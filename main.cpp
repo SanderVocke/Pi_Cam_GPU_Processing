@@ -18,7 +18,7 @@ int main(int argc, const char **argv)
 	
 	DBG("Creating Textures.");
 	//create YUV textures
-	GfxTexture ytexture, utexture, vtexture;
+	GfxTexture ytexture, utexture, vtexture, rgbtexture, outtexture;		
 	ytexture.CreateGreyScale(CAPTURE_WIDTH, CAPTURE_HEIGHT);
 	utexture.CreateGreyScale(CAPTURE_WIDTH/2, CAPTURE_HEIGHT/2);
 	vtexture.CreateGreyScale(CAPTURE_WIDTH/2, CAPTURE_HEIGHT/2);
@@ -30,6 +30,13 @@ int main(int argc, const char **argv)
 	ureadtexture.GenerateFrameBuffer();
 	vreadtexture.CreateRGBA(CAPTURE_WIDTH/2,CAPTURE_HEIGHT/2);
 	vreadtexture.GenerateFrameBuffer();
+	
+	rgbtexture.CreateRGBA(CAPTURE_WIDTH,CAPTURE_HEIGHT);
+	rgbtexture.GenerateFrameBuffer();
+	outtexture.CreateRGBA(CAPTURE_WIDTH,CAPTURE_HEIGHT);
+	outtexture.GenerateFrameBuffer();
+	
+	
 	
 	//Start the processing loop.
 	DBG("Starting process loop.");
@@ -68,6 +75,7 @@ int main(int argc, const char **argv)
 				yreadtexture.Save("tex_y.png");
 				ureadtexture.Save("tex_u.png");
 				vreadtexture.Save("tex_v.png");
+				rgbtexture.Save("tex_rgb.png");
 			}
 
 			move(0,0);
@@ -98,10 +106,12 @@ int main(int argc, const char **argv)
 		//begin frame
 		BeginFrame();
 			
+		DrawYUVTextureRect(&ytexture,&utexture,&vtexture,-1.f,-1.f,1.f,1.f,&rgbtexture);
+			
 		//these are just here so we can access the yuv data cpu side - opengles doesn't let you read grey ones cos they can't be frame buffers!
-		//DrawTextureRect(&ytexture,-1,-1,1,1,&yreadtexture);
-		//DrawTextureRect(&utexture,-1,-1,1,1,&ureadtexture);
-		//DrawTextureRect(&vtexture,-1,-1,1,1,&vreadtexture);
+		DrawTextureRect(&ytexture,-1,-1,1,1,&yreadtexture);
+		DrawTextureRect(&utexture,-1,-1,1,1,&ureadtexture);
+		DrawTextureRect(&vtexture,-1,-1,1,1,&vreadtexture);
 		
 		EndFrame();
 		
