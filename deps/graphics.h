@@ -4,6 +4,7 @@
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
 #include "lodepng.h"
+#include <SDL/SDL.h>
 
 void InitGraphics();
 void ReleaseGraphics();
@@ -47,6 +48,7 @@ class GfxTexture
 	int Height;
 	GLuint Id;
 	bool IsRGBA;
+	void* image;
 
 	GLuint FramebufferId;
 public:
@@ -63,16 +65,12 @@ public:
 	int GetWidth() {return Width;}
 	int GetHeight() {return Height;}
 	void Save(const char* fname);
+	void Show(SDL_Rect* target);
 };
 
 void SaveFrameBuffer(const char* fname);
 
+void DrawOutRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 void DrawTextureRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* vtexture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
-void DrawBlurredRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
-void DrawSobelRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
-void DrawMedianRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
-void DrawMultRect(GfxTexture* texture, float x0, float y0, float x1, float y1, float r, float g, float b, GfxTexture* render_target);
-void DrawThreshRect(GfxTexture* texture, float x0, float y0, float x1, float y1, float r, float g, float b, GfxTexture* render_target);
-void DrawDilateRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
-void DrawErodeRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
+

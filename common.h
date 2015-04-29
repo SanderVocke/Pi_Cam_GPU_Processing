@@ -7,4 +7,6 @@
 #define CAPTURE_HEIGHT 1280
 #define CAPTURE_FPS 15
 
+#define LOWRES_WIDTH 256
+
 #endif

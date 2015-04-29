@@ -1,6 +1,7 @@
 #include "graphics.h"
 #include "camera.h"
 #include "common.h"
+#include "window.h"
 #include <stdio.h>
 #include <curses.h>
 #include <time.h>
@@ -18,7 +19,7 @@ int main(int argc, const char **argv)
 	
 	DBG("Creating Textures.");
 	//create YUV textures
-	GfxTexture ytexture, utexture, vtexture, rgbtexture, outtexture;		
+	GfxTexture ytexture, utexture, vtexture, rgbtexture, rgblowtexture, outtexture, outlowtexture;		
 	ytexture.CreateGreyScale(CAPTURE_WIDTH, CAPTURE_HEIGHT);
 	utexture.CreateGreyScale(CAPTURE_WIDTH/2, CAPTURE_HEIGHT/2);
 	vtexture.CreateGreyScale(CAPTURE_WIDTH/2, CAPTURE_HEIGHT/2);
@@ -30,11 +31,19 @@ int main(int argc, const char **argv)
 	ureadtexture.GenerateFrameBuffer();
 	vreadtexture.CreateRGBA(CAPTURE_WIDTH/2,CAPTURE_HEIGHT/2);
 	vreadtexture.GenerateFrameBuffer();
-	
+	//Main combined RGB textures
 	rgbtexture.CreateRGBA(CAPTURE_WIDTH,CAPTURE_HEIGHT);
 	rgbtexture.GenerateFrameBuffer();
 	outtexture.CreateRGBA(CAPTURE_WIDTH,CAPTURE_HEIGHT);
 	outtexture.GenerateFrameBuffer();
+	//Subsampled RGB textures
+	int lowh = (CAPTURE_HEIGHT/CAPTURE_WIDTH);
+	if(!lowh) lowh = 1;
+	lowh *= LOWRES_WIDTH;
+	rgblowtexture.CreateRGBA(LOWRES_WIDTH, lowh);
+	rgblowtexture.GenerateFrameBuffer();
+	outlowtexture.CreateRGBA(LOWRES_WIDTH, lowh);
+	outlowtexture.GenerateFrameBuffer();
 	
 	
 	
@@ -55,27 +64,34 @@ int main(int argc, const char **argv)
 	cbreak();       /* take input chars one at a time, no wait for \n */
 	clear();
 	nodelay(stdscr, TRUE);
+	
+#define NUMKEYS 3
+	const char* keys[NUMKEYS] = {
+		"s: show input and output snapshots in window (slow)",
+		"w: save framebuffers to files (also slow)",
+		"q: quit"
+	};
 
 	for(int i = 0; i < 3000; i++)
 	{
 		int ch = getch();
 		if(ch != ERR)
 		{
-			if(ch == 'q')
+			SDL_Rect inrect = {0, 0, LOWRES_WIDTH, lowh};
+			SDL_Rect outrect = {LOWRES_WIDTH, 0, LOWRES_WIDTH, lowh};
+			switch(ch){
+			case 's': //save framebuffers
+				rgblowtexture.Show(&inrect);
+				outlowtexture.Show(&outrect);
 				break;
-			else if(ch == 'a')
-				break;
-			else if(ch == 's')
-				break;
-			else if(ch == 'd')
-				do_pipeline = !do_pipeline;
-			else if(ch == 'w')
-			{
+			case 'w': //save framebuffers
 				//SaveFrameBuffer("tex_fb.png");
-				yreadtexture.Save("tex_y.png");
-				ureadtexture.Save("tex_u.png");
-				vreadtexture.Save("tex_v.png");
-				rgbtexture.Save("tex_rgb.png");
+				rgbtexture.Save("./captures/tex_rgb.png");
+				outtexture.Save("./captures/tex_out.png");
+				break;
+			case 'q': //quit
+				endwin();
+				exit(1);
 			}
 
 			move(0,0);
@@ -107,6 +123,13 @@ int main(int argc, const char **argv)
 		BeginFrame();
 			
 		DrawYUVTextureRect(&ytexture,&utexture,&vtexture,-1.f,-1.f,1.f,1.f,&rgbtexture);
+		
+		//make output
+		DrawOutRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &outtexture); 
+		
+		//subsample
+		DrawTextureRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgblowtexture);
+		DrawTextureRect(&outtexture, -1.0f, -1.0f, 1.0f, 1.0f, &outlowtexture);
 			
 		//these are just here so we can access the yuv data cpu side - opengles doesn't let you read grey ones cos they can't be frame buffers!
 		DrawTextureRect(&ytexture,-1,-1,1,1,&yreadtexture);
@@ -126,8 +149,11 @@ int main(int argc, const char **argv)
 		float fr = float(double(i+1)/total_time_s);
 		if((i%30)==0)
 		{
-			mvprintw(0,0,"Framerate: %g\n",fr);
-			move(0,0);
+			mvprintw(0,0,"Framerate: %g",fr);
+			mvprintw(2,0,"Controls:");
+			int h=0;
+			for(h=0; h<NUMKEYS; h++) mvprintw(h+3,0,keys[h]);
+			move(20,0);
 			refresh();
 		}
 
