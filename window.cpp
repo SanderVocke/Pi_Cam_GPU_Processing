@@ -33,7 +33,7 @@ void updateWindow(void* argptr){
 		//SDL part
 		uint8_t ok =
 			init_app("SDL example", NULL, SDL_INIT_VIDEO) &&
-			SDL_SetVideoMode(LOWRES_WIDTH*2, a.height, 24, SDL_SWSURFACE);
+			SDL_SetVideoMode(LOWRES_WIDTH*2, a.height, 24, SDL_HWSURFACE);
 		assert(ok);
 		screen = SDL_GetVideoSurface();
 		SDL_SetEventFilter(filter);

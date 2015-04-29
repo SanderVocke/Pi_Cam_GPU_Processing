@@ -10,6 +10,7 @@
 #include "graphics.h"
 #include "window.h"
 #include <SDL/SDL.h>
+#include "common.h"
 
 #define check() assert(glGetError() == 0)
 
@@ -127,10 +128,10 @@ void InitGraphics()
 	glClear( GL_COLOR_BUFFER_BIT );
 
 	//load the test shaders
-	GSimpleVS.LoadVertexShader("./shaders/ori/simplevertshader.glsl");
-	GSimpleFS.LoadFragmentShader("./shaders/ori/simplefragshader.glsl");
-	GYUVFS.LoadFragmentShader("./shaders/ori/yuvfragshader.glsl");
-	GOutFS.LoadFragmentShader("./shaders/out.glsl");
+	GSimpleVS.LoadVertexShader("./shaders/aux/vertices.glsl");
+	GSimpleFS.LoadFragmentShader("./shaders/aux/copy.glsl");
+	GYUVFS.LoadFragmentShader("./shaders/aux/yuvtorgba.glsl");
+	GOutFS.LoadFragmentShader(MAINSHADER);
 	GSimpleProg.Create(&GSimpleVS,&GSimpleFS);
 	GYUVProg.Create(&GSimpleVS,&GYUVFS);
 	GOutProg.Create(&GSimpleVS,&GOutFS);
