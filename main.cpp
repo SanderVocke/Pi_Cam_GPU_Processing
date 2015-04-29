@@ -12,7 +12,7 @@ int main(int argc, const char **argv)
 	//init graphics and camera
 	DBG("Start.");
 	DBG("Initializing graphics and camera.");
-	CCamera* cam = StartCamera(CAPTURE_WIDTH, CAPTURE_HEIGHT, 15, 1, false); //10fps camera
+	CCamera* cam = StartCamera(CAPTURE_WIDTH, CAPTURE_HEIGHT, CAPTURE_FPS, 1, false); //camera
 	InitGraphics();
 	DBG("Camera resolution: %dx%d", CAPTURE_WIDTH, CAPTURE_HEIGHT);
 	
@@ -99,9 +99,9 @@ int main(int argc, const char **argv)
 		BeginFrame();
 			
 		//these are just here so we can access the yuv data cpu side - opengles doesn't let you read grey ones cos they can't be frame buffers!
-		DrawTextureRect(&ytexture,-1,-1,1,1,&yreadtexture);
-		DrawTextureRect(&utexture,-1,-1,1,1,&ureadtexture);
-		DrawTextureRect(&vtexture,-1,-1,1,1,&vreadtexture);
+		//DrawTextureRect(&ytexture,-1,-1,1,1,&yreadtexture);
+		//DrawTextureRect(&utexture,-1,-1,1,1,&ureadtexture);
+		//DrawTextureRect(&vtexture,-1,-1,1,1,&vreadtexture);
 		
 		EndFrame();
 		
