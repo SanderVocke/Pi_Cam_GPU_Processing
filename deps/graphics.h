@@ -73,5 +73,5 @@ void SaveFrameBuffer(const char* fname);
 void DrawOutRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 void DrawTextureRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* vtexture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
-void DrawDeDonutTextureRect(GfxTexture* texture, GfxTexture* dedonutmap, GfxTexture* render_target);
+void DrawDeDonutTextureRect(GfxTexture* texture, GfxTexture* dedonutmap, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 

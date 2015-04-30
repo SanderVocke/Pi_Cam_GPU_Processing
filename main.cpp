@@ -10,6 +10,10 @@
 #include <unistd.h>
 #include <cmath>
 
+#include "GLES2/gl2.h"
+#include "EGL/egl.h"
+#include "EGL/eglext.h"
+
 #define PI (3.141592653589793)
 
 #define NUMKEYS 3
@@ -38,16 +42,21 @@ void initDeDonutTextures(GfxTexture *targetmap, GfxTexture* target){
 	//this initializes the DeDonut texture, which is a texture that maps pixels of dedonuted to the donuted texture space (basically coordinate translation).
 
 	//approximate dedonuted width based on circumference
-	int width = (int)(PI*CAPTURE_WIDTH); 
+	float widthf = (PI*CAPTURE_WIDTH); 
 	//approximate dedonuted height based on difference of radii of donut
-	int height = (int)((g_conf.DONUTOUTERRATIO-g_conf.DONUTINNERRATIO)*CAPTURE_WIDTH); 
-	target->CreateRGBA(CAPTURE_WIDTH,CAPTURE_HEIGHT);
+	float heightf = ((g_conf.DONUTOUTERRATIO-g_conf.DONUTINNERRATIO)*CAPTURE_WIDTH); 
+	int width = (int)widthf;
+	//Now a dirty way to get rid of the texture size limitation
+	if(width>2048) width = 2048;
+	int height = (int)heightf;
+	DBG("Dedonut: %dx%d", width, height);
+	target->CreateRGBA(width,height);
 	target->GenerateFrameBuffer();
-	targetmap->CreateRGBA(CAPTURE_WIDTH,CAPTURE_HEIGHT);
+	targetmap->CreateRGBA(width,height);
 	targetmap->GenerateFrameBuffer();
 	
 	//now, generate the pixels
-	char* data = (char*)calloc(1,4*(size_t)width*(size_t)height);
+	unsigned char* data = (unsigned char*)calloc(1,4*(size_t)width*(size_t)height);
 	int i,j;
 	float x,y; //pixel
 	float cx,cy; //center
@@ -65,19 +74,20 @@ void initDeDonutTextures(GfxTexture *targetmap, GfxTexture* target){
 	for(i=0; i<width; i++)
 		for(j=0; j<height; j++){
 			//normalize coordinates
-			x = (float)i/(float)CAPTURE_WIDTH;
-			y = (float)j/(float)CAPTURE_WIDTH;
+			x = ((float)i)/(float)width;
+			y = ((float)j)/(float)height;
 			//calculations
 			phi = x*2*PI;
-			d = y*rout+rin;
+			d = (1-y)*(rout-rin)+rin;
 			dx = d*sin(phi);
 			dy = d*cos(phi);
 			xout = cx+dx;
 			yout = cy+dy;
 			
 			//store in pixel form
-			data[(width*i+j)*4] = (int)(xout*255);
-			data[(width*i+j)*4+1] = (int)(yout*255);
+			data[(width*j+i)*4] = (int)(xout*255.0);
+			data[(width*j+i)*4+1] = (int)(yout*255.0);
+			data[(width*j+i)*4+3] = 255;
 		}
 	targetmap->SetPixels(data);
 	free(data);	
@@ -128,6 +138,7 @@ int main(int argc, const char **argv)
 	outlowtexture.CreateRGBA(LOWRES_WIDTH, lowh);
 	outlowtexture.GenerateFrameBuffer();
 	//DeDonut RGB textures
+	DBG("Max texture size: %d", GL_MAX_TEXTURE_SIZE);
 	initDeDonutTextures(&dedonutmap, &dedonuttexture);	
 	
 	//Start the processing loop.
@@ -205,7 +216,7 @@ int main(int argc, const char **argv)
 		DrawOutRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &outtexture); 
 		
 		//make dedonuted
-		DrawDeDonutTextureRect(&rgbtexture, &dedonutmap, &dedonuttexture);
+		DrawDeDonutTextureRect(&rgbtexture, &dedonutmap, -1.0f, -1.0f, 1.0f, 1.0f,  &dedonuttexture);
 		
 		//subsample
 		DrawTextureRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgblowtexture);

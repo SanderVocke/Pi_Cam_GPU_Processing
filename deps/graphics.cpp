@@ -331,7 +331,7 @@ void DrawOutRect(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 	}
 }
 
-void DrawDeDonutTextureRect(GfxTexture* texture, GfxTexture* dedonutmap, GfxTexture* render_target)
+void DrawDeDonutTextureRect(GfxTexture* texture, GfxTexture* dedonutmap, float x0, float y0, float x1, float y1, GfxTexture* render_target)
 {
 	if(render_target)
 	{
@@ -343,6 +343,8 @@ void DrawDeDonutTextureRect(GfxTexture* texture, GfxTexture* dedonutmap, GfxText
 	glUseProgram(GDeDonutProg.GetId());	check();
 	check();
 	
+	glUniform2f(glGetUniformLocation(GDeDonutProg.GetId(),"offset"),x0,y0);
+	glUniform2f(glGetUniformLocation(GDeDonutProg.GetId(),"scale"),x1-x0,y1-y0);
 	glUniform1i(glGetUniformLocation(GDeDonutProg.GetId(),"tex"), 0);
 	glUniform1i(glGetUniformLocation(GDeDonutProg.GetId(),"maptex"), 1);
 
