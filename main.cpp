@@ -1,3 +1,4 @@
+#include "loadstats.h"
 #include "graphics.h"
 #include "camera.h"
 #include "common.h"
@@ -7,9 +8,32 @@
 #include <time.h>
 #include <unistd.h>
 
+#define NUMKEYS 3
+const char* keys[NUMKEYS] = {
+	"s: show input and output snapshots in window (slow)",
+	"w: save framebuffers to files (also slow)",
+	"q: quit"
+};
+
+void drawCurses(float fr){
+	updateStats();
+	mvprintw(0,0,"Framerate: %g",fr);
+	mvprintw(2,0,"Controls:");
+	int h=0;
+	for(h=0; h<NUMKEYS; h++) mvprintw(h+3,0,keys[h]);
+	mvprintw(0,60,"CPU Total: %d",cputot_stats.load);
+	mvprintw(1,65,"CPU1: %d",cpu1_stats.load);
+	mvprintw(2,65,"CPU2: %d",cpu2_stats.load);
+	mvprintw(3,65,"CPU3: %d",cpu3_stats.load);
+	mvprintw(4,65,"CPU4: %d",cpu4_stats.load);
+	move(20,0);
+	refresh();
+}
 
 int main(int argc, const char **argv)
 {
+	updateStats(); //baseline
+
 	//init graphics and camera
 	DBG("Start.");
 	DBG("Initializing graphics and camera.");
@@ -64,13 +88,6 @@ int main(int argc, const char **argv)
 	cbreak();       /* take input chars one at a time, no wait for \n */
 	clear();
 	nodelay(stdscr, TRUE);
-	
-#define NUMKEYS 3
-	const char* keys[NUMKEYS] = {
-		"s: show input and output snapshots in window (slow)",
-		"w: save framebuffers to files (also slow)",
-		"q: quit"
-	};
 
 	for(int i = 0; i < 3000; i++)
 	{
@@ -145,16 +162,12 @@ int main(int argc, const char **argv)
 		total_time_s += double(time_difference)/1000000000.0;
 		start_time = gettime_now.tv_nsec;
 	
-		//print frame rate
+		//print the screen
 		float fr = float(double(i+1)/total_time_s);
 		if((i%30)==0)
 		{
-			mvprintw(0,0,"Framerate: %g",fr);
-			mvprintw(2,0,"Controls:");
-			int h=0;
-			for(h=0; h<NUMKEYS; h++) mvprintw(h+3,0,keys[h]);
-			move(20,0);
-			refresh();
+			//draw the terminal window
+			drawCurses(fr);
 		}
 
 	}
