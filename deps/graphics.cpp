@@ -22,9 +22,11 @@ EGLContext GContext;
 
 GfxShader GSimpleVS;
 GfxShader GSimpleFS;
+GfxShader GDeDonutFS;
 GfxShader GYUVFS;
 GfxShader GOutFS;
 GfxProgram GSimpleProg;
+GfxProgram GDeDonutProg;
 GfxProgram GYUVProg;
 GfxProgram GOutProg;
 GLuint GQuadVertexBuffer;
@@ -131,10 +133,12 @@ void InitGraphics()
 	GSimpleVS.LoadVertexShader("./shaders/aux/vertices.glsl");
 	GSimpleFS.LoadFragmentShader("./shaders/aux/copy.glsl");
 	GYUVFS.LoadFragmentShader("./shaders/aux/yuvtorgba.glsl");
+	GDeDonutFS.LoadFragmentShader("./shaders/aux/dedonut.glsl");
 	GOutFS.LoadFragmentShader(MAINSHADER);
 	GSimpleProg.Create(&GSimpleVS,&GSimpleFS);
 	GYUVProg.Create(&GSimpleVS,&GYUVFS);
 	GOutProg.Create(&GSimpleVS,&GOutFS);
+	GDeDonutProg.Create(&GSimpleVS,&GDeDonutFS);
 	check();
 
 	//create an ickle vertex buffer
@@ -312,6 +316,44 @@ void DrawOutRect(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
 
 	GLuint loc = glGetAttribLocation(GSimpleProg.GetId(),"vertex");
+	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
+	glEnableVertexAttribArray(loc);	check();
+	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 ); check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	if(render_target)
+	{
+		//glFinish();	check();
+		//glFlush(); check();
+		glBindFramebuffer(GL_FRAMEBUFFER,0);
+		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
+	}
+}
+
+void DrawDeDonutTextureRect(GfxTexture* texture, GfxTexture* dedonutmap, GfxTexture* render_target)
+{
+	if(render_target)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
+		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
+		check();
+	}
+
+	glUseProgram(GDeDonutProg.GetId());	check();
+	check();
+	
+	glUniform1i(glGetUniformLocation(GDeDonutProg.GetId(),"tex"), 0);
+	glUniform1i(glGetUniformLocation(GDeDonutProg.GetId(),"maptex"), 1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D,dedonutmap->GetId());	check();
+	glActiveTexture(GL_TEXTURE0);
+
+	GLuint loc = glGetAttribLocation(GDeDonutProg.GetId(),"vertex");
 	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
 	glEnableVertexAttribArray(loc);	check();
 	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 ); check();

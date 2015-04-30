@@ -2,11 +2,15 @@
 #include "graphics.h"
 #include "camera.h"
 #include "common.h"
+#include "config.h"
 #include "window.h"
 #include <stdio.h>
 #include <curses.h>
 #include <time.h>
 #include <unistd.h>
+#include <cmath>
+
+#define PI (3.141592653589793)
 
 #define NUMKEYS 3
 const char* keys[NUMKEYS] = {
@@ -30,9 +34,61 @@ void drawCurses(float fr){
 	refresh();
 }
 
+void initDeDonutTextures(GfxTexture *targetmap, GfxTexture* target){
+	//this initializes the DeDonut texture, which is a texture that maps pixels of dedonuted to the donuted texture space (basically coordinate translation).
+
+	//approximate dedonuted width based on circumference
+	int width = (int)(PI*CAPTURE_WIDTH); 
+	//approximate dedonuted height based on difference of radii of donut
+	int height = (int)((g_conf.DONUTOUTERRATIO-g_conf.DONUTINNERRATIO)*CAPTURE_WIDTH); 
+	target->CreateRGBA(CAPTURE_WIDTH,CAPTURE_HEIGHT);
+	target->GenerateFrameBuffer();
+	targetmap->CreateRGBA(CAPTURE_WIDTH,CAPTURE_HEIGHT);
+	targetmap->GenerateFrameBuffer();
+	
+	//now, generate the pixels
+	char* data = (char*)calloc(1,4*(size_t)width*(size_t)height);
+	int i,j;
+	float x,y; //pixel
+	float cx,cy; //center
+	float rin,rout; //radii
+	float d; //distance
+	float dx, dy; //cartesian distances
+	float phi; //polar angle to top
+	float xout,yout; //mapping in floats (normalized)
+	
+	//donut parameters
+	cx = g_conf.DONUTXRATIO;
+	cy = g_conf.DONUTYRATIO;
+	rin = g_conf.DONUTINNERRATIO;
+	rout = g_conf.DONUTOUTERRATIO;
+	for(i=0; i<width; i++)
+		for(j=0; j<height; j++){
+			//normalize coordinates
+			x = (float)i/(float)CAPTURE_WIDTH;
+			y = (float)j/(float)CAPTURE_WIDTH;
+			//calculations
+			phi = x*2*PI;
+			d = y*rout+rin;
+			dx = d*sin(phi);
+			dy = d*cos(phi);
+			xout = cx+dx;
+			yout = cy+dy;
+			
+			//store in pixel form
+			data[(width*i+j)*4] = (int)(xout*255);
+			data[(width*i+j)*4+1] = (int)(yout*255);
+		}
+	targetmap->SetPixels(data);
+	free(data);	
+	
+	return;
+}
+
 int main(int argc, const char **argv)
 {
 	updateStats(); //baseline
+	initConfig(); //get program settings
 
 	//init graphics and camera
 	DBG("Start.");
@@ -41,9 +97,12 @@ int main(int argc, const char **argv)
 	InitGraphics();
 	DBG("Camera resolution: %dx%d", CAPTURE_WIDTH, CAPTURE_HEIGHT);
 	
+	//set camera settings
+	raspicamcontrol_set_metering_mode(cam->CameraComponent, METERINGMODE_AVERAGE);
+	
 	DBG("Creating Textures.");
 	//create YUV textures
-	GfxTexture ytexture, utexture, vtexture, rgbtexture, rgblowtexture, outtexture, outlowtexture;		
+	GfxTexture ytexture, utexture, vtexture, rgbtexture, rgblowtexture, outtexture, outlowtexture, dedonuttexture, dedonutmap;		
 	ytexture.CreateGreyScale(CAPTURE_WIDTH, CAPTURE_HEIGHT);
 	utexture.CreateGreyScale(CAPTURE_WIDTH/2, CAPTURE_HEIGHT/2);
 	vtexture.CreateGreyScale(CAPTURE_WIDTH/2, CAPTURE_HEIGHT/2);
@@ -68,8 +127,8 @@ int main(int argc, const char **argv)
 	rgblowtexture.GenerateFrameBuffer();
 	outlowtexture.CreateRGBA(LOWRES_WIDTH, lowh);
 	outlowtexture.GenerateFrameBuffer();
-	
-	
+	//DeDonut RGB textures
+	initDeDonutTextures(&dedonutmap, &dedonuttexture);	
 	
 	//Start the processing loop.
 	DBG("Starting process loop.");
@@ -105,6 +164,7 @@ int main(int argc, const char **argv)
 				//SaveFrameBuffer("tex_fb.png");
 				rgbtexture.Save("./captures/tex_rgb.png");
 				outtexture.Save("./captures/tex_out.png");
+				dedonuttexture.Save("./captures/tex_dedonut.png");
 				break;
 			case 'q': //quit
 				endwin();
@@ -143,6 +203,9 @@ int main(int argc, const char **argv)
 		
 		//make output
 		DrawOutRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &outtexture); 
+		
+		//make dedonuted
+		DrawDeDonutTextureRect(&rgbtexture, &dedonutmap, &dedonuttexture);
 		
 		//subsample
 		DrawTextureRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgblowtexture);

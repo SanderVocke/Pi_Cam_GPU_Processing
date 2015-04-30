@@ -38,6 +38,8 @@ public:
 	int ReadFrame(int level, void* buffer, int buffer_size);
 	bool BeginReadFrame(int level, const void* &out_buffer, int& out_buffer_size);
 	void EndReadFrame(int level);
+	
+	MMAL_COMPONENT_T*			CameraComponent; 
 
 private:
 	CCamera();
@@ -54,8 +56,7 @@ private:
 	int							Width;
 	int							Height;
 	int							FrameRate;
-	RASPICAM_CAMERA_PARAMETERS	CameraParameters;
-	MMAL_COMPONENT_T*			CameraComponent;    
+	RASPICAM_CAMERA_PARAMETERS	CameraParameters;   
 	MMAL_COMPONENT_T*			SplitterComponent;
 	MMAL_CONNECTION_T*			VidToSplitConn;
 	CCameraOutput*				Outputs[4];
