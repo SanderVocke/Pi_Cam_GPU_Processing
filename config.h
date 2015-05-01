@@ -7,6 +7,9 @@ typedef struct config_t{
 	float DONUTYRATIO;
 	float DONUTINNERRATIO;
 	float DONUTOUTERRATIO;
+	int CAPTURE_WIDTH;
+	int CAPTURE_HEIGHT;
+	int CAPTURE_FPS;
 }config_t;
 
 extern config_t g_conf;

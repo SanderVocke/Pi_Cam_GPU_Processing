@@ -4,7 +4,7 @@
 
 #define CONFLINEBUFSZ 100
 
-config_t g_conf = {false,0,0,0,0};
+config_t g_conf = {false,0,0,0,0,0,0,0};
 
 void initConfig(void){
 	char buf[CONFLINEBUFSZ];
@@ -17,6 +17,12 @@ void initConfig(void){
 	sscanf(buf, "%*s %f", &g_conf.DONUTINNERRATIO);
 	fgets(buf, CONFLINEBUFSZ, fp);
 	sscanf(buf, "%*s %f", &g_conf.DONUTOUTERRATIO);
+	fgets(buf, CONFLINEBUFSZ, fp);
+	sscanf(buf, "%*s %d", &g_conf.CAPTURE_WIDTH);
+	fgets(buf, CONFLINEBUFSZ, fp);
+	sscanf(buf, "%*s %d", &g_conf.CAPTURE_HEIGHT);
+	fgets(buf, CONFLINEBUFSZ, fp);
+	sscanf(buf, "%*s %d", &g_conf.CAPTURE_FPS);
 	fclose(fp);
 	
 	g_conf.ready = true;
@@ -28,5 +34,8 @@ void writeConfig(void){
 	fprintf(fp, "DONUTYRATIO %f\n", g_conf.DONUTXRATIO);
 	fprintf(fp, "DONUTINNERRATIO %f\n", g_conf.DONUTXRATIO);
 	fprintf(fp, "DONUTOUTERRATIO %f\n", g_conf.DONUTXRATIO);
+	fprintf(fp, "CAPTURE_WIDTH %d\n", g_conf.CAPTURE_WIDTH);
+	fprintf(fp, "CAPTURE_HEIGHT %d\n", g_conf.CAPTURE_HEIGHT);
+	fprintf(fp, "CAPTURE_FPS %d\n", g_conf.CAPTURE_FPS);
 	fclose(fp);
 }

@@ -44,9 +44,9 @@ void initDeDonutTextures(GfxTexture *targetmap){
 	//this initializes the DeDonut texture, which is a texture that maps pixels of dedonuted to the donuted texture space (basically coordinate translation).
 
 	//approximate dedonuted width based on circumference
-	float widthf = (PI*CAPTURE_WIDTH); 
+	float widthf = (PI*g_conf.CAPTURE_WIDTH); 
 	//approximate dedonuted height based on difference of radii of donut
-	float heightf = ((g_conf.DONUTOUTERRATIO-g_conf.DONUTINNERRATIO)*CAPTURE_WIDTH); 
+	float heightf = ((g_conf.DONUTOUTERRATIO-g_conf.DONUTINNERRATIO)*g_conf.CAPTURE_WIDTH); 
 	int width = (int)widthf;
 	//Now a dirty way to get rid of the texture size limitation
 	if(width>2048) width = 2048;
@@ -105,9 +105,9 @@ int main(int argc, const char **argv)
 	//init graphics and camera
 	DBG("Start.");
 	DBG("Initializing graphics and camera.");
-	CCamera* cam = StartCamera(CAPTURE_WIDTH, CAPTURE_HEIGHT, CAPTURE_FPS, 1, false); //camera
+	CCamera* cam = StartCamera(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, g_conf.CAPTURE_FPS, 1, false); //camera
 	InitGraphics();
-	DBG("Camera resolution: %dx%d", CAPTURE_WIDTH, CAPTURE_HEIGHT);
+	DBG("Camera resolution: %dx%d", g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT);
 	
 	//set camera settings
 	raspicamcontrol_set_metering_mode(cam->CameraComponent, METERINGMODE_AVERAGE);
@@ -118,9 +118,9 @@ int main(int argc, const char **argv)
 	DBG("Max texture size: %d", GL_MAX_TEXTURE_SIZE);
 	initDeDonutTextures(&dedonutmap);	
 	//create YUV textures
-	ytexture.CreateGreyScale(CAPTURE_WIDTH, CAPTURE_HEIGHT);
-	utexture.CreateGreyScale(CAPTURE_WIDTH/2, CAPTURE_HEIGHT/2);
-	vtexture.CreateGreyScale(CAPTURE_WIDTH/2, CAPTURE_HEIGHT/2);
+	ytexture.CreateGreyScale(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT);
+	utexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2);
+	vtexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2);
 	//Main combined RGB textures
 	rgbtexture.CreateRGBA(dWidth,dHeight);
 	rgbtexture.GenerateFrameBuffer();
@@ -139,6 +139,7 @@ int main(int argc, const char **argv)
 	DBG("Starting process loop.");
 	
 	long int start_time;
+	double total_frameset_time_s=0;
 	long int time_difference;
 	struct timespec gettime_now;
 	clock_gettime(CLOCK_REALTIME, &gettime_now);
@@ -153,7 +154,7 @@ int main(int argc, const char **argv)
 	clear();
 	nodelay(stdscr, TRUE);
 
-	for(int i = 0; i < 3000; i++)
+	for(long i = 0;; i++)
 	{
 		int ch = getch();
 		if(ch != ERR)
@@ -185,10 +186,10 @@ int main(int argc, const char **argv)
 		//lock the chosen frame buffer, and copy it directly into the corresponding open gl texture
 		{
 			const uint8_t* data = (const uint8_t*)frame_data;
-			int ypitch = CAPTURE_WIDTH;
-			int ysize = ypitch*CAPTURE_HEIGHT;
-			int uvpitch = CAPTURE_WIDTH/2;
-			int uvsize = uvpitch*CAPTURE_HEIGHT/2;
+			int ypitch = g_conf.CAPTURE_WIDTH;
+			int ysize = ypitch*g_conf.CAPTURE_HEIGHT;
+			int uvpitch = g_conf.CAPTURE_WIDTH/2;
+			int uvsize = uvpitch*g_conf.CAPTURE_HEIGHT/2;
 			//int upos = ysize+16*uvpitch;
 			//int vpos = upos+uvsize+4*uvpitch;
 			int upos = ysize;
@@ -219,14 +220,15 @@ int main(int argc, const char **argv)
 		time_difference = gettime_now.tv_nsec - start_time;
 		if(time_difference < 0) time_difference += 1000000000;
 		total_time_s += double(time_difference)/1000000000.0;
+		total_frameset_time_s += double(time_difference)/1000000000.0;
 		start_time = gettime_now.tv_nsec;
+		float fr = float(double(30)/total_frameset_time_s);
 	
 		//print the screen
-		float fr = float(double(i+1)/total_time_s);
 		if((i%30)==0)
-		{
-			//draw the terminal window
+		{			//draw the terminal window
 			drawCurses(fr);
+			total_frameset_time_s = 0;
 		}
 
 	}
