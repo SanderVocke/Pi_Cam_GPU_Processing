@@ -132,7 +132,7 @@ void InitGraphics()
 	//load the test shaders
 	GSimpleVS.LoadVertexShader("./shaders/aux/vertices.glsl");
 	GSimpleFS.LoadFragmentShader("./shaders/aux/copy.glsl");
-	GYUVFS.LoadFragmentShader("./shaders/aux/yuvtorgba.glsl");
+	GYUVFS.LoadFragmentShader("./shaders/aux/yuvtorgba_dedonut.glsl");
 	GDeDonutFS.LoadFragmentShader("./shaders/aux/dedonut.glsl");
 	GOutFS.LoadFragmentShader(MAINSHADER);
 	GSimpleProg.Create(&GSimpleVS,&GSimpleFS);
@@ -406,7 +406,7 @@ void DrawTextureRect(GfxTexture* texture, float x0, float y0, float x1, float y1
 	}
 }
 
-void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* vtexture, float x0, float y0, float x1, float y1, GfxTexture* render_target)
+void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* vtexture, GfxTexture* maptex, float x0, float y0, float x1, float y1, GfxTexture* render_target)
 {
 	if(render_target)
 	{
@@ -422,6 +422,7 @@ void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* 
 	glUniform1i(glGetUniformLocation(GYUVProg.GetId(),"tex0"), 0);
 	glUniform1i(glGetUniformLocation(GYUVProg.GetId(),"tex1"), 1);
 	glUniform1i(glGetUniformLocation(GYUVProg.GetId(),"tex2"), 2);
+	glUniform1i(glGetUniformLocation(GYUVProg.GetId(),"maptex"), 3);
 	check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
@@ -431,6 +432,8 @@ void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* 
 	glBindTexture(GL_TEXTURE_2D,utexture->GetId());	check();
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D,vtexture->GetId());	check();
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D,maptex->GetId());	check();
 	glActiveTexture(GL_TEXTURE0);
 
 	GLuint loc = glGetAttribLocation(GYUVProg.GetId(),"vertex");

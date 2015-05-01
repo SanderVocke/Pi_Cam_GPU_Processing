@@ -16,6 +16,8 @@
 
 #define PI (3.141592653589793)
 
+int dWidth, dHeight; //width and height of "dedonuted" image
+
 #define NUMKEYS 3
 const char* keys[NUMKEYS] = {
 	"s: show input and output snapshots in window (slow)",
@@ -38,7 +40,7 @@ void drawCurses(float fr){
 	refresh();
 }
 
-void initDeDonutTextures(GfxTexture *targetmap, GfxTexture* target){
+void initDeDonutTextures(GfxTexture *targetmap){
 	//this initializes the DeDonut texture, which is a texture that maps pixels of dedonuted to the donuted texture space (basically coordinate translation).
 
 	//approximate dedonuted width based on circumference
@@ -48,10 +50,10 @@ void initDeDonutTextures(GfxTexture *targetmap, GfxTexture* target){
 	int width = (int)widthf;
 	//Now a dirty way to get rid of the texture size limitation
 	if(width>2048) width = 2048;
-	int height = (int)heightf;
+	int height = (int)heightf;	
+	dWidth = width;
+	dHeight = height;
 	DBG("Dedonut: %dx%d", width, height);
-	target->CreateRGBA(width,height);
-	target->GenerateFrameBuffer();
 	targetmap->CreateRGBA(width,height);
 	targetmap->GenerateFrameBuffer();
 	
@@ -110,36 +112,28 @@ int main(int argc, const char **argv)
 	//set camera settings
 	raspicamcontrol_set_metering_mode(cam->CameraComponent, METERINGMODE_AVERAGE);
 	
+	GfxTexture ytexture, utexture, vtexture, rgbtexture, rgblowtexture, outtexture, outlowtexture, dedonutmap;		
 	DBG("Creating Textures.");
+	//DeDonut RGB textures
+	DBG("Max texture size: %d", GL_MAX_TEXTURE_SIZE);
+	initDeDonutTextures(&dedonutmap);	
 	//create YUV textures
-	GfxTexture ytexture, utexture, vtexture, rgbtexture, rgblowtexture, outtexture, outlowtexture, dedonuttexture, dedonutmap;		
 	ytexture.CreateGreyScale(CAPTURE_WIDTH, CAPTURE_HEIGHT);
 	utexture.CreateGreyScale(CAPTURE_WIDTH/2, CAPTURE_HEIGHT/2);
 	vtexture.CreateGreyScale(CAPTURE_WIDTH/2, CAPTURE_HEIGHT/2);
-	//for reading to CPU:
-	GfxTexture yreadtexture,ureadtexture,vreadtexture;
-	yreadtexture.CreateRGBA(CAPTURE_WIDTH,CAPTURE_HEIGHT);
-	yreadtexture.GenerateFrameBuffer();
-	ureadtexture.CreateRGBA(CAPTURE_WIDTH/2,CAPTURE_HEIGHT/2);
-	ureadtexture.GenerateFrameBuffer();
-	vreadtexture.CreateRGBA(CAPTURE_WIDTH/2,CAPTURE_HEIGHT/2);
-	vreadtexture.GenerateFrameBuffer();
 	//Main combined RGB textures
-	rgbtexture.CreateRGBA(CAPTURE_WIDTH,CAPTURE_HEIGHT);
+	rgbtexture.CreateRGBA(dWidth,dHeight);
 	rgbtexture.GenerateFrameBuffer();
-	outtexture.CreateRGBA(CAPTURE_WIDTH,CAPTURE_HEIGHT);
+	outtexture.CreateRGBA(dWidth,dHeight);
 	outtexture.GenerateFrameBuffer();
 	//Subsampled RGB textures
-	int lowh = (CAPTURE_HEIGHT/CAPTURE_WIDTH);
+	float lowhf = ((float)dHeight/(float)dWidth);
+	int lowh = (int)(lowhf * LOWRES_WIDTH);
 	if(!lowh) lowh = 1;
-	lowh *= LOWRES_WIDTH;
 	rgblowtexture.CreateRGBA(LOWRES_WIDTH, lowh);
 	rgblowtexture.GenerateFrameBuffer();
 	outlowtexture.CreateRGBA(LOWRES_WIDTH, lowh);
 	outlowtexture.GenerateFrameBuffer();
-	//DeDonut RGB textures
-	DBG("Max texture size: %d", GL_MAX_TEXTURE_SIZE);
-	initDeDonutTextures(&dedonutmap, &dedonuttexture);	
 	
 	//Start the processing loop.
 	DBG("Starting process loop.");
@@ -165,7 +159,7 @@ int main(int argc, const char **argv)
 		if(ch != ERR)
 		{
 			SDL_Rect inrect = {0, 0, LOWRES_WIDTH, lowh};
-			SDL_Rect outrect = {LOWRES_WIDTH, 0, LOWRES_WIDTH, lowh};
+			SDL_Rect outrect = {0, lowh, LOWRES_WIDTH, lowh};
 			switch(ch){
 			case 's': //save framebuffers
 				rgblowtexture.Show(&inrect);
@@ -175,7 +169,6 @@ int main(int argc, const char **argv)
 				//SaveFrameBuffer("tex_fb.png");
 				rgbtexture.Save("./captures/tex_rgb.png");
 				outtexture.Save("./captures/tex_out.png");
-				dedonuttexture.Save("./captures/tex_dedonut.png");
 				break;
 			case 'q': //quit
 				endwin();
@@ -210,22 +203,14 @@ int main(int argc, const char **argv)
 		//begin frame
 		BeginFrame();
 			
-		DrawYUVTextureRect(&ytexture,&utexture,&vtexture,-1.f,-1.f,1.f,1.f,&rgbtexture);
+		DrawYUVTextureRect(&ytexture,&utexture,&vtexture,&dedonutmap,-1.f,-1.f,1.f,1.f,&rgbtexture);
 		
 		//make output
 		DrawOutRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &outtexture); 
 		
-		//make dedonuted
-		DrawDeDonutTextureRect(&rgbtexture, &dedonutmap, -1.0f, -1.0f, 1.0f, 1.0f,  &dedonuttexture);
-		
 		//subsample
 		DrawTextureRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgblowtexture);
 		DrawTextureRect(&outtexture, -1.0f, -1.0f, 1.0f, 1.0f, &outlowtexture);
-			
-		//these are just here so we can access the yuv data cpu side - opengles doesn't let you read grey ones cos they can't be frame buffers!
-		DrawTextureRect(&ytexture,-1,-1,1,1,&yreadtexture);
-		DrawTextureRect(&utexture,-1,-1,1,1,&ureadtexture);
-		DrawTextureRect(&vtexture,-1,-1,1,1,&vreadtexture);
 		
 		EndFrame();
 		
