@@ -23,6 +23,8 @@ void initConfig(void){
 	sscanf(buf, "%*s %d", &g_conf.CAPTURE_HEIGHT);
 	fgets(buf, CONFLINEBUFSZ, fp);
 	sscanf(buf, "%*s %d", &g_conf.CAPTURE_FPS);
+	fgets(buf, CONFLINEBUFSZ, fp);
+	sscanf(buf, "%*s %d", &g_conf.LOWRES_WIDTH);
 	fclose(fp);
 	
 	g_conf.ready = true;
@@ -37,5 +39,6 @@ void writeConfig(void){
 	fprintf(fp, "CAPTURE_WIDTH %d\n", g_conf.CAPTURE_WIDTH);
 	fprintf(fp, "CAPTURE_HEIGHT %d\n", g_conf.CAPTURE_HEIGHT);
 	fprintf(fp, "CAPTURE_FPS %d\n", g_conf.CAPTURE_FPS);
+	fprintf(fp, "LOWRES_WIDTH %d\n", g_conf.LOWRES_WIDTH);
 	fclose(fp);
 }

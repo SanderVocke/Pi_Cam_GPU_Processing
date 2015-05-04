@@ -3,8 +3,6 @@
 
 #define DBG(...) {printf(__VA_ARGS__); printf("\n");}
 
-#define LOWRES_WIDTH 1680
-
 #define MAINSHADER "./shaders/out.glsl"
 
 //#define METERING_MODE METERINGMODE_AVERAGE

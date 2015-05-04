@@ -36,7 +36,7 @@ void drawCurses(float fr){
 	mvprintw(2,65,"CPU2: %d",cpu2_stats.load);
 	mvprintw(3,65,"CPU3: %d",cpu3_stats.load);
 	mvprintw(4,65,"CPU4: %d",cpu4_stats.load);
-	move(20,0);
+	move(30,0);
 	refresh();
 }
 
@@ -128,11 +128,11 @@ int main(int argc, const char **argv)
 	outtexture.GenerateFrameBuffer();
 	//Subsampled RGB textures
 	float lowhf = ((float)dHeight/(float)dWidth);
-	int lowh = (int)(lowhf * LOWRES_WIDTH);
+	int lowh = (int)(lowhf * g_conf.LOWRES_WIDTH);
 	if(!lowh) lowh = 1;
-	rgblowtexture.CreateRGBA(LOWRES_WIDTH, lowh);
+	rgblowtexture.CreateRGBA(g_conf.LOWRES_WIDTH, lowh);
 	rgblowtexture.GenerateFrameBuffer();
-	outlowtexture.CreateRGBA(LOWRES_WIDTH, lowh);
+	outlowtexture.CreateRGBA(g_conf.LOWRES_WIDTH, lowh);
 	outlowtexture.GenerateFrameBuffer();
 	
 	//Start the processing loop.
@@ -159,8 +159,8 @@ int main(int argc, const char **argv)
 		int ch = getch();
 		if(ch != ERR)
 		{
-			SDL_Rect inrect = {0, 0, LOWRES_WIDTH, lowh};
-			SDL_Rect outrect = {0, lowh, LOWRES_WIDTH, lowh};
+			SDL_Rect inrect = {0, 0, g_conf.LOWRES_WIDTH, lowh};
+			SDL_Rect outrect = {0, lowh, g_conf.LOWRES_WIDTH, lowh};
 			switch(ch){
 			case 's': //save framebuffers
 				rgblowtexture.Show(&inrect);
