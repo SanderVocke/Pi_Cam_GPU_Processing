@@ -1,4 +1,3 @@
-
 attribute vec4 vertex;
 uniform vec2 offset;
 uniform vec2 scale;
@@ -9,4 +8,5 @@ void main(void)
 	tcoord.xy = pos.xy;
 	pos.xy = pos.xy*scale+offset;
 	gl_Position = pos;
+
 }

@@ -130,10 +130,10 @@ void InitGraphics()
 	glClear( GL_COLOR_BUFFER_BIT );
 
 	//load the test shaders
-	GSimpleVS.LoadVertexShader("./shaders/aux/vertices.glsl");
-	GSimpleFS.LoadFragmentShader("./shaders/aux/copy.glsl");
-	GYUVFS.LoadFragmentShader("./shaders/aux/yuvtorgba_dedonut.glsl");
-	GDeDonutFS.LoadFragmentShader("./shaders/aux/dedonut.glsl");
+	GSimpleVS.LoadVertexShader("./shaders/auxiliary/vertices.glsl");
+	GSimpleFS.LoadFragmentShader("./shaders/auxiliary/copy.glsl");
+	GYUVFS.LoadFragmentShader("./shaders/auxiliary/yuvtorgba_dedonut.glsl");
+	GDeDonutFS.LoadFragmentShader("./shaders/auxiliary/dedonut.glsl");
 	GOutFS.LoadFragmentShader(MAINSHADER);
 	GSimpleProg.Create(&GSimpleVS,&GSimpleFS);
 	GYUVProg.Create(&GSimpleVS,&GYUVFS);

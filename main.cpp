@@ -9,6 +9,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <cmath>
+#include "i2c_motor.h"
 
 #include "GLES2/gl2.h"
 #include "EGL/egl.h"
@@ -27,16 +28,19 @@ const char* keys[NUMKEYS] = {
 
 void drawCurses(float fr){
 	updateStats();
-	mvprintw(0,0,"Framerate: %g",fr);
+	mvprintw(0,0,"Framerate: %g  ",fr);
 	mvprintw(2,0,"Controls:");
 	int h=0;
 	for(h=0; h<NUMKEYS; h++) mvprintw(h+3,0,keys[h]);
 	mvprintw(0,60,"CPU Total: %d",cputot_stats.load);
-	mvprintw(1,65,"CPU1: %d",cpu1_stats.load);
-	mvprintw(2,65,"CPU2: %d",cpu2_stats.load);
-	mvprintw(3,65,"CPU3: %d",cpu3_stats.load);
-	mvprintw(4,65,"CPU4: %d",cpu4_stats.load);
-	move(30,0);
+	mvprintw(1,65,"CPU1: %d  ",cpu1_stats.load);
+	mvprintw(2,65,"CPU2: %d  ",cpu2_stats.load);
+	mvprintw(3,65,"CPU3: %d  ",cpu3_stats.load);
+	mvprintw(4,65,"CPU4: %d  ",cpu4_stats.load);
+	mvprintw(6,55,"Left Speed: %d  ",
+		getDirection(LEFT_MOTOR)==FORWARD ? getSpeed(LEFT_MOTOR) : -1*((int)getSpeed(LEFT_MOTOR)));
+	mvprintw(7,55,"Right Speed: %d  ",
+		getDirection(RIGHT_MOTOR)==FORWARD ? getSpeed(RIGHT_MOTOR) : -1*((int)getSpeed(RIGHT_MOTOR)));
 	refresh();
 }
 
@@ -162,6 +166,22 @@ int main(int argc, const char **argv)
 			SDL_Rect inrect = {0, 0, g_conf.LOWRES_WIDTH, lowh};
 			SDL_Rect outrect = {0, lowh, g_conf.LOWRES_WIDTH, lowh};
 			switch(ch){
+			case KEY_LEFT:
+				setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
+				setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
+				break;
+			case KEY_UP:
+				setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
+				setSpeedDir(LEFT_MOTOR, FORWARD, MAX_SPEED);
+				break;
+			case KEY_DOWN:
+				setSpeedDir(RIGHT_MOTOR,BACKWARD, MAX_SPEED);
+				setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
+				break;
+			case KEY_RIGHT:
+				setSpeedDir(RIGHT_MOTOR, BACKWARD, MAX_SPEED);
+				setSpeedDir(LEFT_MOTOR,FORWARD, MAX_SPEED);
+				break;
 			case 's': //save framebuffers
 				rgblowtexture.Show(&inrect);
 				outlowtexture.Show(&outrect);
@@ -178,6 +198,10 @@ int main(int argc, const char **argv)
 
 			move(0,0);
 			refresh();
+		}
+		else{ //no keypress
+			setSpeed(RIGHT_MOTOR,0);
+			setSpeed(LEFT_MOTOR, 0);
 		}
 		
 		//spin until we have a camera frame

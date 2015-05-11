@@ -8,7 +8,7 @@ program_INCLUDE_DIRS := /opt/vc/include /opt/vc/include/interface/vcos/pthreads 
 program_LIBRARY_DIRS := /opt/vc/lib
 program_LIBRARIES := mmal_core mmal_util mmal_vc_client vcos bcm_host GLESv2 EGL ncurses rt SDL pthread
 
-CPPFLAGS += $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir))
+CPPFLAGS += -g $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir))
 LDFLAGS += $(foreach librarydir,$(program_LIBRARY_DIRS),-L$(librarydir))
 LDFLAGS += $(foreach library,$(program_LIBRARIES),-l$(library))
 
