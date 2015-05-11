@@ -18,6 +18,7 @@
 #define PI (3.141592653589793)
 
 int dWidth, dHeight; //width and height of "dedonuted" image
+bool gHaveI2C = false;
 
 #define NUMKEYS 3
 const char* keys[NUMKEYS] = {
@@ -41,6 +42,8 @@ void drawCurses(float fr){
 		getDirection(LEFT_MOTOR)==FORWARD ? getSpeed(LEFT_MOTOR) : -1*((int)getSpeed(LEFT_MOTOR)));
 	mvprintw(7,55,"Right Speed: %d  ",
 		getDirection(RIGHT_MOTOR)==FORWARD ? getSpeed(RIGHT_MOTOR) : -1*((int)getSpeed(RIGHT_MOTOR)));
+	if(gHaveI2C) mvprintw(8,55,"I2C ON");
+	else mvprintw(8,55,"I2C FAIL");
 	refresh();
 }
 
@@ -105,6 +108,7 @@ int main(int argc, const char **argv)
 {
 	updateStats(); //baseline
 	initConfig(); //get program settings
+	if(startI2CMotor()) gHaveI2C = true;
 
 	//init graphics and camera
 	DBG("Start.");
@@ -167,20 +171,20 @@ int main(int argc, const char **argv)
 			SDL_Rect outrect = {0, lowh, g_conf.LOWRES_WIDTH, lowh};
 			switch(ch){
 			case KEY_LEFT:
-				setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
-				setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
+				gHaveI2C = setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
+				gHaveI2C = setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
 				break;
 			case KEY_UP:
-				setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
-				setSpeedDir(LEFT_MOTOR, FORWARD, MAX_SPEED);
+				gHaveI2C = setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
+				gHaveI2C = setSpeedDir(LEFT_MOTOR, FORWARD, MAX_SPEED);
 				break;
 			case KEY_DOWN:
-				setSpeedDir(RIGHT_MOTOR,BACKWARD, MAX_SPEED);
-				setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
+				gHaveI2C = setSpeedDir(RIGHT_MOTOR,BACKWARD, MAX_SPEED);
+				gHaveI2C = setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
 				break;
 			case KEY_RIGHT:
-				setSpeedDir(RIGHT_MOTOR, BACKWARD, MAX_SPEED);
-				setSpeedDir(LEFT_MOTOR,FORWARD, MAX_SPEED);
+				gHaveI2C = setSpeedDir(RIGHT_MOTOR, BACKWARD, MAX_SPEED);
+				gHaveI2C = setSpeedDir(LEFT_MOTOR,FORWARD, MAX_SPEED);
 				break;
 			case 's': //save framebuffers
 				rgblowtexture.Show(&inrect);
@@ -200,8 +204,8 @@ int main(int argc, const char **argv)
 			refresh();
 		}
 		else{ //no keypress
-			setSpeed(RIGHT_MOTOR,0);
-			setSpeed(LEFT_MOTOR, 0);
+			gHaveI2C = setSpeed(RIGHT_MOTOR,0);
+			gHaveI2C = setSpeed(LEFT_MOTOR, 0);
 		}
 		
 		//spin until we have a camera frame
