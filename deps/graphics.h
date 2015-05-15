@@ -58,8 +58,8 @@ public:
 	GfxTexture() : Width(0), Height(0), Id(0), FramebufferId(0) {}
 	~GfxTexture() {}
 
-	bool CreateRGBA(int width, int height, const void* data = NULL);
-	bool CreateGreyScale(int width, int height, const void* data = NULL);
+	bool CreateRGBA(int width, int height, const void* data = NULL, GLfloat MinMag=GL_NEAREST, GLfloat Wrap=GL_CLAMP_TO_EDGE);
+	bool CreateGreyScale(int width, int height, const void* data = NULL, GLfloat MinMag=GL_NEAREST, GLfloat Wrap=GL_CLAMP_TO_EDGE);
 	bool GenerateFrameBuffer();
 	void SetPixels(const void* data);
 	GLuint GetId() { return Id; }
@@ -77,6 +77,8 @@ void DrawThresholdRect(GfxTexture* texture, float x0, float y0, float x1, float 
 void DrawTextureRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* vtexture, GfxTexture* maptex, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 void DrawDeDonutTextureRect(GfxTexture* texture, GfxTexture* dedonutmap, float x0, float y0, float x1, float y1, GfxTexture* render_target);
-void DrawHorSum(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
-void DrawVerSum(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
+void DrawHorSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
+void DrawHorSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
+void DrawVerSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
+void DrawVerSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 void DrawCoordinates(GfxTexture* hortexture, GfxTexture* vertexture, float x0, float y0, float x1, float y1, float numcoords, GfxTexture* render_target);

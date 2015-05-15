@@ -22,18 +22,13 @@ EGLContext GContext;
 
 GfxShader GSimpleVS;
 GfxShader GSimpleFS;
-GfxShader GDeDonutFS;
 GfxShader GYUVFS;
-GfxShader GOutFS;
 GfxShader GHorSumFS, GVerSumFS;
 GfxShader GCoordFS;
 GfxShader GThresholdFS;
 GfxProgram GSimpleProg;
-GfxProgram GDeDonutProg;
 GfxProgram GYUVProg;
-GfxProgram GOutProg;
 GfxProgram GHorSumProg, GVerSumProg;
-GfxProgram GCoordProg;
 GfxProgram GThresholdProg;
 GLuint GQuadVertexBuffer;
 
@@ -143,18 +138,14 @@ void InitGraphics()
 	GSimpleVS.LoadVertexShader("./shaders/auxiliary/vertices.glsl");
 	GSimpleFS.LoadFragmentShader("./shaders/auxiliary/copy.glsl");
 	GYUVFS.LoadFragmentShader("./shaders/auxiliary/yuvtorgba_dedonut.glsl");
-	GDeDonutFS.LoadFragmentShader("./shaders/auxiliary/dedonut.glsl");
 	GHorSumFS.LoadFragmentShader("./shaders/summer_hor.glsl");
 	GVerSumFS.LoadFragmentShader("./shaders/summer_ver.glsl");
 	GThresholdFS.LoadFragmentShader("./shaders/thresholdshader.glsl");
-	GCoordFS.LoadFragmentShader("./shaders/coordinate.glsl");
 	GSimpleProg.Create(&GSimpleVS,&GSimpleFS);
 	GYUVProg.Create(&GSimpleVS,&GYUVFS);
-	GDeDonutProg.Create(&GSimpleVS,&GDeDonutFS);
 	GHorSumProg.Create(&GSimpleVS,&GHorSumFS);
 	GVerSumProg.Create(&GSimpleVS,&GVerSumFS);
 	GThresholdProg.Create(&GSimpleVS,&GThresholdFS);
-	GCoordProg.Create(&GSimpleVS,&GCoordFS);
 	check();
 
 	//create an ickle vertex buffer
@@ -347,46 +338,6 @@ void DrawThresholdRect(GfxTexture* texture, float x0, float y0, float x1, float 
 	}
 }
 
-void DrawDeDonutTextureRect(GfxTexture* texture, GfxTexture* dedonutmap, float x0, float y0, float x1, float y1, GfxTexture* render_target)
-{
-	if(render_target)
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
-		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
-		check();
-	}
-
-	glUseProgram(GDeDonutProg.GetId());	check();
-	check();
-	
-	glUniform2f(glGetUniformLocation(GDeDonutProg.GetId(),"offset"),x0,y0);
-	glUniform2f(glGetUniformLocation(GDeDonutProg.GetId(),"scale"),x1-x0,y1-y0);
-	glUniform1i(glGetUniformLocation(GDeDonutProg.GetId(),"tex"), 0);
-	glUniform1i(glGetUniformLocation(GDeDonutProg.GetId(),"maptex"), 1);
-
-	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D,dedonutmap->GetId());	check();
-	glActiveTexture(GL_TEXTURE0);
-
-	GLuint loc = glGetAttribLocation(GDeDonutProg.GetId(),"vertex");
-	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
-	glEnableVertexAttribArray(loc);	check();
-	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 ); check();
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	if(render_target)
-	{
-		//glFinish();	check();
-		//glFlush(); check();
-		glBindFramebuffer(GL_FRAMEBUFFER,0);
-		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
-	}
-}
-
 void DrawTextureRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target)
 {
 	if(render_target)
@@ -469,7 +420,7 @@ void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* 
 	}
 }
 
-void DrawHorSum(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
+void DrawHorSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
 	if(render_target)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
@@ -482,7 +433,7 @@ void DrawHorSum(GfxTexture* texture, float x0, float y0, float x1, float y1, Gfx
 	glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"offset"),x0,y0);
 	glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"scale"),x1-x0,y1-y0);
 	glUniform1i(glGetUniformLocation(GHorSumProg.GetId(),"tex"), 0);
-	glUniform1f(glGetUniformLocation(GHorSumProg.GetId(),"hor_steps"), (float)render_target->GetWidth());
+	glUniform1f(glGetUniformLocation(GHorSumProg.GetId(),"step"), 1.0f/((float)texture->GetWidth()));
 	check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
@@ -503,7 +454,41 @@ void DrawHorSum(GfxTexture* texture, float x0, float y0, float x1, float y1, Gfx
 		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
 	}
 }
-void DrawVerSum(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
+void DrawHorSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
+	if(render_target)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
+		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
+		check();
+	}
+
+	glUseProgram(GHorSumProg.GetId());	check();
+
+	glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"offset"),x0,y0);
+	glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"scale"),x1-x0,y1-y0);
+	glUniform1i(glGetUniformLocation(GHorSumProg.GetId(),"tex"), 0);
+	glUniform1f(glGetUniformLocation(GHorSumProg.GetId(),"step"), 1.0f/64.0f);
+	check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
+	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
+
+	GLuint loc = glGetAttribLocation(GHorSumProg.GetId(),"vertex");
+	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
+	glEnableVertexAttribArray(loc);	check();
+	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 ); check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	if(render_target)
+	{
+		//glFinish();	check();
+		//glFlush(); check();
+		glBindFramebuffer(GL_FRAMEBUFFER,0);
+		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
+	}
+}
+void DrawVerSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
 	if(render_target)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
@@ -516,7 +501,7 @@ void DrawVerSum(GfxTexture* texture, float x0, float y0, float x1, float y1, Gfx
 	glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"offset"),x0,y0);
 	glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"scale"),x1-x0,y1-y0);
 	glUniform1i(glGetUniformLocation(GVerSumProg.GetId(),"tex"), 0);
-	glUniform1f(glGetUniformLocation(GVerSumProg.GetId(),"ver_steps"), (float)render_target->GetHeight());
+	glUniform1f(glGetUniformLocation(GVerSumProg.GetId(),"step"), 1.0f/((float)texture->GetHeight()));
 	check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
@@ -537,7 +522,7 @@ void DrawVerSum(GfxTexture* texture, float x0, float y0, float x1, float y1, Gfx
 		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
 	}
 }
-void DrawCoordinates(GfxTexture* hortexture, GfxTexture* vertexture, float x0, float y0, float x1, float y1, float numcoords, GfxTexture* render_target){
+void DrawVerSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
 	if(render_target)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
@@ -545,32 +530,24 @@ void DrawCoordinates(GfxTexture* hortexture, GfxTexture* vertexture, float x0, f
 		check();
 	}
 
-	glUseProgram(GCoordProg.GetId());	check();
+	glUseProgram(GVerSumProg.GetId());	check();
 
-	glUniform2f(glGetUniformLocation(GCoordProg.GetId(),"offset"),x0,y0);
-	glUniform2f(glGetUniformLocation(GCoordProg.GetId(),"scale"),x1-x0,y1-y0);
-	glUniform1f(glGetUniformLocation(GCoordProg.GetId(),"hor_sum_height"),(float)hortexture->GetHeight());
-	glUniform1f(glGetUniformLocation(GCoordProg.GetId(),"ver_sum_width"),(float)vertexture->GetWidth());
-	glUniform1f(glGetUniformLocation(GCoordProg.GetId(),"num_coords"),numcoords);
-	glUniform1i(glGetUniformLocation(GCoordProg.GetId(),"hor_sum_tex"), 0);
-	glUniform1i(glGetUniformLocation(GCoordProg.GetId(),"ver_sum_tex"), 1);
+	glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"offset"),x0,y0);
+	glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"scale"),x1-x0,y1-y0);
+	glUniform1i(glGetUniformLocation(GVerSumProg.GetId(),"tex"), 0);
+	glUniform1f(glGetUniformLocation(GVerSumProg.GetId(),"step"), 1.0f/64.0f);
 	check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D,hortexture->GetId());	check();
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D,vertexture->GetId());	check();
-	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
 
-	GLuint loc = glGetAttribLocation(GCoordProg.GetId(),"vertex");
+	GLuint loc = glGetAttribLocation(GVerSumProg.GetId(),"vertex");
 	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
 	glEnableVertexAttribArray(loc);	check();
 	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 ); check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-
 	if(render_target)
 	{
 		//glFinish();	check();
@@ -580,8 +557,7 @@ void DrawCoordinates(GfxTexture* hortexture, GfxTexture* vertexture, float x0, f
 	}
 }
 
-
-bool GfxTexture::CreateRGBA(int width, int height, const void* data)
+bool GfxTexture::CreateRGBA(int width, int height, const void* data, GLfloat MinMag, GLfloat Wrap)
 {
 	Width = width;
 	Height = height;
@@ -591,8 +567,10 @@ bool GfxTexture::CreateRGBA(int width, int height, const void* data)
 	check();
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	check();
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLfloat)GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLfloat)GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MinMag);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MinMag);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, Wrap);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, Wrap);
 	check();
 	glBindTexture(GL_TEXTURE_2D, 0);
 	IsRGBA = true;
@@ -600,7 +578,7 @@ bool GfxTexture::CreateRGBA(int width, int height, const void* data)
 	return true;
 }
 
-bool GfxTexture::CreateGreyScale(int width, int height, const void* data)
+bool GfxTexture::CreateGreyScale(int width, int height, const void* data, GLfloat MinMag, GLfloat Wrap)
 {
 	Width = width;
 	Height = height;
@@ -610,8 +588,10 @@ bool GfxTexture::CreateGreyScale(int width, int height, const void* data)
 	check();
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, Width, Height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
 	check();
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLfloat)GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLfloat)GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MinMag);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MinMag);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, Wrap);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, Wrap);
 	check();
 	glBindTexture(GL_TEXTURE_2D, 0);
 	IsRGBA = false;

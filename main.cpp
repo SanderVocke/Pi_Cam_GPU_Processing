@@ -19,7 +19,7 @@
 
 int dWidth, dHeight; //width and height of "dedonuted" image
 bool gHaveI2C = false;
-bool subsample = true;
+bool showWindow = false;
 
 #define UPDATERATE 10
 #define MAX_COORDS 100
@@ -134,34 +134,49 @@ int main(int argc, const char **argv)
 	//set camera settings
 	raspicamcontrol_set_metering_mode(cam->CameraComponent, METERINGMODE_AVERAGE);
 	
-	GfxTexture ytexture, utexture, vtexture, rgbtexture, rgblowtexture, thresholdtexture, outlowtexture, dedonutmap, horsumtexture, versumtexture, coordtexture;		
+	GfxTexture ytexture, utexture, vtexture, rgbtexture, rgblowtexture, thresholdtexture, thresholdlowtexture;
+	GfxTexture dedonutmap, horsumtexture1, horsumtexture2, versumtexture1, versumtexture2, coordtexture;		
+	GfxTexture horsumlowtexture1, versumlowtexture1, horsumlowtexture2, versumlowtexture2;
 	DBG("Creating Textures.");
 	//DeDonut RGB textures
 	DBG("Max texture size: %d", GL_MAX_TEXTURE_SIZE);
 	initDeDonutTextures(&dedonutmap);	
 	//create YUV textures
-	ytexture.CreateGreyScale(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT);
-	utexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2);
-	vtexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2);
+	ytexture.CreateGreyScale(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
+	utexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
+	vtexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
 	//Main combined RGB textures
-	rgbtexture.CreateRGBA(dWidth,dHeight);
+	rgbtexture.CreateRGBA(dWidth,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	rgbtexture.GenerateFrameBuffer();
-	thresholdtexture.CreateRGBA(dWidth,dHeight);
+	thresholdtexture.CreateRGBA(dWidth,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	thresholdtexture.GenerateFrameBuffer();
-	horsumtexture.CreateRGBA(1,dHeight);
-	horsumtexture.GenerateFrameBuffer();
-	versumtexture.CreateRGBA(dWidth,1);
-	versumtexture.GenerateFrameBuffer();
-	coordtexture.CreateRGBA(MAX_COORDS, 1);
+	horsumtexture1.CreateRGBA((dWidth/64)+1,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	horsumtexture1.GenerateFrameBuffer();
+	horsumtexture2.CreateRGBA(1,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	horsumtexture2.GenerateFrameBuffer();
+	versumtexture1.CreateRGBA(dWidth,(dHeight/64)+1,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	versumtexture1.GenerateFrameBuffer();
+	versumtexture2.CreateRGBA(dWidth,1,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	versumtexture2.GenerateFrameBuffer();
+	coordtexture.CreateRGBA(MAX_COORDS, 1,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	coordtexture.GenerateFrameBuffer();
-	//Subsampled RGB textures
+	//showWindowd RGB textures
 	float lowhf = ((float)dHeight/(float)dWidth);
 	int lowh = (int)(lowhf * g_conf.LOWRES_WIDTH);
 	if(!lowh) lowh = 1;
-	rgblowtexture.CreateRGBA(g_conf.LOWRES_WIDTH, lowh);
+	rgblowtexture.CreateRGBA(g_conf.LOWRES_WIDTH, lowh,NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
 	rgblowtexture.GenerateFrameBuffer();
-	outlowtexture.CreateRGBA(g_conf.LOWRES_WIDTH, lowh);
-	outlowtexture.GenerateFrameBuffer();
+	thresholdlowtexture.CreateRGBA(g_conf.LOWRES_WIDTH, lowh,NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
+	thresholdlowtexture.GenerateFrameBuffer();
+	horsumlowtexture1.CreateRGBA(200,lowh,NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
+	horsumlowtexture1.GenerateFrameBuffer();
+	horsumlowtexture2.CreateRGBA(20,lowh,NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
+	horsumlowtexture2.GenerateFrameBuffer();
+	versumlowtexture1.CreateRGBA(g_conf.LOWRES_WIDTH,100,NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
+	versumlowtexture1.GenerateFrameBuffer();
+	versumlowtexture2.CreateRGBA(g_conf.LOWRES_WIDTH,20,NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
+	versumlowtexture2.GenerateFrameBuffer();
+	
 	
 	//Start the processing loop.
 	DBG("Starting process loop.");
@@ -189,11 +204,29 @@ int main(int argc, const char **argv)
 	{
 		clock_gettime(CLOCK_REALTIME, &t_start);
 		
+		if(showWindow){
+			SDL_Rect inrect = {0, 0, g_conf.LOWRES_WIDTH, lowh};
+			SDL_Rect thresholdrect = {0, lowh+200, g_conf.LOWRES_WIDTH, lowh};
+			SDL_Rect versum1rect = {0,lowh+90,g_conf.LOWRES_WIDTH,100};
+			SDL_Rect versum2rect = {0,lowh+50,g_conf.LOWRES_WIDTH,20};
+			SDL_Rect horsum1rect = {g_conf.LOWRES_WIDTH,lowh+200,200,lowh};
+			SDL_Rect horsum2rect = {g_conf.LOWRES_WIDTH+240,lowh+200,20,lowh};
+			
+			rgblowtexture.Show(&inrect);
+			thresholdlowtexture.Show(&thresholdrect);
+			if(showWindow){
+				versumlowtexture1.Show(&versum1rect);
+				versumlowtexture2.Show(&versum2rect);
+				horsumlowtexture1.Show(&horsum1rect);
+				horsumlowtexture2.Show(&horsum2rect);
+			}
+			
+			showWindow = false;
+		}
+		
 		int ch = getch();
 		if(ch != ERR)
 		{
-			SDL_Rect inrect = {0, 0, g_conf.LOWRES_WIDTH, lowh};
-			SDL_Rect outrect = {0, lowh, g_conf.LOWRES_WIDTH, lowh};
 			switch(ch){
 			case KEY_LEFT:
 				gHaveI2C = setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
@@ -212,8 +245,7 @@ int main(int argc, const char **argv)
 				gHaveI2C = setSpeedDir(LEFT_MOTOR,FORWARD, MAX_SPEED);
 				break;
 			case 's': //save framebuffers
-				rgblowtexture.Show(&inrect);
-				outlowtexture.Show(&outrect);
+				showWindow = true;
 				break;
 			case 'w': //save framebuffers
 				//SaveFrameBuffer("tex_fb.png");
@@ -268,23 +300,30 @@ int main(int argc, const char **argv)
 		DrawThresholdRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &thresholdtexture); 
 		
 		//sum rows/columns
-		DrawHorSum(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture);
-		DrawVerSum(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture);
+		DrawHorSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1);
+		DrawHorSum2(&horsumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture2);
+		DrawVerSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1);
+		DrawVerSum2(&versumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture2);
 		
-		//do object analysis
-		DrawCoordinates(&horsumtexture, &versumtexture, -1.0f, -1.0f, 1.0f, 1.0f, (float)MAX_COORDS, &coordtexture);
-		
-		//subsample for preview window
-		if(subsample){
+		//showWindow for preview window on this frame
+		if(showWindow){
 			DrawTextureRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgblowtexture);
-			DrawTextureRect(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &outlowtexture);
+			DrawTextureRect(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &thresholdlowtexture);
+			DrawTextureRect(&horsumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &horsumlowtexture1);
+			DrawTextureRect(&horsumtexture2, -1.0f, -1.0f, 1.0f, 1.0f, &horsumlowtexture2);
+			DrawTextureRect(&versumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &versumlowtexture1);
+			DrawTextureRect(&versumtexture2, -1.0f, -1.0f, 1.0f, 1.0f, &versumlowtexture2);
 		}
 		
 		EndFrame();
 		
 		clock_gettime(CLOCK_REALTIME, &t_draw);
 		
-		coordtexture.Get();
+		//get summed data back to host (CPU side)
+		versumtexture2.Get();
+		horsumtexture2.Get();
+		versumtexture1.Get();
+		horsumtexture1.Get();
 		
 		clock_gettime(CLOCK_REALTIME, &t_getdata);
 		
