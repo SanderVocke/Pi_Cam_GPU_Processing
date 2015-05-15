@@ -20,30 +20,42 @@
 int dWidth, dHeight; //width and height of "dedonuted" image
 bool gHaveI2C = false;
 
-#define NUMKEYS 3
+#define UPDATERATE 10
+
+#define NUMKEYS 4
 const char* keys[NUMKEYS] = {
-	"s: show input and output snapshots in window (slow)",
-	"w: save framebuffers to files (also slow)",
+	"s: show snapshot window",
+	"w: save framebuffers",
+	"arrow keys: move bot",
 	"q: quit"
 };
 
-void drawCurses(float fr){
+void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, long nsec_getdata){
 	updateStats();
-	mvprintw(0,0,"Framerate: %g  ",fr);
-	mvprintw(2,0,"Controls:");
-	int h=0;
-	for(h=0; h<NUMKEYS; h++) mvprintw(h+3,0,keys[h]);
-	mvprintw(0,60,"CPU Total: %d",cputot_stats.load);
-	mvprintw(1,65,"CPU1: %d  ",cpu1_stats.load);
-	mvprintw(2,65,"CPU2: %d  ",cpu2_stats.load);
-	mvprintw(3,65,"CPU3: %d  ",cpu3_stats.load);
-	mvprintw(4,65,"CPU4: %d  ",cpu4_stats.load);
-	mvprintw(6,55,"Left Speed: %d  ",
+	mvprintw(0,0,"Framerate: %g  ",fr);	
+	mvprintw(2,0,"CPU Total: %d   ",cputot_stats.load);
+	mvprintw(3,0,"CPU1: %d  ",cpu1_stats.load);
+	mvprintw(4,0,"CPU2: %d  ",cpu2_stats.load);
+	mvprintw(5,0,"CPU3: %d  ",cpu3_stats.load);
+	mvprintw(6,0,"CPU4: %d  ",cpu4_stats.load);
+	
+	mvprintw(8,0,"Left Speed: %d     ",
 		getDirection(LEFT_MOTOR)==FORWARD ? getSpeed(LEFT_MOTOR) : -1*((int)getSpeed(LEFT_MOTOR)));
-	mvprintw(7,55,"Right Speed: %d  ",
+	mvprintw(9,0,"Right Speed: %d     ",
 		getDirection(RIGHT_MOTOR)==FORWARD ? getSpeed(RIGHT_MOTOR) : -1*((int)getSpeed(RIGHT_MOTOR)));
-	if(gHaveI2C) mvprintw(8,55,"I2C ON");
-	else mvprintw(8,55,"I2C FAIL");
+		
+	if(gHaveI2C) mvprintw(11,0,"I2C ON  ");
+	else mvprintw(11,0,"I2C FAIL");
+	
+	mvprintw(13,0,"msec Curses: %d   ",nsec_curses/1000000);
+	mvprintw(14,0,"msec Readframe: %d   ",nsec_readframe/1000000);
+	mvprintw(15,0,"msec Putframe: %d   ",nsec_putframe/1000000);
+	mvprintw(16,0,"msec Draw: %d   ",nsec_draw/1000000);
+	mvprintw(17,0,"msec Getdata: %d   ",nsec_getdata/1000000);
+	
+	mvprintw(0,30,"Controls:");
+	int h=0;
+	for(h=0; h<NUMKEYS; h++) mvprintw(h+3,30,keys[h]);
 	refresh();
 }
 
@@ -154,6 +166,9 @@ int main(int argc, const char **argv)
 	start_time = gettime_now.tv_nsec ;
 	double total_time_s = 0;
 	bool do_pipeline = false;
+	
+	struct timespec t_start, t_curses, t_readframe, t_putframe, t_draw, t_getdata;
+	long int nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata;
 
 	initscr();      /* initialize the curses library */
 	keypad(stdscr, TRUE);  /* enable keyboard mapping */
@@ -164,6 +179,8 @@ int main(int argc, const char **argv)
 
 	for(long i = 0;; i++)
 	{
+		clock_gettime(CLOCK_REALTIME, &t_start);
+		
 		int ch = getch();
 		if(ch != ERR)
 		{
@@ -208,26 +225,31 @@ int main(int argc, const char **argv)
 			gHaveI2C = setSpeed(LEFT_MOTOR, 0);
 		}
 		
+		clock_gettime(CLOCK_REALTIME, &t_curses);
+		
 		//spin until we have a camera frame
 		const void* frame_data; int frame_sz;
-		while(!cam->BeginReadFrame(0,frame_data,frame_sz)) {};
+		while(!cam->BeginReadFrame(0,frame_data,frame_sz)) {usleep(500);};
+		clock_gettime(CLOCK_REALTIME, &t_readframe);
 		//lock the chosen frame buffer, and copy it directly into the corresponding open gl texture
-		{
-			const uint8_t* data = (const uint8_t*)frame_data;
-			int ypitch = g_conf.CAPTURE_WIDTH;
-			int ysize = ypitch*g_conf.CAPTURE_HEIGHT;
-			int uvpitch = g_conf.CAPTURE_WIDTH/2;
-			int uvsize = uvpitch*g_conf.CAPTURE_HEIGHT/2;
-			//int upos = ysize+16*uvpitch;
-			//int vpos = upos+uvsize+4*uvpitch;
-			int upos = ysize;
-			int vpos = upos+uvsize;
-			//printf("Frame data len: 0x%x, ypitch: 0x%x ysize: 0x%x, uvpitch: 0x%x, uvsize: 0x%x, u at 0x%x, v at 0x%x, total 0x%x\n", frame_sz, ypitch, ysize, uvpitch, uvsize, upos, vpos, vpos+uvsize);
-			ytexture.SetPixels(data);
-			utexture.SetPixels(data+upos);
-			vtexture.SetPixels(data+vpos);
-			cam->EndReadFrame(0);
-		}
+		const uint8_t* data = (const uint8_t*)frame_data;
+		int ypitch = g_conf.CAPTURE_WIDTH;
+		int ysize = ypitch*g_conf.CAPTURE_HEIGHT;
+		int uvpitch = g_conf.CAPTURE_WIDTH/2;
+		int uvsize = uvpitch*g_conf.CAPTURE_HEIGHT/2;
+		//int upos = ysize+16*uvpitch;
+		//int vpos = upos+uvsize+4*uvpitch;
+		int upos = ysize;
+		int vpos = upos+uvsize;
+		//printf("Frame data len: 0x%x, ypitch: 0x%x ysize: 0x%x, uvpitch: 0x%x, uvsize: 0x%x, u at 0x%x, v at 0x%x, total 0x%x\n", frame_sz, ypitch, ysize, uvpitch, uvsize, upos, vpos, vpos+uvsize);		
+		ytexture.SetPixels(data);
+		utexture.SetPixels(data+upos);
+		vtexture.SetPixels(data+vpos);
+		cam->EndReadFrame(0);
+		
+		clock_gettime(CLOCK_REALTIME, &t_putframe);
+		
+		
 		
 		//begin frame
 		BeginFrame();
@@ -243,6 +265,22 @@ int main(int argc, const char **argv)
 		
 		EndFrame();
 		
+		clock_gettime(CLOCK_REALTIME, &t_draw);
+		
+		clock_gettime(CLOCK_REALTIME, &t_getdata);
+		
+		//benchmarking
+		nsec_curses = t_curses.tv_nsec - t_start.tv_nsec;
+		nsec_readframe = t_readframe.tv_nsec - t_curses.tv_nsec;
+		nsec_putframe = t_putframe.tv_nsec - t_readframe.tv_nsec;
+		nsec_draw = t_draw.tv_nsec - t_putframe.tv_nsec;
+		nsec_getdata = t_getdata.tv_nsec - t_draw.tv_nsec;
+		if(nsec_curses < 0) nsec_curses += 1000000000;
+		if(nsec_readframe < 0) nsec_readframe += 1000000000;
+		if(nsec_putframe < 0) nsec_putframe += 1000000000;
+		if(nsec_draw < 0) nsec_draw += 1000000000;
+		if(nsec_getdata < 0) nsec_getdata += 1000000000;
+		
 		//read current time
 		clock_gettime(CLOCK_REALTIME, &gettime_now);
 		time_difference = gettime_now.tv_nsec - start_time;
@@ -250,12 +288,14 @@ int main(int argc, const char **argv)
 		total_time_s += double(time_difference)/1000000000.0;
 		total_frameset_time_s += double(time_difference)/1000000000.0;
 		start_time = gettime_now.tv_nsec;
-		float fr = float(double(30)/total_frameset_time_s);
+		float fr = float(double(UPDATERATE)/total_frameset_time_s);
+		
+		
 	
 		//print the screen
-		if((i%30)==0)
+		if((i%UPDATERATE)==0)
 		{			//draw the terminal window
-			drawCurses(fr);
+			drawCurses(fr, nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata);
 			total_frameset_time_s = 0;
 		}
 

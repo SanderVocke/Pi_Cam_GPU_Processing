@@ -31,6 +31,10 @@ GfxProgram GYUVProg;
 GfxProgram GOutProg;
 GLuint GQuadVertexBuffer;
 
+void Finish(){
+	glFinish();
+}
+
 void InitGraphics()
 {
 	bcm_host_init();

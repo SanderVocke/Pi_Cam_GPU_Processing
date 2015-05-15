@@ -1,0 +1,4 @@
+drawing of I2C FAIL
+better key recognition
+mention that XMing should be on
+GPU fastpath

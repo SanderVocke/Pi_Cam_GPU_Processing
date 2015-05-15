@@ -10,6 +10,8 @@ void InitGraphics();
 void ReleaseGraphics();
 void BeginFrame();
 void EndFrame();
+void Finish();
+
 
 class GfxShader
 {
