@@ -19,8 +19,10 @@
 
 int dWidth, dHeight; //width and height of "dedonuted" image
 bool gHaveI2C = false;
+bool subsample = true;
 
 #define UPDATERATE 10
+#define MAX_COORDS 100
 
 #define NUMKEYS 4
 const char* keys[NUMKEYS] = {
@@ -132,7 +134,7 @@ int main(int argc, const char **argv)
 	//set camera settings
 	raspicamcontrol_set_metering_mode(cam->CameraComponent, METERINGMODE_AVERAGE);
 	
-	GfxTexture ytexture, utexture, vtexture, rgbtexture, rgblowtexture, outtexture, outlowtexture, dedonutmap;		
+	GfxTexture ytexture, utexture, vtexture, rgbtexture, rgblowtexture, thresholdtexture, outlowtexture, dedonutmap, horsumtexture, versumtexture, coordtexture;		
 	DBG("Creating Textures.");
 	//DeDonut RGB textures
 	DBG("Max texture size: %d", GL_MAX_TEXTURE_SIZE);
@@ -144,8 +146,14 @@ int main(int argc, const char **argv)
 	//Main combined RGB textures
 	rgbtexture.CreateRGBA(dWidth,dHeight);
 	rgbtexture.GenerateFrameBuffer();
-	outtexture.CreateRGBA(dWidth,dHeight);
-	outtexture.GenerateFrameBuffer();
+	thresholdtexture.CreateRGBA(dWidth,dHeight);
+	thresholdtexture.GenerateFrameBuffer();
+	horsumtexture.CreateRGBA(1,dHeight);
+	horsumtexture.GenerateFrameBuffer();
+	versumtexture.CreateRGBA(dWidth,1);
+	versumtexture.GenerateFrameBuffer();
+	coordtexture.CreateRGBA(MAX_COORDS, 1);
+	coordtexture.GenerateFrameBuffer();
 	//Subsampled RGB textures
 	float lowhf = ((float)dHeight/(float)dWidth);
 	int lowh = (int)(lowhf * g_conf.LOWRES_WIDTH);
@@ -210,7 +218,7 @@ int main(int argc, const char **argv)
 			case 'w': //save framebuffers
 				//SaveFrameBuffer("tex_fb.png");
 				rgbtexture.Save("./captures/tex_rgb.png");
-				outtexture.Save("./captures/tex_out.png");
+				thresholdtexture.Save("./captures/tex_out.png");
 				break;
 			case 'q': //quit
 				endwin();
@@ -256,16 +264,27 @@ int main(int argc, const char **argv)
 			
 		DrawYUVTextureRect(&ytexture,&utexture,&vtexture,&dedonutmap,-1.f,-1.f,1.f,1.f,&rgbtexture);
 		
-		//make output
-		DrawOutRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &outtexture); 
+		//make thresholded
+		DrawThresholdRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &thresholdtexture); 
 		
-		//subsample
-		DrawTextureRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgblowtexture);
-		DrawTextureRect(&outtexture, -1.0f, -1.0f, 1.0f, 1.0f, &outlowtexture);
+		//sum rows/columns
+		DrawHorSum(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture);
+		DrawVerSum(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture);
+		
+		//do object analysis
+		DrawCoordinates(&horsumtexture, &versumtexture, -1.0f, -1.0f, 1.0f, 1.0f, (float)MAX_COORDS, &coordtexture);
+		
+		//subsample for preview window
+		if(subsample){
+			DrawTextureRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgblowtexture);
+			DrawTextureRect(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &outlowtexture);
+		}
 		
 		EndFrame();
 		
 		clock_gettime(CLOCK_REALTIME, &t_draw);
+		
+		coordtexture.Get();
 		
 		clock_gettime(CLOCK_REALTIME, &t_getdata);
 		

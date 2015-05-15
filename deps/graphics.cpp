@@ -25,10 +25,16 @@ GfxShader GSimpleFS;
 GfxShader GDeDonutFS;
 GfxShader GYUVFS;
 GfxShader GOutFS;
+GfxShader GHorSumFS, GVerSumFS;
+GfxShader GCoordFS;
+GfxShader GThresholdFS;
 GfxProgram GSimpleProg;
 GfxProgram GDeDonutProg;
 GfxProgram GYUVProg;
 GfxProgram GOutProg;
+GfxProgram GHorSumProg, GVerSumProg;
+GfxProgram GCoordProg;
+GfxProgram GThresholdProg;
 GLuint GQuadVertexBuffer;
 
 void Finish(){
@@ -138,11 +144,17 @@ void InitGraphics()
 	GSimpleFS.LoadFragmentShader("./shaders/auxiliary/copy.glsl");
 	GYUVFS.LoadFragmentShader("./shaders/auxiliary/yuvtorgba_dedonut.glsl");
 	GDeDonutFS.LoadFragmentShader("./shaders/auxiliary/dedonut.glsl");
-	GOutFS.LoadFragmentShader(MAINSHADER);
+	GHorSumFS.LoadFragmentShader("./shaders/summer_hor.glsl");
+	GVerSumFS.LoadFragmentShader("./shaders/summer_ver.glsl");
+	GThresholdFS.LoadFragmentShader("./shaders/thresholdshader.glsl");
+	GCoordFS.LoadFragmentShader("./shaders/coordinate.glsl");
 	GSimpleProg.Create(&GSimpleVS,&GSimpleFS);
 	GYUVProg.Create(&GSimpleVS,&GYUVFS);
-	GOutProg.Create(&GSimpleVS,&GOutFS);
 	GDeDonutProg.Create(&GSimpleVS,&GDeDonutFS);
+	GHorSumProg.Create(&GSimpleVS,&GHorSumFS);
+	GVerSumProg.Create(&GSimpleVS,&GVerSumFS);
+	GThresholdProg.Create(&GSimpleVS,&GThresholdFS);
+	GCoordProg.Create(&GSimpleVS,&GCoordFS);
 	check();
 
 	//create an ickle vertex buffer
@@ -300,7 +312,7 @@ bool GfxProgram::Create(GfxShader* vertex_shader, GfxShader* fragment_shader)
 	return true;	
 }
 
-void DrawOutRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target)
+void DrawThresholdRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target)
 {
 	if(render_target)
 	{
@@ -309,17 +321,17 @@ void DrawOutRect(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 		check();
 	}
 
-	glUseProgram(GOutProg.GetId());	check();
+	glUseProgram(GThresholdProg.GetId());	check();
 
-	glUniform2f(glGetUniformLocation(GSimpleProg.GetId(),"offset"),x0,y0);
-	glUniform2f(glGetUniformLocation(GSimpleProg.GetId(),"scale"),x1-x0,y1-y0);
-	glUniform1i(glGetUniformLocation(GSimpleProg.GetId(),"tex"), 0);
+	glUniform2f(glGetUniformLocation(GThresholdProg.GetId(),"offset"),x0,y0);
+	glUniform2f(glGetUniformLocation(GThresholdProg.GetId(),"scale"),x1-x0,y1-y0);
+	glUniform1i(glGetUniformLocation(GThresholdProg.GetId(),"tex"), 0);
 	check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
 	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
 
-	GLuint loc = glGetAttribLocation(GSimpleProg.GetId(),"vertex");
+	GLuint loc = glGetAttribLocation(GThresholdProg.GetId(),"vertex");
 	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
 	glEnableVertexAttribArray(loc);	check();
 	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 ); check();
@@ -457,6 +469,117 @@ void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* 
 	}
 }
 
+void DrawHorSum(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
+	if(render_target)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
+		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
+		check();
+	}
+
+	glUseProgram(GHorSumProg.GetId());	check();
+
+	glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"offset"),x0,y0);
+	glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"scale"),x1-x0,y1-y0);
+	glUniform1i(glGetUniformLocation(GHorSumProg.GetId(),"tex"), 0);
+	glUniform1f(glGetUniformLocation(GHorSumProg.GetId(),"hor_steps"), (float)render_target->GetWidth());
+	check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
+	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
+
+	GLuint loc = glGetAttribLocation(GHorSumProg.GetId(),"vertex");
+	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
+	glEnableVertexAttribArray(loc);	check();
+	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 ); check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	if(render_target)
+	{
+		//glFinish();	check();
+		//glFlush(); check();
+		glBindFramebuffer(GL_FRAMEBUFFER,0);
+		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
+	}
+}
+void DrawVerSum(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
+	if(render_target)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
+		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
+		check();
+	}
+
+	glUseProgram(GVerSumProg.GetId());	check();
+
+	glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"offset"),x0,y0);
+	glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"scale"),x1-x0,y1-y0);
+	glUniform1i(glGetUniformLocation(GVerSumProg.GetId(),"tex"), 0);
+	glUniform1f(glGetUniformLocation(GVerSumProg.GetId(),"ver_steps"), (float)render_target->GetHeight());
+	check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
+	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
+
+	GLuint loc = glGetAttribLocation(GVerSumProg.GetId(),"vertex");
+	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
+	glEnableVertexAttribArray(loc);	check();
+	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 ); check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	if(render_target)
+	{
+		//glFinish();	check();
+		//glFlush(); check();
+		glBindFramebuffer(GL_FRAMEBUFFER,0);
+		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
+	}
+}
+void DrawCoordinates(GfxTexture* hortexture, GfxTexture* vertexture, float x0, float y0, float x1, float y1, float numcoords, GfxTexture* render_target){
+	if(render_target)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
+		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
+		check();
+	}
+
+	glUseProgram(GCoordProg.GetId());	check();
+
+	glUniform2f(glGetUniformLocation(GCoordProg.GetId(),"offset"),x0,y0);
+	glUniform2f(glGetUniformLocation(GCoordProg.GetId(),"scale"),x1-x0,y1-y0);
+	glUniform1f(glGetUniformLocation(GCoordProg.GetId(),"hor_sum_height"),(float)hortexture->GetHeight());
+	glUniform1f(glGetUniformLocation(GCoordProg.GetId(),"ver_sum_width"),(float)vertexture->GetWidth());
+	glUniform1f(glGetUniformLocation(GCoordProg.GetId(),"num_coords"),numcoords);
+	glUniform1i(glGetUniformLocation(GCoordProg.GetId(),"hor_sum_tex"), 0);
+	glUniform1i(glGetUniformLocation(GCoordProg.GetId(),"ver_sum_tex"), 1);
+	check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D,hortexture->GetId());	check();
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D,vertexture->GetId());	check();
+	glActiveTexture(GL_TEXTURE0);
+
+	GLuint loc = glGetAttribLocation(GCoordProg.GetId(),"vertex");
+	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
+	glEnableVertexAttribArray(loc);	check();
+	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 ); check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	if(render_target)
+	{
+		//glFinish();	check();
+		//glFlush(); check();
+		glBindFramebuffer(GL_FRAMEBUFFER,0);
+		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
+	}
+}
+
 
 bool GfxTexture::CreateRGBA(int width, int height, const void* data)
 {
@@ -562,4 +685,14 @@ void GfxTexture::Show(SDL_Rect *target)
 	args.target = target;
 	
 	updateWindow(&args);
+}
+
+void GfxTexture::Get()
+{
+	if(image == NULL) image = malloc(Width*Height*4);
+	glBindFramebuffer(GL_FRAMEBUFFER,FramebufferId);
+	check();
+	glReadPixels(0,0,Width,Height,IsRGBA ? GL_RGBA : GL_LUMINANCE, GL_UNSIGNED_BYTE, image);
+	check();
+	glBindFramebuffer(GL_FRAMEBUFFER,0);
 }
