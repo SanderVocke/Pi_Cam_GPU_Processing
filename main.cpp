@@ -20,15 +20,17 @@
 int dWidth, dHeight; //width and height of "dedonuted" image
 bool gHaveI2C = false;
 bool showWindow = false;
+bool renderScreen = false;
 
 #define UPDATERATE 10
 #define MAX_COORDS 100
 
-#define NUMKEYS 4
+#define NUMKEYS 5
 const char* keys[NUMKEYS] = {
+	"arrow keys: move bot",
 	"s: show snapshot window",
 	"w: save framebuffers",
-	"arrow keys: move bot",
+	"r: turn HDMI live rendering on/off",
 	"q: quit"
 };
 
@@ -48,12 +50,14 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 		
 	if(gHaveI2C) mvprintw(11,0,"I2C ON  ");
 	else mvprintw(11,0,"I2C FAIL");
+	if(renderScreen) mvprintw(12,0, "HDMI ON     ");
+	else mvprintw(12,0, "HDMI OFF     ");
 	
-	mvprintw(13,0,"msec Curses: %d   ",nsec_curses/1000000);
-	mvprintw(14,0,"msec Readframe: %d   ",nsec_readframe/1000000);
-	mvprintw(15,0,"msec Putframe: %d   ",nsec_putframe/1000000);
-	mvprintw(16,0,"msec Draw: %d   ",nsec_draw/1000000);
-	mvprintw(17,0,"msec Getdata: %d   ",nsec_getdata/1000000);
+	mvprintw(14,0,"msec Curses: %d   ",nsec_curses/1000000);
+	mvprintw(15,0,"msec Readframe: %d   ",nsec_readframe/1000000);
+	mvprintw(16,0,"msec Putframe: %d   ",nsec_putframe/1000000);
+	mvprintw(17,0,"msec Draw: %d   ",nsec_draw/1000000);
+	mvprintw(18,0,"msec Getdata: %d   ",nsec_getdata/1000000);
 	
 	mvprintw(0,30,"Controls:");
 	int h=0;
@@ -252,6 +256,10 @@ int main(int argc, const char **argv)
 				rgbtexture.Save("./captures/tex_rgb.png");
 				thresholdtexture.Save("./captures/tex_out.png");
 				break;
+			case 'r': //rendering on/off_type
+				if(renderScreen) renderScreen = false;
+				else renderScreen = true;
+				break;
 			case 'q': //quit
 				endwin();
 				exit(1);
@@ -313,6 +321,15 @@ int main(int argc, const char **argv)
 			DrawTextureRect(&horsumtexture2, -1.0f, -1.0f, 1.0f, 1.0f, &horsumlowtexture2);
 			DrawTextureRect(&versumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &versumlowtexture1);
 			DrawTextureRect(&versumtexture2, -1.0f, -1.0f, 1.0f, 1.0f, &versumlowtexture2);
+		}
+		
+		if(renderScreen){
+			DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, NULL);
+			DrawTextureRect(&thresholdtexture, 0.8f, -0.2f, -1.0f, -1.0f, NULL);
+			DrawTextureRect(&horsumtexture1, 0.95f, -0.2f, 0.8f, -1.0f,  NULL);
+			DrawTextureRect(&horsumtexture2, 1.0f, -0.2f, 0.95f, -1.0f, NULL);
+			DrawTextureRect(&versumtexture1, 0.8f, 0.0f, -1.0f, -0.2f, NULL);
+			DrawTextureRect(&versumtexture2, 0.8f, 0.15f, -1.0f, 0.05f, NULL);
 		}
 		
 		EndFrame();
