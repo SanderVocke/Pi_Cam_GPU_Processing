@@ -22,7 +22,7 @@ bool gHaveI2C = false;
 bool showWindow = false;
 bool renderScreen = false;
 
-#define UPDATERATE 10
+#define UPDATERATE 1
 #define MAX_COORDS 100
 
 #define NUMKEYS 5
@@ -196,6 +196,9 @@ int main(int argc, const char **argv)
 	
 	struct timespec t_start, t_curses, t_readframe, t_putframe, t_draw, t_getdata;
 	long int nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata;
+	
+	struct timespec t_up, t_down, t_left, t_right;
+	long int nsec_up, nsec_down, nsec_left, nsec_right;
 
 	initscr();      /* initialize the curses library */
 	keypad(stdscr, TRUE);  /* enable keyboard mapping */
@@ -203,6 +206,9 @@ int main(int argc, const char **argv)
 	cbreak();       /* take input chars one at a time, no wait for \n */
 	clear();
 	nodelay(stdscr, TRUE);
+	
+	clock_gettime(CLOCK_REALTIME, &t_up);
+	t_down=t_left=t_right=t_up;
 
 	for(long i = 0;; i++)
 	{
@@ -229,48 +235,77 @@ int main(int argc, const char **argv)
 		}
 		
 		int ch = getch();
-		if(ch != ERR)
-		{
-			switch(ch){
-			case KEY_LEFT:
-				gHaveI2C = setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
-				gHaveI2C = setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
-				break;
-			case KEY_UP:
-				gHaveI2C = setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
-				gHaveI2C = setSpeedDir(LEFT_MOTOR, FORWARD, MAX_SPEED);
-				break;
-			case KEY_DOWN:
-				gHaveI2C = setSpeedDir(RIGHT_MOTOR,BACKWARD, MAX_SPEED);
-				gHaveI2C = setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
-				break;
-			case KEY_RIGHT:
-				gHaveI2C = setSpeedDir(RIGHT_MOTOR, BACKWARD, MAX_SPEED);
-				gHaveI2C = setSpeedDir(LEFT_MOTOR,FORWARD, MAX_SPEED);
-				break;
-			case 's': //save framebuffers
-				showWindow = true;
-				break;
-			case 'w': //save framebuffers
-				//SaveFrameBuffer("tex_fb.png");
-				rgbtexture.Save("./captures/tex_rgb.png");
-				thresholdtexture.Save("./captures/tex_out.png");
-				break;
-			case 'r': //rendering on/off_type
-				if(renderScreen) renderScreen = false;
-				else renderScreen = true;
-				break;
-			case 'q': //quit
-				endwin();
-				exit(1);
-			}
-
-			move(0,0);
-			refresh();
-		}
-		else{ //no keypress
+		if(ch==ERR){ //no keypress
 			gHaveI2C = setSpeed(RIGHT_MOTOR,0);
 			gHaveI2C = setSpeed(LEFT_MOTOR, 0);
+		}
+		else{
+			while(ch != ERR)
+			{
+				struct timespec temp;
+				long diff;
+				switch(ch){
+				case KEY_LEFT:					
+					clock_gettime(CLOCK_REALTIME, &temp);
+					diff = temp.tv_nsec - t_left.tv_nsec;
+					if(diff < 0) diff += 1000000000;
+					t_left = temp;
+					if(diff<=60000000){
+						gHaveI2C = setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
+						gHaveI2C = setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
+					}
+					break;
+				case KEY_UP:
+					clock_gettime(CLOCK_REALTIME, &temp);
+					diff = temp.tv_nsec - t_up.tv_nsec;
+					if(diff < 0) diff += 1000000000;
+					t_up = temp;
+					if(diff<=60000000){
+						gHaveI2C = setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
+						gHaveI2C = setSpeedDir(LEFT_MOTOR, FORWARD, MAX_SPEED);
+					}
+					break;
+				case KEY_DOWN:
+					clock_gettime(CLOCK_REALTIME, &temp);
+					diff = temp.tv_nsec - t_down.tv_nsec;
+					if(diff < 0) diff += 1000000000;
+					t_down = temp;
+					if(diff<=60000000){
+						gHaveI2C = setSpeedDir(RIGHT_MOTOR,BACKWARD, MAX_SPEED);
+						gHaveI2C = setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
+					}
+					break;
+				case KEY_RIGHT:
+					clock_gettime(CLOCK_REALTIME, &temp);
+					diff = temp.tv_nsec - t_right.tv_nsec;
+					if(diff < 0) diff += 1000000000;
+					t_right = temp;
+					if(diff<=60000000){
+						gHaveI2C = setSpeedDir(RIGHT_MOTOR, BACKWARD, MAX_SPEED);
+						gHaveI2C = setSpeedDir(LEFT_MOTOR,FORWARD, MAX_SPEED);
+					}
+					break;
+				case 's': //save framebuffers
+					showWindow = true;
+					break;
+				case 'w': //save framebuffers
+					//SaveFrameBuffer("tex_fb.png");
+					rgbtexture.Save("./captures/tex_rgb.png");
+					thresholdtexture.Save("./captures/tex_out.png");
+					break;
+				case 'r': //rendering on/off_type
+					if(renderScreen) renderScreen = false;
+					else renderScreen = true;
+					break;
+				case 'q': //quit
+					endwin();
+					exit(1);
+				}
+	
+				move(0,0);
+				refresh();
+				ch = getch();
+			}
 		}
 		
 		clock_gettime(CLOCK_REALTIME, &t_curses);
