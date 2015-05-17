@@ -146,14 +146,22 @@ int main(int argc, const char **argv)
 	DBG("Max texture size: %d", GL_MAX_TEXTURE_SIZE);
 	initDeDonutTextures(&dedonutmap);	
 	//create YUV textures
+	//these textures will store the image data coming from the camera.
+	//the camera records in YUV color space. Each color component is stored in a SEPARATE buffer, which is why
+	//we have three separate textures for them.
 	ytexture.CreateGreyScale(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
 	utexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
 	vtexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
 	//Main combined RGB textures
+	//rgbtexture will hold the result of transforming the separate y,u,v textures into a single RGBA format texture.
+	//in addition to that, rgbtexture is already unrolled into a wide panoramic image
 	rgbtexture.CreateRGBA(dWidth,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	rgbtexture.GenerateFrameBuffer();
+	//thresholdtexture holds the result of performing thresholding (and possibly other filtering steps)
 	thresholdtexture.CreateRGBA(dWidth,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	thresholdtexture.GenerateFrameBuffer();
+	//the textures below hold the summation results. It is a two-stage summation: therefore there are two textures for this with different sizes.
+	//the two-stage approach is because of the GLSL limitation on Pi that allows only reading 64 pixels max per shader.
 	horsumtexture1.CreateRGBA((dWidth/64)+1,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	horsumtexture1.GenerateFrameBuffer();
 	horsumtexture2.CreateRGBA(1,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
@@ -162,9 +170,14 @@ int main(int argc, const char **argv)
 	versumtexture1.GenerateFrameBuffer();
 	versumtexture2.CreateRGBA(dWidth,1,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	versumtexture2.GenerateFrameBuffer();
+	//will be deleted: nvm.
 	coordtexture.CreateRGBA(MAX_COORDS, 1,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	coordtexture.GenerateFrameBuffer();
+	
+
 	//showWindowd RGB textures
+	//these textures are just low-resolution versions of the above. they are used when we want to get a preview window: transfering the
+	//full-size textures takes too much time so they are first down-sampled.
 	float lowhf = ((float)dHeight/(float)dWidth);
 	int lowh = (int)(lowhf * g_conf.LOWRES_WIDTH);
 	if(!lowh) lowh = 1;
@@ -233,7 +246,7 @@ int main(int argc, const char **argv)
 			
 			showWindow = false;
 		}
-		
+
 		int ch = getch();
 		if(ch==ERR){ //no keypress
 			gHaveI2C = setSpeed(RIGHT_MOTOR,0);
@@ -312,6 +325,8 @@ int main(int argc, const char **argv)
 		
 		//spin until we have a camera frame
 		const void* frame_data; int frame_sz;
+		//the camera is set to a certain framerate. Therefore, by the time we get here, the next frame may not be ready yet.
+		//therefore this while loop loops until a frame is ready, and when it is,  grabs it and puts it in the frame_data buffer.
 		while(!cam->BeginReadFrame(0,frame_data,frame_sz)) {usleep(500);};
 		clock_gettime(CLOCK_REALTIME, &t_readframe);
 		//lock the chosen frame buffer, and copy it directly into the corresponding open gl texture
@@ -325,6 +340,8 @@ int main(int argc, const char **argv)
 		int upos = ysize;
 		int vpos = upos+uvsize;
 		//printf("Frame data len: 0x%x, ypitch: 0x%x ysize: 0x%x, uvpitch: 0x%x, uvsize: 0x%x, u at 0x%x, v at 0x%x, total 0x%x\n", frame_sz, ypitch, ysize, uvpitch, uvsize, upos, vpos, vpos+uvsize);		
+		//now we have the frame from the camera in the CPU memory in the 'data'  buffer. Now we have to upload it to the GPU as textures using the
+		//SetPixels() function provided by the OpenGL API.
 		ytexture.SetPixels(data);
 		utexture.SetPixels(data+upos);
 		vtexture.SetPixels(data+vpos);
@@ -334,7 +351,7 @@ int main(int argc, const char **argv)
 		
 		
 		
-		//begin frame
+		//begin frame: a call from the graphics.h/cpp module that starts the rendering pipeline for this frame.
 		BeginFrame();
 			
 		DrawYUVTextureRect(&ytexture,&utexture,&vtexture,&dedonutmap,-1.f,-1.f,1.f,1.f,&rgbtexture);
