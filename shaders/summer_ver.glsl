@@ -21,6 +21,6 @@ void main(void)
 
 	float result = sum/32.0;
 	//store the output pixel
-	gl_FragColor = vec4(result,0.0,0.0,1.0);
-	//gl_FragColor = vec4(result>0.0?1.0:0.0,0.0,0.0,1.0);
+	//gl_FragColor = vec4(result,0.0,0.0,1.0);
+	gl_FragColor = vec4(result>0.0?1.0:0.0,0.0,0.0,1.0);
 }

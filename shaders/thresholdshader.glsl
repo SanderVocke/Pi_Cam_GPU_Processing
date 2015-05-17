@@ -48,7 +48,7 @@ vec3 hsv2rgb(vec3 c) //this function converts a vec3 pixel from HSV to RGB. (cop
 vec3 doThreshold(vec3 c) //this function does the thresholding on a RGB pixel, including HSV conversion.
 {
     vec3 hsv = rgb2hsv(c);
-    if((hsv[0] >= 0.85) && (hsv[0] <= 1.0) && (hsv[1] > 0.2) && (hsv[2] > 0.15)) return vec3(hsv[0], 1, 1);
+    if((hsv[0] >= 0.0) && (hsv[0] <= 0.1) && (hsv[1] > 0.1) && (hsv[2] > 0.1)) return vec3(hsv[0], 1, 1);
     return c*vec3(0.0,0.0,0.0);
 }
 
@@ -68,6 +68,7 @@ vec3 colorizeSelect(vec3 c) //unused right now: colorize but with a brightness t
 //MAIN FUNCTION
 void main(void)
 {
-    //gl_FragColor = vec4(doThreshold(texture2D( tex, tcoord).rgb), texture2D(tex,tcoord).a);
-	gl_FragColor = vec4(colorizeSelect(texture2D( tex, tcoord).rgb), texture2D(tex,tcoord).a);
+	gl_FragColor = vec4(doThreshold(texture2D( tex, tcoord).rgb), texture2D(tex,tcoord).a);
+	//gl_FragColor = vec4(colorizeSelect(texture2D( tex, tcoord).rgb), texture2D(tex,tcoord).a);
+	//gl_FragColor = vec4(colorize(texture2D(tex,tcoord).rgb), texture2D(tex, tcoord).a);
 }
