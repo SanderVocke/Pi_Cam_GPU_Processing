@@ -41,7 +41,7 @@ GfxTexture horsumlowtexture1, versumlowtexture1, horsumlowtexture2, versumlowtex
 #define MAX_COORDS 100
 
 void analyzeResults(void); //analyze the results we got from GPU on the CPU
-void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, long nsec_getdata); //Draw the CURSES GUI
+void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, long nsec_getdata, long nsec_processdata); //Draw the CURSES GUI
 void initDeDonutTextures(GfxTexture *targetmap); //initialize the mapping look-up table texture for "de-donuting"
 
 //This array of strings is just here to be printed to the terminal screen,
@@ -145,8 +145,8 @@ int main(int argc, const char **argv)
 	bool do_pipeline = false;
 	
 	//more timing stuff to benchmark each step inside the loop separately.
-	struct timespec t_start, t_curses, t_readframe, t_putframe, t_draw, t_getdata;
-	long int nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata;
+	struct timespec t_start, t_curses, t_readframe, t_putframe, t_draw, t_getdata, t_processdata;
+	long int nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata;
 	
 	//these timing variables are for input keypress handling.
 	struct timespec t_up, t_down, t_left, t_right;
@@ -349,10 +349,12 @@ int main(int argc, const char **argv)
 		versumtexture1.Get();
 		horsumtexture1.Get();		
 		
+		clock_gettime(CLOCK_REALTIME, &t_getdata); //benchmarking
+		
 		//DATA ANALYSIS ON CPU
 		analyzeResults();
 		
-		clock_gettime(CLOCK_REALTIME, &t_getdata); //benchmarking
+		clock_gettime(CLOCK_REALTIME, &t_processdata); //for benchmarking.		
 		
 		//do all benchmarking time calculations
 		nsec_curses = t_curses.tv_nsec - t_start.tv_nsec;
@@ -360,11 +362,13 @@ int main(int argc, const char **argv)
 		nsec_putframe = t_putframe.tv_nsec - t_readframe.tv_nsec;
 		nsec_draw = t_draw.tv_nsec - t_putframe.tv_nsec;
 		nsec_getdata = t_getdata.tv_nsec - t_draw.tv_nsec;
+		nsec_processdata = t_processdata.tv_nsec - t_getdata.tv_nsec;
 		if(nsec_curses < 0) nsec_curses += 1000000000;
 		if(nsec_readframe < 0) nsec_readframe += 1000000000;
 		if(nsec_putframe < 0) nsec_putframe += 1000000000;
 		if(nsec_draw < 0) nsec_draw += 1000000000;
 		if(nsec_getdata < 0) nsec_getdata += 1000000000;
+		if(nsec_processdata < 0) nsec_processdata += 1000000000;
 		
 		//read current time value
 		clock_gettime(CLOCK_REALTIME, &gettime_now);
@@ -378,7 +382,7 @@ int main(int argc, const char **argv)
 		//print the screen once every so many iterations
 		if((i%UPDATERATE)==0)
 		{			//draw the terminal window
-			drawCurses(fr, nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata);
+			drawCurses(fr, nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata);
 			total_frameset_time_s = 0;
 		}
 
@@ -394,7 +398,7 @@ int main(int argc, const char **argv)
 
 //this is a function which will be called from the main() program's main loop,
 //updating the "text GUI" which is visible when running the program over SSH.
-void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, long nsec_getdata){
+void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, long nsec_getdata, long nsec_processdata){
 	//Update CPU usage stats
 	updateStats();
 	
@@ -426,25 +430,27 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	mvprintw(16,0,"msec Putframe: %d   ",nsec_putframe/1000000);
 	mvprintw(17,0,"msec Draw: %d   ",nsec_draw/1000000);
 	mvprintw(18,0,"msec Getdata: %d   ",nsec_getdata/1000000);
+	mvprintw(19,0,"msec Processdata: %d        ",nsec_processdata/1000000);
+	
+	//print the objects we found (for now, x and y axis separately!)
+	int i;
+	mvprintw(21,0, "Blue coordinates found: %d      ", total_blue_x+total_blue_y);
+	for(i=0; i<20; i++){
+		if(i<total_blue_x) mvprintw(i+22,0, "X Blue object found: (%d,?)      ",blue_x[i]);
+		else if(i<total_blue_y) mvprintw(i+22,0, "Y Blue object found: (?,%d)      ",blue_y[i-total_blue_x]);
+		else mvprintw(i+22,0,"(not found)                  ");
+	}
+	mvprintw(21,40, "Red coordinates found: %d      ", total_red_x+total_red_y);
+	for(i=0; i<20; i++){
+		if(i<total_red_x) mvprintw(i+22,40, "X Red object found: (%d,?)      ",red_x[i]);
+		else if(i<total_red_y) mvprintw(i+22,40, "Y Red object found: (?,%d)      ",red_y[i-total_red_x]);
+		else mvprintw(i+22,40,"(not found)                 ");
+	}
 	
 	//Print the keyboard control instructions
 	mvprintw(0,30,"Controls:");
 	int h=0;
 	for(h=0; h<NUMKEYS; h++) mvprintw(h+3,30,keys[h]);
-	
-	//print the objects we found (for now, x and y axis separately!)
-	mvprintw(20,0, "Blue coordinates found: %d      ", total_blue_x+total_blue_y);
-	for(int i=0; i<20; i++){
-		if(i<total_blue_x) mvprintw(i+21,0, "X Blue object found: (%d,?)      ",blue_x[i]);
-		else if(i<total_blue_y) mvprintw(i+21,0, "Y Blue object found: (?,%d)      ",blue_y[i-total_blue_x]);
-		else mvprintw(i+21,0,"(not found)                                                 ");
-	}
-	mvprintw(20,40, "Red coordinates found: %d      ", total_red_x+total_red_y);
-	for(int i=0; i<20; i++){
-		if(i<total_red_x) mvprintw(i+21,40, "X Red object found: (%d,?)      ",red_x[i]);
-		else if(i<total_red_y) mvprintw(i+21,40, "Y Red object found: (?,%d)      ",red_y[i-total_red_x]);
-		else mvprintw(i+21,40,"(not found)                                                 ");
-	}
 	
 	//finally draw all of this to the screen.
 	refresh();
