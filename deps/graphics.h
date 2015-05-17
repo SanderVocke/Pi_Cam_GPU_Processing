@@ -46,14 +46,13 @@ public:
 
 class GfxTexture
 {
-	int Width;
-	int Height;
 	GLuint Id;
 	bool IsRGBA;
-	void* image;
 
 	GLuint FramebufferId;
 public:
+	void* image;
+	int Width,Height;
 
 	GfxTexture() : Width(0), Height(0), Id(0), FramebufferId(0) {}
 	~GfxTexture() {}
@@ -82,3 +81,5 @@ void DrawHorSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 void DrawVerSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 void DrawVerSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 void DrawCoordinates(GfxTexture* hortexture, GfxTexture* vertexture, float x0, float y0, float x1, float y1, float numcoords, GfxTexture* render_target);
+
+void UpdateShaders(void);

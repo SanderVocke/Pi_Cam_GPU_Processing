@@ -22,7 +22,17 @@ bool gHaveI2C = false;
 bool showWindow = false;
 bool renderScreen = false;
 
-#define UPDATERATE 1
+int blue_x [30];
+int blue_y [30];
+int red_x [30];
+int red_y [30];
+int total_blue_x; 
+int total_blue_y; 
+int total_red_x; 
+int total_red_y; 
+
+
+#define UPDATERATE 10
 #define MAX_COORDS 100
 
 #define NUMKEYS 5
@@ -62,6 +72,21 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	mvprintw(0,30,"Controls:");
 	int h=0;
 	for(h=0; h<NUMKEYS; h++) mvprintw(h+3,30,keys[h]);
+	
+	//print the objects
+	mvprintw(20,0, "Blue coordinates found: %d      ", total_blue_x+total_blue_y);
+	for(int i=0; i<20; i++){
+		if(i<total_blue_x) mvprintw(i+21,0, "X Blue object found: (%d,?)      ",blue_x[i]);
+		else if(i<total_blue_y) mvprintw(i+21,0, "Y Blue object found: (?,%d)      ",blue_y[i-total_blue_x]);
+		else mvprintw(i+21,0,"(not found)                                                 ");
+	}
+	mvprintw(20,40, "Red coordinates found: %d      ", total_red_x+total_red_y);
+	for(int i=0; i<20; i++){
+		if(i<total_red_x) mvprintw(i+21,40, "X Red object found: (%d,?)      ",red_x[i]);
+		else if(i<total_red_y) mvprintw(i+21,40, "Y Red object found: (?,%d)      ",red_y[i-total_red_x]);
+		else mvprintw(i+21,40,"(not found)                                                 ");
+	}
+	
 	refresh();
 }
 
@@ -305,6 +330,8 @@ int main(int argc, const char **argv)
 					//SaveFrameBuffer("tex_fb.png");
 					rgbtexture.Save("./captures/tex_rgb.png");
 					thresholdtexture.Save("./captures/tex_out.png");
+					horsumtexture2.Save("./captures/tex_hor.png");
+					versumtexture2.Save("./captures/tex_ver.png");
 					break;
 				case 'r': //rendering on/off_type
 					if(renderScreen) renderScreen = false;
@@ -393,6 +420,153 @@ int main(int argc, const char **argv)
 		horsumtexture2.Get();
 		versumtexture1.Get();
 		horsumtexture1.Get();
+		
+		struct centroid{
+			int x;
+			int y;
+		};
+
+		struct centroid c_red[30];
+		struct centroid c_blue[30];
+
+		int a;
+		int a1,a2, sum_blue, sum_red;
+		int x_bhigh[15];
+		int x_blow[15];
+		int x_rhigh[15];
+		int x_rlow[15];
+		int total_red_x = 0; 
+		int set_blue = 1;
+		int set_red =1;
+		int k_blue=0;
+		int k_red=0;
+		total_blue_x = total_red_x = 0;
+		unsigned char * verptr = (unsigned char*)versumtexture2.image;
+		for(int j=0; j< (versumtexture2.Width); j++)
+		{   
+			a1 = verptr[j*4 +2];
+			if (set_blue ==1)
+			{
+		       if(a1>0)
+			   {   
+			    x_bhigh[k_blue] =j;
+			    set_blue =0;
+               }
+		     }
+			if (set_blue ==0)
+			{
+			if ((a1==0)||(j == (versumtexture2.Width) -1))
+			{   
+			    total_blue_x++;
+			    x_blow[k_blue] =j;
+			    set_blue =1;
+               
+			    sum_blue = (x_bhigh[k_blue] + ( x_blow[k_blue] -x_bhigh[k_blue] )/2);
+				blue_x[k_blue]=sum_blue;
+				//printf(" * x_blue[%d]  = %d\n", total_blue_x,sum);
+				k_blue++;
+		     }
+			}
+			  
+			//red x coordinates
+			a2 = verptr[j*4];
+			if (set_red ==1)
+			{
+		       if(a2>0)
+			   {   
+			    x_rhigh[k_red] =j;
+			    set_red =0;
+               }
+		     }
+			if (set_red ==0)
+			{
+			if ((a2==0)||(j == (versumtexture2.Width) -1))
+			{   
+			    total_red_x++;
+			    x_rlow[k_red] =j;
+			    set_red =1;
+               
+			    sum_red = (x_rhigh[k_red] + ( x_rlow[k_red] -x_rhigh[k_red] )/2);
+				red_x[k_red]=sum_red;
+				//printf(" * x_blue[%d]  = %d\n", total_blue_x,sum);
+				k_red++;
+		     }
+
+		}
+	}
+		
+		
+		
+		
+		
+		set_blue = 1;
+		set_red =1;
+		k_blue=0;
+		k_red=0;
+		int y_bhigh[15];
+		int y_blow[15];
+		int y_rhigh[15];
+		int y_rlow[15];
+		total_red_y = 0; 
+		total_blue_y= 0; 
+		unsigned char * horptr = (unsigned char*)horsumtexture2.image;
+		for(int j=0; j< (horsumtexture2.Height); j++)
+		{
+			
+			a1 = horptr[j*4 +2];;
+			if (set_blue ==1)
+			{
+		       if(a1>0)
+			   {   
+			    
+			    y_bhigh[k_blue] =i;
+			    set_blue =0;
+               }
+		     }
+
+			if (set_blue ==0)
+			{
+			if ((a1==0)||(i == (horsumtexture2.Height)-1))
+			{   
+			    total_blue_y++;
+			    y_blow[k_blue] =i;
+			    set_blue =1;
+			    sum_blue = (y_bhigh[k_blue] + ( y_blow[k_blue] - y_bhigh[k_blue] )/2);
+				blue_y[k_blue] =sum_blue;
+				//printf(" * y_blue[%d]  = %d\n", total_blue_y,sum);
+				k_blue++;
+		     }
+
+	     	}
+			 
+			//red 
+			a2 = horptr[j*4];;
+			if (set_red ==1)
+			{
+		       if(a2>0)
+			   {   
+			    
+			    y_rhigh[k_red] =i;
+			    set_red =0;
+               }
+		     }
+
+			if (set_red ==0)
+			{
+			if ((a2==0)||(i == (horsumtexture2.Height)-1))
+			{   
+			    total_red_y++;
+			    y_rlow[k_red] =i;
+			    set_red =1;
+			    sum_red = (y_rhigh[k_red] + ( y_rlow[k_red] - y_rhigh[k_red] )/2);
+				red_y[k_red] =sum_red;
+				//printf(" * y_blue[%d]  = %d\n", total_blue_y,sum);
+				k_red++;
+		     }
+
+	     	}
+		}
+
 		
 		clock_gettime(CLOCK_REALTIME, &t_getdata);
 		

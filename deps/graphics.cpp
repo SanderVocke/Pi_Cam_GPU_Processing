@@ -134,19 +134,7 @@ void InitGraphics()
 	glClearColor(0.15f, 0.25f, 0.35f, 1.0f);
 	glClear( GL_COLOR_BUFFER_BIT );
 
-	//load the test shaders
-	GSimpleVS.LoadVertexShader("./shaders/auxiliary/vertices.glsl");
-	GSimpleFS.LoadFragmentShader("./shaders/auxiliary/copy.glsl");
-	GYUVFS.LoadFragmentShader("./shaders/auxiliary/yuvtorgba_dedonut.glsl");
-	GHorSumFS.LoadFragmentShader("./shaders/summer_hor.glsl");
-	GVerSumFS.LoadFragmentShader("./shaders/summer_ver.glsl");
-	GThresholdFS.LoadFragmentShader("./shaders/thresholdshader.glsl");
-	GSimpleProg.Create(&GSimpleVS,&GSimpleFS);
-	GYUVProg.Create(&GSimpleVS,&GYUVFS);
-	GHorSumProg.Create(&GSimpleVS,&GHorSumFS);
-	GVerSumProg.Create(&GSimpleVS,&GVerSumFS);
-	GThresholdProg.Create(&GSimpleVS,&GThresholdFS);
-	check();
+	UpdateShaders();
 
 	//create an ickle vertex buffer
 	static const GLfloat quad_vertex_positions[] = {
@@ -160,6 +148,22 @@ void InitGraphics()
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertex_positions), quad_vertex_positions, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	check();
+}
+
+void UpdateShaders(void){
+	//load the test shaders
+	GSimpleVS.LoadVertexShader("./shaders/auxiliary/vertices.glsl");
+	GSimpleFS.LoadFragmentShader("./shaders/auxiliary/copy.glsl");
+	GYUVFS.LoadFragmentShader("./shaders/auxiliary/yuvtorgba_dedonut.glsl");
+	GHorSumFS.LoadFragmentShader("./shaders/summer_hor.glsl");
+	GVerSumFS.LoadFragmentShader("./shaders/summer_ver.glsl");
+	GThresholdFS.LoadFragmentShader("./shaders/thresholdshader.glsl");
+	GSimpleProg.Create(&GSimpleVS,&GSimpleFS);
+	GYUVProg.Create(&GSimpleVS,&GYUVFS);
+	GHorSumProg.Create(&GSimpleVS,&GHorSumFS);
+	GVerSumProg.Create(&GSimpleVS,&GVerSumFS);
+	GThresholdProg.Create(&GSimpleVS,&GThresholdFS);
 	check();
 }
 
@@ -209,7 +213,10 @@ void printShaderInfoLog(GLint shader)
 bool GfxShader::LoadVertexShader(const char* filename)
 {
 	//cheeky bit of code to read the whole file into memory
-	assert(!Src);
+	if(Src){
+		delete(Src);
+		Src = NULL;
+	}
 	FILE* f = fopen(filename, "rb");
 	assert(f);
 	fseek(f,0,SEEK_END);
@@ -248,7 +255,10 @@ bool GfxShader::LoadVertexShader(const char* filename)
 bool GfxShader::LoadFragmentShader(const char* filename)
 {
 	//cheeky bit of code to read the whole file into memory
-	assert(!Src);
+	if(Src){
+		delete(Src);
+		Src = NULL;
+	}
 	FILE* f = fopen(filename, "rb");
 	assert(f);
 	fseek(f,0,SEEK_END);

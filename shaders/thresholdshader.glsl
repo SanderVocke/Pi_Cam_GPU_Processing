@@ -45,11 +45,13 @@ vec3 hsv2rgb(vec3 c) //this function converts a vec3 pixel from HSV to RGB. (cop
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
-vec3 doThreshold(vec3 c) //this function does the thresholding on a RGB pixel, including HSV conversion.
+vec3 doThreshold(vec3 hsv) //this function does the thresholding on a RGB pixel, including HSV conversion.
 {
-    vec3 hsv = rgb2hsv(c);
-    if((hsv[0] >= 0.0) && (hsv[0] <= 0.1) && (hsv[1] > 0.1) && (hsv[2] > 0.1)) return vec3(hsv[0], 1, 1);
-    return c*vec3(0.0,0.0,0.0);
+    vec3 outThreshold;
+	outThreshold	= vec3(0.0,0.0,0.0);
+    if((hsv[0] >= 0.0) && (hsv[0] <= 0.1) && (hsv[1] > 0.3) && (hsv[2] > 0.3)) outThreshold[0] = 1.0;
+	if((hsv[0] >= 0.40) && (hsv[0] <= 0.85) && (hsv[1] > 0.3) && (hsv[2] > 0.3)) outThreshold[2] = 1.0;
+	return outThreshold;
 }
 
 vec3 colorize(vec3 c) //unused right now: converts to HSV then back to RGB with maximum S and V ("colorize")
@@ -61,14 +63,14 @@ vec3 colorize(vec3 c) //unused right now: converts to HSV then back to RGB with 
 vec3 colorizeSelect(vec3 c) //unused right now: colorize but with a brightness threshold included.
 {
     vec3 hsv = rgb2hsv(c);
-    if((hsv[1] > 0.1) && (hsv[2] > 0.1)) return hsv2rgb(vec3(hsv[0], 1, 1));
+    if((hsv[1] > 0.15) && (hsv[2] > 0.3)) return hsv2rgb(vec3(hsv[0], 1, 1));
     return vec3(0,0,0);
 }
 
 //MAIN FUNCTION
 void main(void)
 {
-	gl_FragColor = vec4(doThreshold(texture2D( tex, tcoord).rgb), texture2D(tex,tcoord).a);
+    vec3 hsv = rgb2hsv(texture2D( tex, tcoord).rgb);
+	gl_FragColor = vec4(doThreshold(hsv), texture2D(tex,tcoord).a);
 	//gl_FragColor = vec4(colorizeSelect(texture2D( tex, tcoord).rgb), texture2D(tex,tcoord).a);
-	//gl_FragColor = vec4(colorize(texture2D(tex,tcoord).rgb), texture2D(tex, tcoord).a);
 }
