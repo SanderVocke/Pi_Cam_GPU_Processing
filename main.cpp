@@ -21,6 +21,8 @@ int dWidth, dHeight; //width and height of "dedonuted" image
 bool gHaveI2C = false;
 bool showWindow = false;
 bool renderScreen = false;
+bool imageAvailable = false;
+bool doImage = false;
 
 //For post-processing on CPU
 int blue_x [30];
@@ -32,10 +34,27 @@ int total_blue_y;
 int total_red_x; 
 int total_red_y; 
 
+//These time values are just for benchmarking and framerate calculations later during the loop.
+long int start_time;
+double total_frameset_time_s=0;
+long int time_difference;
+struct timespec gettime_now;
+double total_time_s = 0;
+bool do_pipeline = false;
+
+//more timing stuff to benchmark each step inside the loop separately.
+struct timespec t_start, t_curses, t_readframe, t_putframe, t_draw, t_getdata, t_processdata;
+long int nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata;
+
+//these timing variables are for input keypress handling.
+struct timespec t_up, t_down, t_left, t_right;
+long int nsec_up, nsec_down, nsec_left, nsec_right;
+
 //DEFINE CPU-SIDE HANDLES (CLASS OBJECTS) FOR ALL OPENGL TEXTURES WE WILL USE
 GfxTexture ytexture, utexture, vtexture, rgbtexture, rgblowtexture, thresholdtexture, thresholdlowtexture;
 GfxTexture dedonutmap, horsumtexture1, horsumtexture2, versumtexture1, versumtexture2;		
 GfxTexture horsumlowtexture1, versumlowtexture1, horsumlowtexture2, versumlowtexture2;
+GfxTexture fileinputtexture;
 
 #define UPDATERATE 10
 #define MAX_COORDS 100
@@ -43,15 +62,18 @@ GfxTexture horsumlowtexture1, versumlowtexture1, horsumlowtexture2, versumlowtex
 void analyzeResults(void); //analyze the results we got from GPU on the CPU
 void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, long nsec_getdata, long nsec_processdata); //Draw the CURSES GUI
 void initDeDonutTextures(GfxTexture *targetmap); //initialize the mapping look-up table texture for "de-donuting"
+void showTexWindow(float lowh);
+void doInput(void);
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
-#define NUMKEYS 5
+#define NUMKEYS 6
 const char* keys[NUMKEYS] = {
 	"arrow keys: move bot",
 	"s: show snapshot window",
 	"w: save framebuffers",
 	"r: turn HDMI live rendering on/off",
+	"i: use PNG input image instead of camera stream",
 	"q: quit"
 };
 
@@ -79,6 +101,16 @@ int main(int argc, const char **argv)
 	//DeDonut RGB textures
 	DBG("Max texture size: %d", GL_MAX_TEXTURE_SIZE);
 	initDeDonutTextures(&dedonutmap); //(Create and also fill in its values, see function)
+	
+	//input image texture: if we are rendering from an input image instead of the camera, the data is in this.
+	unsigned char * inputbuf;
+	unsigned int w,h;
+	LodePNGState lstate;
+	lodepng_decode32_file(&inputbuf, &w, &h, "./inputs/input.png");
+	if(w>0 && h>0){
+		fileinputtexture.CreateRGBA(w,h,(const void*)inputbuf,(GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
+		imageAvailable = true;
+	}
 	
 	//create YUV textures
 	//these textures will store the image data coming from the camera.
@@ -133,24 +165,6 @@ int main(int argc, const char **argv)
 	
 	//Start the processing loop.
 	DBG("Starting process loop.");
-	
-	//These time values are just for benchmarking and framerate calculations later during the loop.
-	long int start_time;
-	double total_frameset_time_s=0;
-	long int time_difference;
-	struct timespec gettime_now;
-	clock_gettime(CLOCK_REALTIME, &gettime_now);
-	start_time = gettime_now.tv_nsec ;
-	double total_time_s = 0;
-	bool do_pipeline = false;
-	
-	//more timing stuff to benchmark each step inside the loop separately.
-	struct timespec t_start, t_curses, t_readframe, t_putframe, t_draw, t_getdata, t_processdata;
-	long int nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata;
-	
-	//these timing variables are for input keypress handling.
-	struct timespec t_up, t_down, t_left, t_right;
-	long int nsec_up, nsec_down, nsec_left, nsec_right;
 
 	//Init the CURSES window.
 	initscr();      /* initialize the curses library */
@@ -163,6 +177,8 @@ int main(int argc, const char **argv)
 	//baseline times.
 	clock_gettime(CLOCK_REALTIME, &t_up);
 	t_down=t_left=t_right=t_up;
+	clock_gettime(CLOCK_REALTIME, &gettime_now);
+	start_time = gettime_now.tv_nsec ;
 
 	//MAIN PROCESSING LOOP
 	for(long i = 0;; i++)
@@ -173,104 +189,13 @@ int main(int argc, const char **argv)
 		//this boolean showWindow will have been set and the frames all rendered to low-res versions
 		//for easy grabbing. Now we will actually show them in an X window using SDL.
 		if(showWindow){
-			//rectangles defining what to draw where in the window
-			SDL_Rect inrect = {0, 0, g_conf.LOWRES_WIDTH, lowh};
-			SDL_Rect thresholdrect = {0, lowh+200, g_conf.LOWRES_WIDTH, lowh};
-			SDL_Rect versum1rect = {0,lowh+90,g_conf.LOWRES_WIDTH,100};
-			SDL_Rect versum2rect = {0,lowh+50,g_conf.LOWRES_WIDTH,20};
-			SDL_Rect horsum1rect = {g_conf.LOWRES_WIDTH,lowh+200,200,lowh};
-			SDL_Rect horsum2rect = {g_conf.LOWRES_WIDTH+240,lowh+200,20,lowh};
-			
-			//draw in the window (see Show() functions of textures, which "really" do the work)
-			rgblowtexture.Show(&inrect);
-			thresholdlowtexture.Show(&thresholdrect);
-			if(showWindow){
-				versumlowtexture1.Show(&versum1rect);
-				versumlowtexture2.Show(&versum2rect);
-				horsumlowtexture1.Show(&horsum1rect);
-				horsumlowtexture2.Show(&horsum2rect);
-			}
-			
+			showTexWindow(lowh); //show it			
 			//set to false again until the user may press 's' again in the future.
 			showWindow = false;
 		}
 
 		//INPUT HANDLING OF KEYBOARD KEYS
-		int ch = getch();
-		if(ch==ERR){ //no keypress detected? for now set the motor speeds to 0 again.
-			gHaveI2C = setSpeed(RIGHT_MOTOR,0);
-			gHaveI2C = setSpeed(LEFT_MOTOR, 0);
-		}
-		else{ //there was a key detected. check out what we should do.
-			while(ch != ERR) //for each key found...
-			{
-				struct timespec temp;
-				long diff;
-				switch(ch){ //which key was it?
-				case KEY_LEFT:	//left key! if these are coming at high frequency (being held down), turn the motors into a left turn.				
-					clock_gettime(CLOCK_REALTIME, &temp);
-					diff = temp.tv_nsec - t_left.tv_nsec;
-					if(diff < 0) diff += 1000000000;
-					t_left = temp;
-					if(diff<=60000000){
-						gHaveI2C = setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
-						gHaveI2C = setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
-					}
-					break;
-				case KEY_UP://up key! if these are coming at high frequency (being held down), turn the motors forward.	
-					clock_gettime(CLOCK_REALTIME, &temp);
-					diff = temp.tv_nsec - t_up.tv_nsec;
-					if(diff < 0) diff += 1000000000;
-					t_up = temp;
-					if(diff<=60000000){
-						gHaveI2C = setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
-						gHaveI2C = setSpeedDir(LEFT_MOTOR, FORWARD, MAX_SPEED);
-					}
-					break;
-				case KEY_DOWN://down key! if these are coming at high frequency (being held down), turn the motors backward.	
-					clock_gettime(CLOCK_REALTIME, &temp);
-					diff = temp.tv_nsec - t_down.tv_nsec;
-					if(diff < 0) diff += 1000000000;
-					t_down = temp;
-					if(diff<=60000000){
-						gHaveI2C = setSpeedDir(RIGHT_MOTOR,BACKWARD, MAX_SPEED);
-						gHaveI2C = setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
-					}
-					break;
-				case KEY_RIGHT://right key! if these are coming at high frequency (being held down), turn the motors into a right turn.	
-					clock_gettime(CLOCK_REALTIME, &temp);
-					diff = temp.tv_nsec - t_right.tv_nsec;
-					if(diff < 0) diff += 1000000000;
-					t_right = temp;
-					if(diff<=60000000){
-						gHaveI2C = setSpeedDir(RIGHT_MOTOR, BACKWARD, MAX_SPEED);
-						gHaveI2C = setSpeedDir(LEFT_MOTOR,FORWARD, MAX_SPEED);
-					}
-					break;
-				case 's': //save framebuffers
-					showWindow = true;
-					break;
-				case 'w': //save framebuffers
-					//SaveFrameBuffer("tex_fb.png");
-					rgbtexture.Save("./captures/tex_rgb.png");
-					thresholdtexture.Save("./captures/tex_out.png");
-					horsumtexture2.Save("./captures/tex_hor.png");
-					versumtexture2.Save("./captures/tex_ver.png");
-					break;
-				case 'r': //rendering on/off_type
-					if(renderScreen) renderScreen = false;
-					else renderScreen = true;
-					break;
-				case 'q': //quit
-					endwin();
-					exit(1);
-				}
-	
-				move(0,0);
-				refresh();
-				ch = getch();
-			}
-		}
+		doInput(); //handles input.
 		
 		clock_gettime(CLOCK_REALTIME, &t_curses); //for benchmarking
 		
@@ -307,7 +232,12 @@ int main(int argc, const char **argv)
 		//begin frame: a call from the graphics.h/cpp module that starts the rendering pipeline for this frame.
 		BeginFrame();
 			
-		DrawYUVTextureRect(&ytexture,&utexture,&vtexture,&dedonutmap,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
+		if(!doImage){ //normal case: render from the camera stream.
+			DrawYUVTextureRect(&ytexture,&utexture,&vtexture,&dedonutmap,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
+		}
+		else{ //render from the static PNG image texture we made.
+			DrawTextureRect(&fileinputtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgbtexture);
+		}
 		
 		//make thresholded
 		DrawThresholdRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &thresholdtexture); //perform (filtering and) thresholding
@@ -398,59 +328,81 @@ int main(int argc, const char **argv)
 
 //this is a function which will be called from the main() program's main loop,
 //updating the "text GUI" which is visible when running the program over SSH.
+#define STATSLINE 0
+#define STATSCOL 0
+#define SPEEDLINE (STATSLINE + 7)
+#define SPEEDCOL 0
+#define I2CLINE (SPEEDLINE + 3)
+#define I2CCOL 0
+#define HDMILINE (I2CLINE+1)
+#define HDMICOL 0
+#define IMGLINE (HDMILINE+1)
+#define IMGCOL 0
+#define BENCHLINE (IMGLINE + 2)
+#define BENCHCOL 0
+#define BLUELINE (BENCHLINE + 7)
+#define BLUECOL 0
+#define REDLINE BLUELINE
+#define REDCOL 40
+#define CONTROLLINE 0
+#define CONTROLCOL 30
 void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, long nsec_getdata, long nsec_processdata){
 	//Update CPU usage stats
 	updateStats();
 	
 	//Print framerate and CPU usage stats
-	mvprintw(0,0,"Framerate: %g  ",fr);	
-	mvprintw(2,0,"CPU Total: %d   ",cputot_stats.load);
-	mvprintw(3,0,"CPU1: %d  ",cpu1_stats.load);
-	mvprintw(4,0,"CPU2: %d  ",cpu2_stats.load);
-	mvprintw(5,0,"CPU3: %d  ",cpu3_stats.load);
-	mvprintw(6,0,"CPU4: %d  ",cpu4_stats.load);
+	mvprintw(STATSLINE+0,STATSCOL,"Framerate: %g  ",fr);	
+	mvprintw(STATSLINE+1,STATSCOL,"CPU Total: %d   ",cputot_stats.load);
+	mvprintw(STATSLINE+2,STATSCOL,"CPU1: %d  ",cpu1_stats.load);
+	mvprintw(STATSLINE+3,STATSCOL,"CPU2: %d  ",cpu2_stats.load);
+	mvprintw(STATSLINE+4,STATSCOL,"CPU3: %d  ",cpu3_stats.load);
+	mvprintw(STATSLINE+5,STATSCOL,"CPU4: %d  ",cpu4_stats.load);
 	
 	//Print robot motor states.
-	mvprintw(8,0,"Left Speed: %d     ",
+	mvprintw(SPEEDLINE,SPEEDCOL,"Left Speed: %d     ",
 		getDirection(LEFT_MOTOR)==FORWARD ? getSpeed(LEFT_MOTOR) : -1*((int)getSpeed(LEFT_MOTOR)));
-	mvprintw(9,0,"Right Speed: %d     ",
+	mvprintw(SPEEDLINE+1,SPEEDCOL,"Right Speed: %d     ",
 		getDirection(RIGHT_MOTOR)==FORWARD ? getSpeed(RIGHT_MOTOR) : -1*((int)getSpeed(RIGHT_MOTOR)));
 	
 	//Print I2C driver state (ON or FAIL)
-	if(gHaveI2C) mvprintw(11,0,"I2C ON  ");
-	else mvprintw(11,0,"I2C FAIL");
+	if(gHaveI2C) mvprintw(I2CLINE,I2CCOL,"I2C ON  ");
+	else mvprintw(I2CLINE,I2CCOL,"I2C FAIL");
 	
 	//Print whether live HDMI rendering is on
-	if(renderScreen) mvprintw(12,0, "HDMI ON     ");
-	else mvprintw(12,0, "HDMI OFF     ");
+	if(renderScreen) mvprintw(HDMILINE,HDMICOL, "HDMI ON     ");
+	else mvprintw(HDMILINE,HDMICOL, "HDMI OFF     ");
+	
+	//Print whether we are rendering an image or a camera stream
+	if(doImage) mvprintw(IMGLINE,IMGCOL, "Input from: './inputs/input.png'     ");
+	else mvprintw(IMGLINE,IMGCOL,"Input from: CAMERA      ");
 	
 	//Print benchmarking results
-	mvprintw(14,0,"msec Curses: %d   ",nsec_curses/1000000);
-	mvprintw(15,0,"msec Readframe: %d   ",nsec_readframe/1000000);
-	mvprintw(16,0,"msec Putframe: %d   ",nsec_putframe/1000000);
-	mvprintw(17,0,"msec Draw: %d   ",nsec_draw/1000000);
-	mvprintw(18,0,"msec Getdata: %d   ",nsec_getdata/1000000);
-	mvprintw(19,0,"msec Processdata: %d        ",nsec_processdata/1000000);
+	mvprintw(BENCHLINE,BENCHCOL,"msec Curses: %d   ",nsec_curses/1000000);
+	mvprintw(BENCHLINE+1,BENCHCOL,"msec Readframe: %d   ",nsec_readframe/1000000);
+	mvprintw(BENCHLINE+2,BENCHCOL,"msec Putframe: %d   ",nsec_putframe/1000000);
+	mvprintw(BENCHLINE+3,BENCHCOL,"msec Draw: %d   ",nsec_draw/1000000);
+	mvprintw(BENCHLINE+4,BENCHCOL,"msec Getdata: %d   ",nsec_getdata/1000000);
+	mvprintw(BENCHLINE+5,BENCHCOL,"msec Processdata: %d        ",nsec_processdata/1000000);
 	
 	//print the objects we found (for now, x and y axis separately!)
 	int i;
-	mvprintw(21,0, "Blue coordinates found: %d      ", total_blue_x+total_blue_y);
+	mvprintw(BLUELINE, BLUECOL, "Blue coordinates found: %d      ", total_blue_x+total_blue_y);
 	for(i=0; i<20; i++){
-		if(i<total_blue_x) mvprintw(i+22,0, "X Blue object found: (%d,?)      ",blue_x[i]);
-		else if(i<total_blue_y) mvprintw(i+22,0, "Y Blue object found: (?,%d)      ",blue_y[i-total_blue_x]);
-		else mvprintw(i+22,0,"(not found)                  ");
+		if(i<total_blue_x) mvprintw(i+BLUELINE+1,BLUECOL, "X Blue object found: (%d,?)      ",blue_x[i]);
+		else if(i<total_blue_y) mvprintw(i+BLUELINE+1,BLUECOL,  "Y Blue object found: (?,%d)      ",blue_y[i-total_blue_x]);
+		else mvprintw(i+BLUELINE+1,BLUECOL, "(not found)                  ");
 	}
-	mvprintw(21,40, "Red coordinates found: %d      ", total_red_x+total_red_y);
+	mvprintw(REDLINE, REDCOL, "Red coordinates found: %d      ", total_red_x+total_red_y);
 	for(i=0; i<20; i++){
-		if(i<total_red_x) mvprintw(i+22,40, "X Red object found: (%d,?)      ",red_x[i]);
-		else if(i<total_red_y) mvprintw(i+22,40, "Y Red object found: (?,%d)      ",red_y[i-total_red_x]);
-		else mvprintw(i+22,40,"(not found)                 ");
+		if(i<total_red_x) mvprintw(REDLINE+i+1,REDCOL, "X Red object found: (%d,?)      ",red_x[i]);
+		else if(i<total_red_y) mvprintw(REDLINE+i+1,REDCOL, "Y Red object found: (?,%d)      ",red_y[i-total_red_x]);
+		else mvprintw(REDLINE+i+1,REDCOL,"(not found)                 ");
 	}
 	
 	//Print the keyboard control instructions
-	mvprintw(0,30,"Controls:");
+	mvprintw(CONTROLLINE, CONTROLCOL,"Controls:");
 	int h=0;
-	for(h=0; h<NUMKEYS; h++) mvprintw(h+3,30,keys[h]);
+	for(h=0; h<NUMKEYS; h++) mvprintw(CONTROLLINE+h+2,CONTROLCOL,keys[h]);
 	
 	//finally draw all of this to the screen.
 	refresh();
@@ -660,4 +612,106 @@ void analyzeResults(void){
 	 	}
 	}
 	return;
+}
+
+void showTexWindow(float lowh){
+	//rectangles defining what to draw where in the window
+	SDL_Rect inrect = {0, 0, g_conf.LOWRES_WIDTH, lowh};
+	SDL_Rect thresholdrect = {0, lowh+200, g_conf.LOWRES_WIDTH, lowh};
+	SDL_Rect versum1rect = {0,lowh+90,g_conf.LOWRES_WIDTH,100};
+	SDL_Rect versum2rect = {0,lowh+50,g_conf.LOWRES_WIDTH,20};
+	SDL_Rect horsum1rect = {g_conf.LOWRES_WIDTH,lowh+200,200,lowh};
+	SDL_Rect horsum2rect = {g_conf.LOWRES_WIDTH+240,lowh+200,20,lowh};
+	
+	//draw in the window (see Show() functions of textures, which "really" do the work)
+	rgblowtexture.Show(&inrect);
+	thresholdlowtexture.Show(&thresholdrect);
+	if(showWindow){
+		versumlowtexture1.Show(&versum1rect);
+		versumlowtexture2.Show(&versum2rect);
+		horsumlowtexture1.Show(&horsum1rect);
+		horsumlowtexture2.Show(&horsum2rect);
+	}
+}
+
+void doInput(void){
+	int ch = getch();
+	if(ch==ERR){ //no keypress detected? for now set the motor speeds to 0 again.
+		gHaveI2C = setSpeed(RIGHT_MOTOR,0);
+		gHaveI2C = setSpeed(LEFT_MOTOR, 0);
+	}
+	else{ //there was a key detected. check out what we should do.
+		while(ch != ERR) //for each key found...
+		{
+			struct timespec temp;
+			long diff;
+			switch(ch){ //which key was it?
+			case KEY_LEFT:	//left key! if these are coming at high frequency (being held down), turn the motors into a left turn.				
+				clock_gettime(CLOCK_REALTIME, &temp);
+				diff = temp.tv_nsec - t_left.tv_nsec;
+				if(diff < 0) diff += 1000000000;
+				t_left = temp;
+				if(diff<=60000000){
+					gHaveI2C = setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
+					gHaveI2C = setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
+				}
+				break;
+			case KEY_UP://up key! if these are coming at high frequency (being held down), turn the motors forward.	
+				clock_gettime(CLOCK_REALTIME, &temp);
+				diff = temp.tv_nsec - t_up.tv_nsec;
+				if(diff < 0) diff += 1000000000;
+				t_up = temp;
+				if(diff<=60000000){
+					gHaveI2C = setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
+					gHaveI2C = setSpeedDir(LEFT_MOTOR, FORWARD, MAX_SPEED);
+				}
+				break;
+			case KEY_DOWN://down key! if these are coming at high frequency (being held down), turn the motors backward.	
+				clock_gettime(CLOCK_REALTIME, &temp);
+				diff = temp.tv_nsec - t_down.tv_nsec;
+				if(diff < 0) diff += 1000000000;
+				t_down = temp;
+				if(diff<=60000000){
+					gHaveI2C = setSpeedDir(RIGHT_MOTOR,BACKWARD, MAX_SPEED);
+					gHaveI2C = setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
+				}
+				break;
+			case KEY_RIGHT://right key! if these are coming at high frequency (being held down), turn the motors into a right turn.	
+				clock_gettime(CLOCK_REALTIME, &temp);
+				diff = temp.tv_nsec - t_right.tv_nsec;
+				if(diff < 0) diff += 1000000000;
+				t_right = temp;
+				if(diff<=60000000){
+					gHaveI2C = setSpeedDir(RIGHT_MOTOR, BACKWARD, MAX_SPEED);
+					gHaveI2C = setSpeedDir(LEFT_MOTOR,FORWARD, MAX_SPEED);
+				}
+				break;
+			case 's': //save framebuffers
+				showWindow = true;
+				break;
+			case 'w': //save framebuffers
+				//SaveFrameBuffer("tex_fb.png");
+				rgbtexture.Save("./captures/tex_rgb.png");
+				thresholdtexture.Save("./captures/tex_out.png");
+				horsumtexture2.Save("./captures/tex_hor.png");
+				versumtexture2.Save("./captures/tex_ver.png");
+				break;
+			case 'r': //rendering on/off_type
+				if(renderScreen) renderScreen = false;
+				else renderScreen = true;
+				break;
+			case 'i': //render from image instead of camera (if we have an image!)
+				if(imageAvailable) doImage = !doImage;
+				else doImage = false;
+				break;
+			case 'q': //quit
+				endwin();
+				exit(1);
+			}
+	
+			move(0,0);
+			refresh();
+			ch = getch();
+		}
+	}
 }
