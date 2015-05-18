@@ -13,15 +13,17 @@ void main(void)
 	//make the sum variable
 	float sum_red = 0.0;
 	float sum_blue = 0.0;
-	float pos = tcoord[1];
+	float pos = tcoord[1]-step;
+	vec4 pixel;
 	//iterate over 64 source pixels using this step, summing their content	
 	for(int i=0;i<64;i++){
-	    vec4 pixel = texture2D(tex,vec2(tcoord[0],pos));
+		pixel = texture2D(tex,vec2(tcoord[0],pos));	
 		sum_red = sum_red + pixel.r;
 		sum_blue = sum_blue + pixel.b;
 		pos = pos + step;
+		
 	}
-
+	
 	float result_red = sum_red/32.0;
 	float result_blue = sum_blue/32.0;
 	//store the output pixel

@@ -477,7 +477,7 @@ void DrawHorSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 	glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"offset"),x0,y0);
 	glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"scale"),x1-x0,y1-y0);
 	glUniform1i(glGetUniformLocation(GHorSumProg.GetId(),"tex"), 0);
-	glUniform1f(glGetUniformLocation(GHorSumProg.GetId(),"step"), 1.0f/64.0f);
+	glUniform1f(glGetUniformLocation(GHorSumProg.GetId(),"step"), 1.0f/((float)texture->GetWidth()));
 	check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
@@ -545,7 +545,7 @@ void DrawVerSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 	glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"offset"),x0,y0);
 	glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"scale"),x1-x0,y1-y0);
 	glUniform1i(glGetUniformLocation(GVerSumProg.GetId(),"tex"), 0);
-	glUniform1f(glGetUniformLocation(GVerSumProg.GetId(),"step"), 1.0f/64.0f);
+	glUniform1f(glGetUniformLocation(GVerSumProg.GetId(),"step"), 1.0f/((float)texture->GetHeight()));
 	check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
