@@ -58,6 +58,7 @@ GfxTexture fileinputtexture;
 
 #define UPDATERATE 10
 #define MAX_COORDS 100
+#define VER_STRETCH 3.0f
 
 void analyzeResults(void); //analyze the results we got from GPU on the CPU
 void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, long nsec_getdata, long nsec_processdata); //Draw the CURSES GUI
@@ -146,7 +147,7 @@ int main(int argc, const char **argv)
 	//showWindowd RGB textures
 	//these textures are just low-resolution versions of the above. they are used when we want to get a preview window: transfering the
 	//full-size textures takes too much time so they are first down-sampled.
-	float lowhf = ((float)dHeight/(float)dWidth);
+	float lowhf = ((float)dHeight/(float)dWidth) * VER_STRETCH;
 	int lowh = (int)(lowhf * g_conf.LOWRES_WIDTH);
 	if(!lowh) lowh = 1;
 	rgblowtexture.CreateRGBA(g_conf.LOWRES_WIDTH, lowh,NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
@@ -374,7 +375,7 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	
 	//Print whether we are rendering an image or a camera stream
 	if(doImage) mvprintw(IMGLINE,IMGCOL, "Input from: './inputs/input.png'     ");
-	else mvprintw(IMGLINE,IMGCOL,"Input from: CAMERA      ");
+	else mvprintw(IMGLINE,IMGCOL,"Input from: CAMERA                          ");
 	
 	//Print benchmarking results
 	mvprintw(BENCHLINE,BENCHCOL,"msec Curses: %d   ",nsec_curses/1000000);
@@ -388,14 +389,14 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	int i;
 	mvprintw(BLUELINE, BLUECOL, "Blue coordinates found: %d      ", total_blue_x+total_blue_y);
 	for(i=0; i<20; i++){
-		if(i<total_blue_x) mvprintw(i+BLUELINE+1,BLUECOL, "X Blue object found: (%d,?)      ",blue_x[i]);
-		else if(i<total_blue_y) mvprintw(i+BLUELINE+1,BLUECOL,  "Y Blue object found: (?,%d)      ",blue_y[i-total_blue_x]);
+		if(i<total_blue_x) mvprintw(i+BLUELINE+1,BLUECOL, "X found: (%d,?)      ",blue_x[i]);
+		else if(i<(total_blue_x+total_blue_y)) mvprintw(i+BLUELINE+1,BLUECOL,  "Y found: (?,%d)      ",blue_y[i-total_blue_x]);
 		else mvprintw(i+BLUELINE+1,BLUECOL, "(not found)                  ");
 	}
 	mvprintw(REDLINE, REDCOL, "Red coordinates found: %d      ", total_red_x+total_red_y);
 	for(i=0; i<20; i++){
-		if(i<total_red_x) mvprintw(REDLINE+i+1,REDCOL, "X Red object found: (%d,?)      ",red_x[i]);
-		else if(i<total_red_y) mvprintw(REDLINE+i+1,REDCOL, "Y Red object found: (?,%d)      ",red_y[i-total_red_x]);
+		if(i<total_red_x) mvprintw(REDLINE+i+1,REDCOL, "X found: (%d,?)      ",red_x[i]);
+		else if(i<(total_red_x+total_red_y)) mvprintw(REDLINE+i+1,REDCOL, "Y found: (?,%d)      ",red_y[i-total_red_x]);
 		else mvprintw(REDLINE+i+1,REDCOL,"(not found)                 ");
 	}
 	
