@@ -83,6 +83,7 @@ const char* keys[NUMKEYS] = {
 ////////////////////////////////////////////////////////
 int main(int argc, const char **argv)
 {
+	OPENLOG; //start log file.
 	updateStats(); //baseline CPU usage stats.
 	initConfig(); //get program settings from the config.txt file.
 	if(startI2CMotor()) gHaveI2C = true; //Start I2C.
@@ -322,6 +323,7 @@ int main(int argc, const char **argv)
 	//if we get here, the main loop was exited for some reason.
 	StopCamera(); //stop camera
 	endwin(); //close window of CURSES
+	CLOSELOG; //close log file
 	
 	return 0;
 }
@@ -341,12 +343,14 @@ int main(int argc, const char **argv)
 #define IMGCOL 0
 #define BENCHLINE (IMGLINE + 2)
 #define BENCHCOL 0
-#define BLUELINE (BENCHLINE + 7)
+#define BLUELINE (BENCHLINE + 8)
 #define BLUECOL 0
 #define REDLINE BLUELINE
 #define REDCOL 40
 #define CONTROLLINE 0
 #define CONTROLCOL 30
+#define DBGLINE (CONTROLLINE + NUMKEYS+3)
+#define DBGCOL 30
 void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, long nsec_getdata, long nsec_processdata){
 	//Update CPU usage stats
 	updateStats();
@@ -404,6 +408,16 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	mvprintw(CONTROLLINE, CONTROLCOL,"Controls:");
 	int h=0;
 	for(h=0; h<NUMKEYS; h++) mvprintw(CONTROLLINE+h+2,CONTROLCOL,keys[h]);
+	
+	//print debug messages
+	mvprintw(DBGLINE, DBGCOL, "LAST %d DEBUG MESSAGES:", NUMDBG);
+	mvprintw(DBGLINE+1, DBGCOL, "---------------------------------------------");
+	for(i=0; i<NUMDBG; i++){
+		mvprintw(DBGLINE+2+i,DBGCOL,"-                                              ");
+	}
+	for(i=0; i<NUMDBG; i++){
+		mvprintw(DBGLINE+2+i,DBGCOL+2,messages[(msgi+i)%NUMDBG]);
+	}
 	
 	//finally draw all of this to the screen.
 	refresh();
@@ -487,7 +501,7 @@ void analyzeResults(void){
 	int x_blow[15];
 	int x_rhigh[15];
 	int x_rlow[15];
-	int total_red_x = 0; 
+	total_red_x = 0; 
 	int set_blue = 1;
 	int set_red =1;
 	int k_blue=0;
@@ -515,7 +529,7 @@ void analyzeResults(void){
 			
 				sum_blue = (x_bhigh[k_blue] + ( x_blow[k_blue] -x_bhigh[k_blue] )/2);
 				blue_x[k_blue]=sum_blue;
-				//printf(" * x_blue[%d]  = %d\n", total_blue_x,sum);
+				DBG(" * x_blue[%d]  = %d\n", total_blue_x,sum_blue);
 				k_blue++;
 			}
 		}
@@ -540,7 +554,7 @@ void analyzeResults(void){
 			
 				sum_red = (x_rhigh[k_red] + ( x_rlow[k_red] -x_rhigh[k_red] )/2);
 				red_x[k_red]=sum_red;
-				//printf(" * x_blue[%d]  = %d\n", total_blue_x,sum);
+				DBG(" * x_blue[%d]  = %d\n", total_blue_x,sum_red);
 				k_red++;
 			}
 		 }
@@ -580,7 +594,7 @@ void analyzeResults(void){
 				set_blue =1;
 				sum_blue = (y_bhigh[k_blue] + ( y_blow[k_blue] - y_bhigh[k_blue] )/2);
 				blue_y[k_blue] =sum_blue;
-				//printf(" * y_blue[%d]  = %d\n", total_blue_y,sum);
+				DBG(" * y_blue[%d]  = %d\n", total_blue_y,sum_blue);
 				k_blue++;
 			}
 	
@@ -606,7 +620,7 @@ void analyzeResults(void){
 				set_red =1;
 				sum_red = (y_rhigh[k_red] + ( y_rlow[k_red] - y_rhigh[k_red] )/2);
 				red_y[k_red] =sum_red;
-				//printf(" * y_blue[%d]  = %d\n", total_blue_y,sum);
+				DBG(" * y_blue[%d]  = %d\n", total_blue_y,sum_red);
 				k_red++;
 			}
 

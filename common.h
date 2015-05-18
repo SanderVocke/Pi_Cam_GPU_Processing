@@ -1,7 +1,17 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#define DBG(...) {printf(__VA_ARGS__); printf("\n");}
+#include <stdio.h>
+
+#define NUMDBG 10
+
+FILE * logfile;
+char messages[NUMDBG][300];
+unsigned int msgi = 0;
+
+#define DBG(...) {sprintf(messages[msgi%NUMDBG], __VA_ARGS__); msgi++; fprintf(logfile, __VA_ARGS__); fprintf(logfile, "\n");}
+#define OPENLOG logfile = fopen("log.txt", "w")
+#define CLOSELOG fclose(logfile)
 
 #define MAINSHADER "./shaders/out.glsl"
 
