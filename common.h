@@ -1,13 +1,13 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef __COMMON_H__
+#define __COMMON_H__
 
 #include <stdio.h>
 
 #define NUMDBG 10
 
-FILE * logfile;
-char messages[NUMDBG][300];
-unsigned int msgi = 0;
+extern FILE * logfile;
+extern char messages[NUMDBG][300];
+extern unsigned int msgi;
 
 #define DBG(...) {sprintf(messages[msgi%NUMDBG], __VA_ARGS__); msgi++; fprintf(logfile, __VA_ARGS__); fprintf(logfile, "\n");}
 #define OPENLOG logfile = fopen("log.txt", "w")

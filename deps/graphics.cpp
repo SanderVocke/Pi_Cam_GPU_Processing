@@ -20,17 +20,21 @@ EGLDisplay GDisplay;
 EGLSurface GSurface;
 EGLContext GContext;
 
+GfxShader GDirectVS;
+GfxShader GDirectFS;
 GfxShader GSimpleVS;
 GfxShader GSimpleFS;
 GfxShader GYUVFS;
 GfxShader GHorSumFS, GVerSumFS;
 GfxShader GCoordFS;
 GfxShader GThresholdFS;
+GfxProgram GDirectProg;
 GfxProgram GSimpleProg;
 GfxProgram GYUVProg;
 GfxProgram GHorSumProg, GVerSumProg;
 GfxProgram GThresholdProg;
 GLuint GQuadVertexBuffer;
+GLuint GLinesVertexBuffer;
 
 void Finish(){
 	glFinish();
@@ -144,6 +148,7 @@ void InitGraphics()
 		1.0f, 1.0f, 1.0f, 1.0f
 	};
 	glGenBuffers(1, &GQuadVertexBuffer);
+	glGenBuffers(1, &GLinesVertexBuffer);
 	check();
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertex_positions), quad_vertex_positions, GL_STATIC_DRAW);
@@ -153,17 +158,20 @@ void InitGraphics()
 
 void UpdateShaders(void){
 	//load the test shaders
+	GDirectVS.LoadVertexShader("./shaders/vertex.glsl");
 	GSimpleVS.LoadVertexShader("./shaders/auxiliary/vertices.glsl");
 	GSimpleFS.LoadFragmentShader("./shaders/auxiliary/copy.glsl");
 	GYUVFS.LoadFragmentShader("./shaders/auxiliary/yuvtorgba_dedonut.glsl");
 	GHorSumFS.LoadFragmentShader("./shaders/summer_hor.glsl");
 	GVerSumFS.LoadFragmentShader("./shaders/summer_ver.glsl");
 	GThresholdFS.LoadFragmentShader("./shaders/thresholdshader.glsl");
+	GDirectFS.LoadFragmentShader("./shaders/color.glsl");
 	GSimpleProg.Create(&GSimpleVS,&GSimpleFS);
 	GYUVProg.Create(&GSimpleVS,&GYUVFS);
 	GHorSumProg.Create(&GSimpleVS,&GHorSumFS);
 	GVerSumProg.Create(&GSimpleVS,&GVerSumFS);
 	GThresholdProg.Create(&GSimpleVS,&GThresholdFS);
+	GDirectProg.Create(&GDirectVS, &GDirectFS);
 	check();
 }
 
@@ -565,6 +573,39 @@ void DrawVerSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 		glBindFramebuffer(GL_FRAMEBUFFER,0);
 		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
 	}
+}
+
+void DrawBox(float x0, float y0, float x1,float y1,float R,float G,float B){
+	
+	static const GLfloat ver[] = {
+		0.0f, 0.0f,	1.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f
+	};
+	
+	glBindBuffer(GL_ARRAY_BUFFER, GLinesVertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(ver), ver, GL_STATIC_DRAW);
+	
+	
+	glBindFramebuffer(GL_FRAMEBUFFER,0);
+	glViewport(0,0,GScreenWidth, GScreenHeight);
+	glUseProgram(GDirectProg.GetId());
+	check();
+	
+	glUniform2f(glGetUniformLocation(GDirectProg.GetId(),"offset"),x0,y0);
+	glUniform2f(glGetUniformLocation(GDirectProg.GetId(),"scale"),x1-x0,y1-y0);
+	glUniform4f(glGetUniformLocation(GDirectProg.GetId(),"color"), R, G, B, 1.0f);
+	check();
+	
+	GLuint loc = glGetAttribLocation(GDirectProg.GetId(), "vertex");
+	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0); check();
+	glEnableVertexAttribArray(loc); check();
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+	check();
+	glDrawArrays(GL_LINE_STRIP,0,5);
+	
 }
 
 bool GfxTexture::CreateRGBA(int width, int height, const void* data, GLfloat MinMag, GLfloat Wrap)

@@ -17,12 +17,16 @@
 
 #define PI (3.141592653589793)
 
+FILE * logfile;
+char messages[NUMDBG][300];
+unsigned int msgi = 0;
+
 int dWidth, dHeight; //width and height of "dedonuted" image
 bool gHaveI2C = false;
 bool showWindow = false;
-bool renderScreen = false;
-bool imageAvailable = false;
-bool doImage = false;
+bool renderScreen = true;
+bool imageAvailable = true;
+bool doImage = true;
 
 //For post-processing on CPU
 int blue_x [30];
@@ -270,7 +274,7 @@ int main(int argc, const char **argv)
 			DrawTextureRect(&versumtexture2, 0.8f, 0.15f, -1.0f, 0.05f, NULL);
 		}
 		
-		EndFrame();
+		
 		
 		clock_gettime(CLOCK_REALTIME, &t_draw); //benchmarking
 		
@@ -285,6 +289,8 @@ int main(int argc, const char **argv)
 		
 		//DATA ANALYSIS ON CPU
 		analyzeResults();
+		
+		EndFrame();
 		
 		clock_gettime(CLOCK_REALTIME, &t_processdata); //for benchmarking.		
 		
@@ -491,22 +497,47 @@ void analyzeResults(void){
 		int x;
 		int y;
 	};
+	
+	struct box_x{
+		int x_start;
+		int x_stop;
+	};
+	
+	struct box_y{
+		int y_start;
+		int y_stop;
+	};
+	
+	struct object{
+		int x_start;
+		int x_stop;
+		int y_start;
+		int y_stop;
+		
+	};
 
-	struct centroid c_red[30];
-	struct centroid c_blue[30];
-
+	struct centroid c_red[200];
+	struct centroid c_blue[200];
+	
+	struct box_x  box_blue_x[200];
+	struct box_x  box_red_x[200];
+	struct box_y  box_red_y[200];
+	struct box_y  box_blue_y[200];
+    struct object object_blue[300];
+	struct object object_red[300];
+	
 	int a;
 	int a1,a2, sum_blue, sum_red;
-	int x_bhigh[15];
-	int x_blow[15];
-	int x_rhigh[15];
-	int x_rlow[15];
+	int x_bhigh[40];
+	int x_blow[40];
+	int x_rhigh[40];
+	int x_rlow[40];
 	total_red_x = 0; 
 	int set_blue = 1;
 	int set_red =1;
 	int k_blue=0;
 	int k_red=0;
-	total_blue_x = total_red_x = 0;
+	total_blue_x  = 0;
 	unsigned char * verptr = (unsigned char*)versumtexture2.image;
 	for(int j=0; j< (versumtexture2.Width); j++)
 	{   
@@ -516,6 +547,8 @@ void analyzeResults(void){
 			if(a1>0)
 			{   
 				x_bhigh[k_blue] =j;
+				box_blue_x[k_blue].x_start=j;
+				
 				set_blue =0;
 			}
 	     }
@@ -525,6 +558,7 @@ void analyzeResults(void){
 			{   
 				total_blue_x++;
 				x_blow[k_blue] =j;
+				box_blue_x[k_blue].x_stop=j;
 				set_blue =1;
 			
 				sum_blue = (x_bhigh[k_blue] + ( x_blow[k_blue] -x_bhigh[k_blue] )/2);
@@ -541,6 +575,7 @@ void analyzeResults(void){
 			if(a2>0)
 			{   
 				x_rhigh[k_red] =j;
+				box_red_x[k_red].x_start=j;
 				set_red =0;
 			}
 	     }
@@ -550,11 +585,12 @@ void analyzeResults(void){
 			{   
 				total_red_x++;
 				x_rlow[k_red] =j;
+				box_red_x[k_red].x_stop=j;
 				set_red =1;
 			
 				sum_red = (x_rhigh[k_red] + ( x_rlow[k_red] -x_rhigh[k_red] )/2);
 				red_x[k_red]=sum_red;
-				DBG(" * x_blue[%d]  = %d\n", total_blue_x,sum_red);
+				DBG(" * x_red[%d]  = %d\n", total_red_x,sum_red);
 				k_red++;
 			}
 		 }
@@ -581,6 +617,7 @@ void analyzeResults(void){
 			if(a1>0)
 			{   			
 				y_bhigh[k_blue] =j;
+				box_blue_y[k_blue].y_start=j;
 				set_blue =0;
 			}
 	    }
@@ -591,6 +628,7 @@ void analyzeResults(void){
 			{   
 				total_blue_y++;
 				y_blow[k_blue] =j;
+				box_blue_y[k_blue].y_stop=j;
 				set_blue =1;
 				sum_blue = (y_bhigh[k_blue] + ( y_blow[k_blue] - y_bhigh[k_blue] )/2);
 				blue_y[k_blue] =sum_blue;
@@ -607,6 +645,7 @@ void analyzeResults(void){
 	       if(a2>0)
 		   {   
 		    	y_rhigh[k_red] =j;
+				box_red_y[k_red].y_start=j;
 				set_red =0;
            }
 	    }
@@ -617,15 +656,97 @@ void analyzeResults(void){
 			{   
 				total_red_y++;
 				y_rlow[k_red] =j;
+				box_red_y[k_red].y_stop=j;
 				set_red =1;
 				sum_red = (y_rhigh[k_red] + ( y_rlow[k_red] - y_rhigh[k_red] )/2);
 				red_y[k_red] =sum_red;
-				DBG(" * y_blue[%d]  = %d\n", total_blue_y,sum_red);
+				DBG(" * y_red[%d]  = %d\n", total_red_y,sum_red);
 				k_red++;
 			}
 
 	 	}
 	}
+	
+	int g,h;
+	int red_centroid_total =0; 
+		for (g=0; g<total_red_x;g++)
+		{   
+			for (h=0; h<total_red_y;h++)
+			
+			{
+				c_red[red_centroid_total].x = red_x[g];
+				c_red[red_centroid_total].y = red_y[h];
+				object_red[red_centroid_total].x_start = box_red_x[g].x_start;
+				object_red[red_centroid_total].x_stop =  box_red_x[g].x_stop;
+				object_red[red_centroid_total].y_start = box_red_y[h].y_start;
+				object_red[red_centroid_total].y_stop= box_red_y[h].y_stop;
+				red_centroid_total++;
+				
+				//DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, NULL);
+				float x0,y0,x1,y1;
+				x0 = -1.0f + 1.8f*(1.0f-(((float)object_red[red_centroid_total].x_stop)/((float)rgbtexture.Width)));
+				x1 = -1.0f + 1.8f*(1.0f-(((float)object_red[red_centroid_total].x_start)/((float)rgbtexture.Width)));
+				y0 = 0.2f + 0.8f*(1.0f-(((float)object_red[red_centroid_total].y_stop)/((float)rgbtexture.Height)));
+				y1 = 0.2f + 0.8f*(1.0f-(((float)object_red[red_centroid_total].y_start)/((float)rgbtexture.Height)));
+				DBG("%f %f %f %f \n", x0,y0,x1,y1);
+				DBG("%d \n", object_red[red_centroid_total].x_start);
+				DrawBox(x0,y0,x1,y1,1.0f,1.0f,0.0f);
+				//DrawBox(0.0f,0.0f,0.1f,0.1f,1.0f,1.0f,0.0f);
+			}
+		}
+		 DBG(" * Total red centroids %d\n",red_centroid_total);
+		
+	int blue_centroid_total =0; 
+		for (g=0; g<total_blue_x;g++)
+		{   
+			for (h=0; h<total_blue_y;h++)
+			
+			{
+				c_blue[blue_centroid_total].x = blue_x[g];
+				c_blue[blue_centroid_total].y = blue_y[h];
+				object_blue[blue_centroid_total].x_start = box_blue_x[g].x_start;
+				object_blue[blue_centroid_total].x_stop =  box_blue_x[g].x_stop;
+				object_blue[blue_centroid_total].y_start = box_blue_y[h].y_start;
+				object_blue[blue_centroid_total].y_stop= box_blue_y[h].y_stop;
+				blue_centroid_total++;
+				
+			}
+		}
+
+		DBG(" * Total blue centroids %d\n",blue_centroid_total  );
+		
+		int total =0;
+		for( int i = 0; i< red_centroid_total; i++ )
+      { 
+	     for( int j = 0; j<blue_centroid_total; j++ )
+		 {
+			 if (
+				 ( c_blue[j].y > c_red[i].y )&& (
+				                               ( ( c_red[i].x < c_blue[j].x)&& (c_blue[j].x < (c_red[i].x+50))) ||
+											   (((c_red[i].x - 50)<c_blue[j].x )&&(c_blue[j].x<c_red[i].x  ))
+											   )
+											   
+											   
+									
+											   
+			 )
+
+			
+         
+		    { 
+				
+				total++;
+			    DBG(" * Contour_blue[%d] - Cx(%d) = %d \n", j,j, c_blue[j].x );
+			    DBG(" * Contour_blue[%d] - Cy(%d) = %d \n", j,j, c_blue[j].y );
+			    DBG(" * Contour_red[%d] - Cx(%d) = %d \n", i,i, c_red[i].x );
+	            DBG(" * Contour_red[%d] - Cy(%d) = %d \n", i,i, c_red[i].y );
+			  
+			}
+
+		 }
+	  }
+	   DBG(" * total possibilities %d \n", total);  
+
 	return;
 }
 

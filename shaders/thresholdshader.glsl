@@ -24,7 +24,7 @@ vec3 doThreshold(vec3 hsv) //this function does the thresholding on a RGB pixel,
 {
     vec3 outThreshold;
 	outThreshold	= vec3(0.0,0.0,0.0);
-    if((hsv[0] >= 0.0) && (hsv[0] <= 0.1) && (hsv[1] > 0.3) && (hsv[2] > 0.3)) outThreshold[0] = 1.0;
+    if((hsv[0] >= 0.85) && (hsv[0] <= 1.0) && (hsv[1] > 0.3) && (hsv[2] > 0.3)) outThreshold[0] = 1.0;
 	if((hsv[0] >= 0.40) && (hsv[0] <= 0.85) && (hsv[1] > 0.3) && (hsv[2] > 0.3)) outThreshold[2] = 1.0;
 	return outThreshold;
 }

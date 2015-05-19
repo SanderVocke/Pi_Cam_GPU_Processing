@@ -1,0 +1,2275 @@
+Start.
+Initializing graphics and camera.
+Camera resolution: 640x640
+Creating Textures.
+Max texture size: 3379
+Dedonut: 2010x153
+Starting process loop.
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
+ * x_red[1]  = 1006
+
+ * y_red[1]  = 93
+
+0.800000 1.000000 0.800000 1.000000 
+
+0 
+
+ * Total red centroids 1
+
+ * Total blue centroids 0
+
+ * total possibilities 0 
+
