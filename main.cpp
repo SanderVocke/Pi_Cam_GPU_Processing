@@ -563,7 +563,7 @@ void analyzeResults(void){
 			
 				sum_blue = (x_bhigh[k_blue] + ( x_blow[k_blue] -x_bhigh[k_blue] )/2);
 				blue_x[k_blue]=sum_blue;
-				DBG(" * x_blue[%d]  = %d\n", total_blue_x,sum_blue);
+				//DBG(" * x_blue[%d]  = %d\n", total_blue_x,sum_blue);
 				k_blue++;
 			}
 		}
@@ -590,7 +590,11 @@ void analyzeResults(void){
 			
 				sum_red = (x_rhigh[k_red] + ( x_rlow[k_red] -x_rhigh[k_red] )/2);
 				red_x[k_red]=sum_red;
-				DBG(" * x_red[%d]  = %d\n", total_red_x,sum_red);
+				//DBG(" * x_red[%d]  = %d\n", total_red_x,sum_red);
+				//DBG(" * x_rlow[%d]  = %d\n", total_red_y,x_rlow[k_red] );
+				//DBG(" * x_rhigh[%d]  = %d\n", total_red_y,x_rhigh[k_red] );
+				//DBG(" * x_rlow[%d]  = %d\n", total_red_y, box_red_x[k_red].x_stop);
+				//DBG(" * x_rhigh[%d]  = %d\n", total_red_y, box_red_x[k_red].x_start);
 				k_red++;
 			}
 		 }
@@ -632,7 +636,8 @@ void analyzeResults(void){
 				set_blue =1;
 				sum_blue = (y_bhigh[k_blue] + ( y_blow[k_blue] - y_bhigh[k_blue] )/2);
 				blue_y[k_blue] =sum_blue;
-				DBG(" * y_blue[%d]  = %d\n", total_blue_y,sum_blue);
+				//DBG(" * y_blue[%d]  = %d\n", total_blue_y,sum_blue);
+				
 				k_blue++;
 			}
 	
@@ -660,7 +665,13 @@ void analyzeResults(void){
 				set_red =1;
 				sum_red = (y_rhigh[k_red] + ( y_rlow[k_red] - y_rhigh[k_red] )/2);
 				red_y[k_red] =sum_red;
-				DBG(" * y_red[%d]  = %d\n", total_red_y,sum_red);
+				//DBG(" * y_red[%d]  = %d\n", total_red_y,sum_red);
+				//DBG(" * y_rlow[%d]  = %d\n", total_red_y,y_rlow[k_red] );
+				//DBG(" * y_rhigh[%d]  = %d\n", total_red_y,y_rhigh[k_red] );
+				//DBG(" * y_rlow[%d]  = %d\n", total_red_y,box_red_y[k_red].y_stop);
+				//DBG(" * y_rhigh[%d]  = %d\n", total_red_y,box_red_y[k_red].y_start);
+				//DBG(" * k_value[%d]  = %d\n", total_red_y,k_red);
+			
 				k_red++;
 			}
 
@@ -677,10 +688,12 @@ void analyzeResults(void){
 				c_red[red_centroid_total].x = red_x[g];
 				c_red[red_centroid_total].y = red_y[h];
 				object_red[red_centroid_total].x_start = box_red_x[g].x_start;
+				
 				object_red[red_centroid_total].x_stop =  box_red_x[g].x_stop;
 				object_red[red_centroid_total].y_start = box_red_y[h].y_start;
 				object_red[red_centroid_total].y_stop= box_red_y[h].y_stop;
-				red_centroid_total++;
+				
+				
 				
 				//DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, NULL);
 				float x0,y0,x1,y1;
@@ -688,13 +701,17 @@ void analyzeResults(void){
 				x1 = -1.0f + 1.8f*(1.0f-(((float)object_red[red_centroid_total].x_start)/((float)rgbtexture.Width)));
 				y0 = 0.2f + 0.8f*(1.0f-(((float)object_red[red_centroid_total].y_stop)/((float)rgbtexture.Height)));
 				y1 = 0.2f + 0.8f*(1.0f-(((float)object_red[red_centroid_total].y_start)/((float)rgbtexture.Height)));
-				DBG("%f %f %f %f \n", x0,y0,x1,y1);
-				DBG("%d \n", object_red[red_centroid_total].x_start);
+				//DBG("%f %f %f %f \n", x0,y0,x1,y1);
+				//DBG("%d \n", object_red[red_centroid_total].x_start);
+				//DBG("%d \n", object_red[red_centroid_total].x_stop);
+				//DBG("%d \n", object_red[red_centroid_total].y_start);
+				//DBG("%d \n", object_red[red_centroid_total].y_start);
 				DrawBox(x0,y0,x1,y1,1.0f,1.0f,0.0f);
 				//DrawBox(0.0f,0.0f,0.1f,0.1f,1.0f,1.0f,0.0f);
+				red_centroid_total++;
 			}
 		}
-		 DBG(" * Total red centroids %d\n",red_centroid_total);
+		 //DBG(" * Total red centroids %d\n",red_centroid_total);
 		
 	int blue_centroid_total =0; 
 		for (g=0; g<total_blue_x;g++)
@@ -713,7 +730,7 @@ void analyzeResults(void){
 			}
 		}
 
-		DBG(" * Total blue centroids %d\n",blue_centroid_total  );
+		//DBG(" * Total blue centroids %d\n",blue_centroid_total  );
 		
 		int total =0;
 		for( int i = 0; i< red_centroid_total; i++ )
@@ -736,16 +753,16 @@ void analyzeResults(void){
 		    { 
 				
 				total++;
-			    DBG(" * Contour_blue[%d] - Cx(%d) = %d \n", j,j, c_blue[j].x );
-			    DBG(" * Contour_blue[%d] - Cy(%d) = %d \n", j,j, c_blue[j].y );
-			    DBG(" * Contour_red[%d] - Cx(%d) = %d \n", i,i, c_red[i].x );
-	            DBG(" * Contour_red[%d] - Cy(%d) = %d \n", i,i, c_red[i].y );
+			    //DBG(" * Contour_blue[%d] - Cx(%d) = %d \n", j,j, c_blue[j].x );
+			    //DBG(" * Contour_blue[%d] - Cy(%d) = %d \n", j,j, c_blue[j].y );
+			    //DBG(" * Contour_red[%d] - Cx(%d) = %d \n", i,i, c_red[i].x );
+	            //DBG(" * Contour_red[%d] - Cy(%d) = %d \n", i,i, c_red[i].y );
 			  
 			}
 
 		 }
 	  }
-	   DBG(" * total possibilities %d \n", total);  
+	   //DBG(" * total possibilities %d \n", total);  
 
 	return;
 }
