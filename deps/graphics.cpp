@@ -147,11 +147,20 @@ void InitGraphics()
 		0.0f, 1.0f, 1.0f, 1.0f,
 		1.0f, 1.0f, 1.0f, 1.0f
 	};
+	static const GLfloat ver[] = {
+		0.0f, 0.0f,	1.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f
+	};	
 	glGenBuffers(1, &GQuadVertexBuffer);
 	glGenBuffers(1, &GLinesVertexBuffer);
 	check();
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertex_positions), quad_vertex_positions, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, GLinesVertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(ver), ver, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	check();
 }
@@ -576,15 +585,6 @@ void DrawVerSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 }
 
 void DrawBox(float x0, float y0, float x1,float y1,float R,float G,float B,GfxTexture*render_target){
-	
-	static const GLfloat ver[] = {
-		0.0f, 0.0f,	1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f
-	};	
-	
 	if(render_target)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
@@ -593,9 +593,6 @@ void DrawBox(float x0, float y0, float x1,float y1,float R,float G,float B,GfxTe
 	}
 	
 	glBindBuffer(GL_ARRAY_BUFFER, GLinesVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(ver), ver, GL_STATIC_DRAW);
-	
-	glViewport(0,0,GScreenWidth, GScreenHeight);
 	glUseProgram(GDirectProg.GetId());
 	check();
 	

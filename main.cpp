@@ -106,6 +106,7 @@ void showTexWindow(float lowh);
 void doInput(void);
 void renderDebugWindow(GfxTexture* render_target);
 void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float y1i);
+void drawBoxInRGB(int x0i, int y0i, int x1i, int y1i, float R, float G, float B);
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
@@ -278,15 +279,7 @@ int main(int argc, const char **argv)
 		DrawHorSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
 		DrawHorSum2(&horsumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture2); //second (final) horizontal summer stage
 		DrawVerSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
-		DrawVerSum2(&versumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture2); //second (final) vertical summer stage
-		
-		//if 's' was pressed, showWindow will be true. Then we need to render our textures onto low-resolution versions for faster capturing back to CPU.
-		if(showWindow){
-			renderDebugWindow(&lowdisptexture); //render to texture
-		}		
-		else if(renderScreen){//if on-screen rendering to HDMI is active, draw all textures in the pipeline to the screen framebuffer as well.
-			renderDebugWindow(NULL); //render to screen
-		}		
+		DrawVerSum2(&versumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture2); //second (final) vertical summer stage		
 		
 		clock_gettime(CLOCK_REALTIME, &t_draw); //benchmarking
 		
@@ -301,6 +294,14 @@ int main(int argc, const char **argv)
 		
 		//DATA ANALYSIS ON CPU
 		analyzeResults();
+		
+		//if 's' was pressed, showWindow will be true. Then we need to render our textures onto low-resolution versions for faster capturing back to CPU.
+		if(showWindow){
+			renderDebugWindow(&lowdisptexture); //render to texture
+		}		
+		else if(renderScreen){//if on-screen rendering to HDMI is active, draw all textures in the pipeline to the screen framebuffer as well.
+			renderDebugWindow(NULL); //render to screen
+		}
 		
 		EndFrame();
 		
@@ -347,13 +348,26 @@ int main(int argc, const char **argv)
 }
 
 void renderDebugWindow(GfxTexture* render_target){
-	DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target);
-	DrawTextureRect(&thresholdtexture, 0.8f, -0.2f, -1.0f, -1.0f, render_target);
-	DrawTextureRect(&horsumtexture1, 0.95f, -0.2f, 0.8f, -1.0f,  render_target);
-	DrawTextureRect(&horsumtexture2, 1.0f, -0.2f, 0.95f, -1.0f, render_target);
-	DrawTextureRect(&versumtexture1, 0.8f, 0.0f, -1.0f, -0.2f, render_target);
-	DrawTextureRect(&versumtexture2, 0.8f, 0.15f, -1.0f, 0.05f, render_target);	
-	drawBoxes(render_target, 0.8f, 1.0f, -1.0f, 0.2f);
+	
+	if(render_target == NULL){
+		DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target);
+		DrawTextureRect(&thresholdtexture, 0.8f, -0.2f, -1.0f, -1.0f, render_target);
+		DrawTextureRect(&horsumtexture1, 0.95f, -0.2f, 0.8f, -1.0f,  render_target);
+		DrawTextureRect(&horsumtexture2, 1.0f, -0.2f, 0.95f, -1.0f, render_target);
+		DrawTextureRect(&versumtexture1, 0.8f, 0.0f, -1.0f, -0.2f, render_target);
+		DrawTextureRect(&versumtexture2, 0.8f, 0.15f, -1.0f, 0.05f, render_target);	
+		drawBoxes(render_target, 0.8f, 1.0f, -1.0f, 0.2f);
+	}
+	else{
+		drawBoxes(&rgbtexture, -1.0f,-1.0f,1.0f,1.0f);
+		DrawTextureRect(&rgbtexture, -1.0f, 0.2f, 0.8f, 1.0f, render_target);
+		DrawTextureRect(&thresholdtexture, -1.0f, -1.0f, 0.8f, -0.2f, render_target);
+		DrawTextureRect(&horsumtexture1, 0.8f, -1.0f, 0.95f, -0.2f,  render_target);
+		DrawTextureRect(&horsumtexture2, 0.95f, -1.0f, 1.0f, -0.2f, render_target);
+		DrawTextureRect(&versumtexture1, -1.0f, -0.2f, 0.8f, 0.0f, render_target);
+		DrawTextureRect(&versumtexture2, -1.0f, 0.05f, 0.8f, 0.15f, render_target);	
+		//drawBoxes(render_target, -1.0f, 0.2f, 0.8f, 1.0f );
+	}
 }
 
 
@@ -747,22 +761,37 @@ void analyzeResults(void){
 		 }
 	  }
 	   //DBG(" * total possibilities %d \n", total);  
-
+	drawBoxInRGB(10, 10, 1000, 20, 1.0f, 0.0f, 0.0f);
 	return;
 }
-//DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target);
+
+//-0.830746 0.294118 -0.857612 0.236601
+//drawBoxes(render_target, -1.0f, 0.2f, 0.8f, 1.0f );
 void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float y1i){
 	int i;
 	float x0,y0,x1,y1;
 	for(i=0; i<red_centroid_total; i++){
-		x0 = x1i + (x0i-x1i)*(((float)object_red[i].x_start)/((float)rgbtexture.Width));
-		x1 = x1i + (x0i-x1i)*(((float)object_red[i].x_stop)/((float)rgbtexture.Width));
-		y0 = y1i + (y0i-y1i)*(((float)object_red[i].y_start)/((float)rgbtexture.Height));
-		y1 = y1i + (y0i-y1i)*(((float)object_red[i].y_stop)/((float)rgbtexture.Height));
-		DBG("%f %f %f %f", x0,y0,x1,y1);
+		x0 = x0i + (x1i-x0i)*(((float)object_red[i].x_start)/((float)rgbtexture.Width));
+		x1 = x0i + (x1i-x0i)*(((float)object_red[i].x_stop)/((float)rgbtexture.Width));
+		y0 = y0i + (y1i-y0i)*(((float)object_red[i].y_start)/((float)rgbtexture.Height));
+		y1 = y0i + (y1i-y0i)*(((float)object_red[i].y_stop)/((float)rgbtexture.Height));
+		//DBG("%f %f %f %f", x0,y0,x1,y1);
 		DrawBox(x0,y0,x1,y1,1.0f,1.0f,0.0f, render_target);
 		//DrawBox(-0.5,-0.5,0.5,0.5,1.0f,0.0f,1.0f, render_target);
 	}
+	
+	//DrawBox(-1.0f,0.2f,0.8f,1.0f,1.0f,1.0f,0.0f, render_target);
+	//DrawBox(x0i,y0i,x1i,y1i, 1.0f,1.0f,0.0f,render_target);
+	//DrawBox(-0.5f,-0.5f,0.5f,0.5f, 1.0f,1.0f,0.0f,render_target);
+}
+
+void drawBoxInRGB(int x0i, int y0i, int x1i, int y1i, float R, float G, float B){
+	float x0,y0,x1,y1;
+	x0 = -1.0f + 2.0f*(((float)x0i)/((float)rgbtexture.Width));
+	x1 = -1.0f + 2.0f*(((float)x1i)/((float)rgbtexture.Width));
+	y0 = -1.0f + 2.0f*(((float)y0i)/((float)rgbtexture.Height));
+	y1 = -1.0f + 2.0f*(((float)y1i)/((float)rgbtexture.Height));
+	DrawBox(x0,y0,x1,y1,R,G,B,&rgbtexture);
 }
 
 void showTexWindow(float lowh){
