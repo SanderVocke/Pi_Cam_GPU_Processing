@@ -29,6 +29,41 @@ bool imageAvailable = true;
 bool doImage = true;
 
 //For post-processing on CPU
+struct centroid{
+	int x;
+	int y;
+};
+
+struct box_x{
+	int x_start;
+	int x_stop;
+};
+
+struct box_y{
+	int y_start;
+	int y_stop;
+};
+
+struct object{
+	int x_start;
+	int x_stop;
+	int y_start;
+	int y_stop;
+	
+};
+
+struct centroid c_red[200];
+struct centroid c_blue[200];
+int red_centroid_total = 0;
+int blue_centroid_total = 0;
+
+struct box_x  box_blue_x[200];
+struct box_x  box_red_x[200];
+struct box_y  box_red_y[200];
+struct box_y  box_blue_y[200];
+struct object object_blue[300];
+struct object object_red[300];
+
 int blue_x [30];
 int blue_y [30];
 int red_x [30];
@@ -55,10 +90,10 @@ struct timespec t_up, t_down, t_left, t_right;
 long int nsec_up, nsec_down, nsec_left, nsec_right;
 
 //DEFINE CPU-SIDE HANDLES (CLASS OBJECTS) FOR ALL OPENGL TEXTURES WE WILL USE
-GfxTexture ytexture, utexture, vtexture, rgbtexture, rgblowtexture, thresholdtexture, thresholdlowtexture;
-GfxTexture dedonutmap, horsumtexture1, horsumtexture2, versumtexture1, versumtexture2;		
-GfxTexture horsumlowtexture1, versumlowtexture1, horsumlowtexture2, versumlowtexture2;
+GfxTexture ytexture, utexture, vtexture, rgbtexture, thresholdtexture;
+GfxTexture dedonutmap, horsumtexture1, horsumtexture2, versumtexture1, versumtexture2;
 GfxTexture fileinputtexture;
+GfxTexture lowdisptexture;
 
 #define UPDATERATE 10
 #define MAX_COORDS 100
@@ -69,6 +104,8 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 void initDeDonutTextures(GfxTexture *targetmap); //initialize the mapping look-up table texture for "de-donuting"
 void showTexWindow(float lowh);
 void doInput(void);
+void renderDebugWindow(GfxTexture* render_target);
+void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float y1i);
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
@@ -152,21 +189,10 @@ int main(int argc, const char **argv)
 	//showWindowd RGB textures
 	//these textures are just low-resolution versions of the above. they are used when we want to get a preview window: transfering the
 	//full-size textures takes too much time so they are first down-sampled.
-	float lowhf = ((float)dHeight/(float)dWidth) * VER_STRETCH;
-	int lowh = (int)(lowhf * g_conf.LOWRES_WIDTH);
+	int lowh = (int)(0.7f * g_conf.LOWRES_WIDTH);
 	if(!lowh) lowh = 1;
-	rgblowtexture.CreateRGBA(g_conf.LOWRES_WIDTH, lowh,NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
-	rgblowtexture.GenerateFrameBuffer();
-	thresholdlowtexture.CreateRGBA(g_conf.LOWRES_WIDTH, lowh,NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
-	thresholdlowtexture.GenerateFrameBuffer();
-	horsumlowtexture1.CreateRGBA(200,lowh,NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
-	horsumlowtexture1.GenerateFrameBuffer();
-	horsumlowtexture2.CreateRGBA(20,lowh,NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
-	horsumlowtexture2.GenerateFrameBuffer();
-	versumlowtexture1.CreateRGBA(g_conf.LOWRES_WIDTH,100,NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
-	versumlowtexture1.GenerateFrameBuffer();
-	versumlowtexture2.CreateRGBA(g_conf.LOWRES_WIDTH,20,NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
-	versumlowtexture2.GenerateFrameBuffer();
+	lowdisptexture.CreateRGBA(g_conf.LOWRES_WIDTH, lowh, NULL, (GLfloat) GL_LINEAR, (GLfloat) GL_CLAMP_TO_EDGE);
+	lowdisptexture.GenerateFrameBuffer();
 	
 	
 	//Start the processing loop.
@@ -256,25 +282,11 @@ int main(int argc, const char **argv)
 		
 		//if 's' was pressed, showWindow will be true. Then we need to render our textures onto low-resolution versions for faster capturing back to CPU.
 		if(showWindow){
-			DrawTextureRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgblowtexture);
-			DrawTextureRect(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &thresholdlowtexture);
-			DrawTextureRect(&horsumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &horsumlowtexture1);
-			DrawTextureRect(&horsumtexture2, -1.0f, -1.0f, 1.0f, 1.0f, &horsumlowtexture2);
-			DrawTextureRect(&versumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &versumlowtexture1);
-			DrawTextureRect(&versumtexture2, -1.0f, -1.0f, 1.0f, 1.0f, &versumlowtexture2);
-		}
-		
-		//if on-screen rendering to HDMI is active, draw all textures in the pipeline to the screen framebuffer as well.
-		if(renderScreen){
-			DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, NULL);
-			DrawTextureRect(&thresholdtexture, 0.8f, -0.2f, -1.0f, -1.0f, NULL);
-			DrawTextureRect(&horsumtexture1, 0.95f, -0.2f, 0.8f, -1.0f,  NULL);
-			DrawTextureRect(&horsumtexture2, 1.0f, -0.2f, 0.95f, -1.0f, NULL);
-			DrawTextureRect(&versumtexture1, 0.8f, 0.0f, -1.0f, -0.2f, NULL);
-			DrawTextureRect(&versumtexture2, 0.8f, 0.15f, -1.0f, 0.05f, NULL);
-		}
-		
-		
+			renderDebugWindow(&lowdisptexture); //render to texture
+		}		
+		else if(renderScreen){//if on-screen rendering to HDMI is active, draw all textures in the pipeline to the screen framebuffer as well.
+			renderDebugWindow(NULL); //render to screen
+		}		
 		
 		clock_gettime(CLOCK_REALTIME, &t_draw); //benchmarking
 		
@@ -334,6 +346,16 @@ int main(int argc, const char **argv)
 	return 0;
 }
 
+void renderDebugWindow(GfxTexture* render_target){
+	DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target);
+	drawBoxes(render_target, 0.8f, 1.0f, -1.0f, 0.2f);
+	DrawTextureRect(&thresholdtexture, 0.8f, -0.2f, -1.0f, -1.0f, render_target);
+	DrawTextureRect(&horsumtexture1, 0.95f, -0.2f, 0.8f, -1.0f,  render_target);
+	DrawTextureRect(&horsumtexture2, 1.0f, -0.2f, 0.95f, -1.0f, render_target);
+	DrawTextureRect(&versumtexture1, 0.8f, 0.0f, -1.0f, -0.2f, render_target);
+	DrawTextureRect(&versumtexture2, 0.8f, 0.15f, -1.0f, 0.05f, render_target);	
+}
+
 
 //this is a function which will be called from the main() program's main loop,
 //updating the "text GUI" which is visible when running the program over SSH.
@@ -358,6 +380,8 @@ int main(int argc, const char **argv)
 #define DBGLINE (CONTROLLINE + NUMKEYS+3)
 #define DBGCOL 30
 void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, long nsec_getdata, long nsec_processdata){
+	clear();
+	
 	//Update CPU usage stats
 	updateStats();
 	
@@ -397,18 +421,18 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	
 	//print the objects we found (for now, x and y axis separately!)
 	int i;
-	mvprintw(BLUELINE, BLUECOL, "Blue coordinates found: %d      ", total_blue_x+total_blue_y);
-	for(i=0; i<20; i++){
-		if(i<total_blue_x) mvprintw(i+BLUELINE+1,BLUECOL, "X found: (%d,?)      ",blue_x[i]);
-		else if(i<(total_blue_x+total_blue_y)) mvprintw(i+BLUELINE+1,BLUECOL,  "Y found: (?,%d)      ",blue_y[i-total_blue_x]);
-		else mvprintw(i+BLUELINE+1,BLUECOL, "(not found)                  ");
-	}
-	mvprintw(REDLINE, REDCOL, "Red coordinates found: %d      ", total_red_x+total_red_y);
-	for(i=0; i<20; i++){
-		if(i<total_red_x) mvprintw(REDLINE+i+1,REDCOL, "X found: (%d,?)      ",red_x[i]);
-		else if(i<(total_red_x+total_red_y)) mvprintw(REDLINE+i+1,REDCOL, "Y found: (?,%d)      ",red_y[i-total_red_x]);
-		else mvprintw(REDLINE+i+1,REDCOL,"(not found)                 ");
-	}
+	mvprintw(BLUELINE, BLUECOL, "Blue objects found: %d      ", blue_centroid_total);
+	//for(i=0; i<20; i++){
+		//if(i<total_blue_x) mvprintw(i+BLUELINE+1,BLUECOL, "X found: (%d,?)      ",blue_x[i]);
+		//else if(i<(total_blue_x+total_blue_y)) mvprintw(i+BLUELINE+1,BLUECOL,  "Y found: (?,%d)      ",blue_y[i-total_blue_x]);
+		//else mvprintw(i+BLUELINE+1,BLUECOL, "(not found)                  ");
+	//}
+	mvprintw(REDLINE, REDCOL, "Red objects found: %d      ", red_centroid_total);
+	//for(i=0; i<20; i++){
+		//if(i<total_red_x) mvprintw(REDLINE+i+1,REDCOL, "X found: (%d,?)      ",red_x[i]);
+		//else if(i<(total_red_x+total_red_y)) mvprintw(REDLINE+i+1,REDCOL, "Y found: (?,%d)      ",red_y[i-total_red_x]);
+		//else mvprintw(REDLINE+i+1,REDCOL,"(not found)                 ");
+	//}
 	
 	//Print the keyboard control instructions
 	mvprintw(CONTROLLINE, CONTROLCOL,"Controls:");
@@ -491,41 +515,7 @@ void initDeDonutTextures(GfxTexture *targetmap){
 }
 
 //function that processes the GPU results into actual coordinates of target
-void analyzeResults(void){
-
-	struct centroid{
-		int x;
-		int y;
-	};
-	
-	struct box_x{
-		int x_start;
-		int x_stop;
-	};
-	
-	struct box_y{
-		int y_start;
-		int y_stop;
-	};
-	
-	struct object{
-		int x_start;
-		int x_stop;
-		int y_start;
-		int y_stop;
-		
-	};
-
-	struct centroid c_red[200];
-	struct centroid c_blue[200];
-	
-	struct box_x  box_blue_x[200];
-	struct box_x  box_red_x[200];
-	struct box_y  box_red_y[200];
-	struct box_y  box_blue_y[200];
-    struct object object_blue[300];
-	struct object object_red[300];
-	
+void analyzeResults(void){	
 	int a;
 	int a1,a2, sum_blue, sum_red;
 	int x_bhigh[40];
@@ -679,7 +669,7 @@ void analyzeResults(void){
 	}
 	
 	int g,h;
-	int red_centroid_total =0; 
+	red_centroid_total =0; 
 		for (g=0; g<total_red_x;g++)
 		{   
 			for (h=0; h<total_red_y;h++)
@@ -696,24 +686,18 @@ void analyzeResults(void){
 				
 				
 				//DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, NULL);
-				float x0,y0,x1,y1;
-				x0 = -1.0f + 1.8f*(1.0f-(((float)object_red[red_centroid_total].x_stop)/((float)rgbtexture.Width)));
-				x1 = -1.0f + 1.8f*(1.0f-(((float)object_red[red_centroid_total].x_start)/((float)rgbtexture.Width)));
-				y0 = 0.2f + 0.8f*(1.0f-(((float)object_red[red_centroid_total].y_stop)/((float)rgbtexture.Height)));
-				y1 = 0.2f + 0.8f*(1.0f-(((float)object_red[red_centroid_total].y_start)/((float)rgbtexture.Height)));
 				//DBG("%f %f %f %f \n", x0,y0,x1,y1);
 				//DBG("%d \n", object_red[red_centroid_total].x_start);
 				//DBG("%d \n", object_red[red_centroid_total].x_stop);
 				//DBG("%d \n", object_red[red_centroid_total].y_start);
-				//DBG("%d \n", object_red[red_centroid_total].y_start);
-				DrawBox(x0,y0,x1,y1,1.0f,1.0f,0.0f);
+				//DBG("%d \n", object_red[red_centroid_total].y_start);				
 				//DrawBox(0.0f,0.0f,0.1f,0.1f,1.0f,1.0f,0.0f);
 				red_centroid_total++;
 			}
 		}
 		 //DBG(" * Total red centroids %d\n",red_centroid_total);
 		
-	int blue_centroid_total =0; 
+	blue_centroid_total =0; 
 		for (g=0; g<total_blue_x;g++)
 		{   
 			for (h=0; h<total_blue_y;h++)
@@ -767,24 +751,33 @@ void analyzeResults(void){
 	return;
 }
 
+void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float y1i){
+	int i;
+	float x0,y0,x1,y1;
+	for(i=0; i<red_centroid_total; i++){
+		x0 = (((float)object_red[i].x_start)/((float)rgbtexture.Width));
+		x1 = (((float)object_red[i].x_stop)/((float)rgbtexture.Width));
+		y0 = (((float)object_red[i].y_start)/((float)rgbtexture.Height));
+		y1 = (((float)object_red[i].y_stop)/((float)rgbtexture.Height));
+		DBG("%f %f %f %f", x0,y0,x1,y1);
+		//DrawBox(x0,y0,x1,y1,1.0f,1.0f,0.0f, render_target);
+		DrawBox(0.4,0.4,0.5,0.5,1.0f,0.0f,1.0f, render_target);
+	}
+}
+
 void showTexWindow(float lowh){
+	clear();
+	
+	mvprintw(0,0,"Transferring and rendering current frame to X window, please wait...");
+	
+	//finally draw all of this to the screen.
+	refresh();
+	
 	//rectangles defining what to draw where in the window
-	SDL_Rect inrect = {0, 0, g_conf.LOWRES_WIDTH, lowh};
-	SDL_Rect thresholdrect = {0, lowh+200, g_conf.LOWRES_WIDTH, lowh};
-	SDL_Rect versum1rect = {0,lowh+90,g_conf.LOWRES_WIDTH,100};
-	SDL_Rect versum2rect = {0,lowh+50,g_conf.LOWRES_WIDTH,20};
-	SDL_Rect horsum1rect = {g_conf.LOWRES_WIDTH,lowh+200,200,lowh};
-	SDL_Rect horsum2rect = {g_conf.LOWRES_WIDTH+240,lowh+200,20,lowh};
+	SDL_Rect rect = {0,0,g_conf.LOWRES_WIDTH,lowh};
 	
 	//draw in the window (see Show() functions of textures, which "really" do the work)
-	rgblowtexture.Show(&inrect);
-	thresholdlowtexture.Show(&thresholdrect);
-	if(showWindow){
-		versumlowtexture1.Show(&versum1rect);
-		versumlowtexture2.Show(&versum2rect);
-		horsumlowtexture1.Show(&horsum1rect);
-		horsumlowtexture2.Show(&horsum2rect);
-	}
+	lowdisptexture.Show(&rect);
 }
 
 void doInput(void){
@@ -843,6 +836,9 @@ void doInput(void){
 				showWindow = true;
 				break;
 			case 'w': //save framebuffers
+				clear();
+				mvprintw(0,0, "Downloading and saving texture framebuffers, please wait...");
+				refresh();
 				//SaveFrameBuffer("tex_fb.png");
 				rgbtexture.Save("./captures/tex_rgb.png");
 				thresholdtexture.Save("./captures/tex_out.png");

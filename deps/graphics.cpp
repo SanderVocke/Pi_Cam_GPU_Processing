@@ -575,7 +575,7 @@ void DrawVerSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 	}
 }
 
-void DrawBox(float x0, float y0, float x1,float y1,float R,float G,float B){
+void DrawBox(float x0, float y0, float x1,float y1,float R,float G,float B,GfxTexture*render_target){
 	
 	static const GLfloat ver[] = {
 		0.0f, 0.0f,	1.0f, 1.0f,
@@ -583,13 +583,18 @@ void DrawBox(float x0, float y0, float x1,float y1,float R,float G,float B){
 		1.0f, 1.0f, 1.0f, 1.0f,
 		0.0f, 1.0f, 1.0f, 1.0f,
 		0.0f, 0.0f, 1.0f, 1.0f
-	};
+	};	
+	
+	if(render_target)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
+		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
+		check();
+	}
 	
 	glBindBuffer(GL_ARRAY_BUFFER, GLinesVertexBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(ver), ver, GL_STATIC_DRAW);
 	
-	
-	glBindFramebuffer(GL_FRAMEBUFFER,0);
 	glViewport(0,0,GScreenWidth, GScreenHeight);
 	glUseProgram(GDirectProg.GetId());
 	check();
@@ -605,7 +610,13 @@ void DrawBox(float x0, float y0, float x1,float y1,float R,float G,float B){
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 	check();
 	glDrawArrays(GL_LINE_STRIP,0,5);
-	
+	if(render_target)
+	{
+		//glFinish();	check();
+		//glFlush(); check();
+		glBindFramebuffer(GL_FRAMEBUFFER,0);
+		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
+	}
 }
 
 bool GfxTexture::CreateRGBA(int width, int height, const void* data, GLfloat MinMag, GLfloat Wrap)
