@@ -348,12 +348,12 @@ int main(int argc, const char **argv)
 
 void renderDebugWindow(GfxTexture* render_target){
 	DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target);
-	drawBoxes(render_target, 0.8f, 1.0f, -1.0f, 0.2f);
 	DrawTextureRect(&thresholdtexture, 0.8f, -0.2f, -1.0f, -1.0f, render_target);
 	DrawTextureRect(&horsumtexture1, 0.95f, -0.2f, 0.8f, -1.0f,  render_target);
 	DrawTextureRect(&horsumtexture2, 1.0f, -0.2f, 0.95f, -1.0f, render_target);
 	DrawTextureRect(&versumtexture1, 0.8f, 0.0f, -1.0f, -0.2f, render_target);
 	DrawTextureRect(&versumtexture2, 0.8f, 0.15f, -1.0f, 0.05f, render_target);	
+	drawBoxes(render_target, 0.8f, 1.0f, -1.0f, 0.2f);
 }
 
 
@@ -750,18 +750,18 @@ void analyzeResults(void){
 
 	return;
 }
-
+//DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target);
 void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float y1i){
 	int i;
 	float x0,y0,x1,y1;
 	for(i=0; i<red_centroid_total; i++){
-		x0 = (((float)object_red[i].x_start)/((float)rgbtexture.Width));
-		x1 = (((float)object_red[i].x_stop)/((float)rgbtexture.Width));
-		y0 = (((float)object_red[i].y_start)/((float)rgbtexture.Height));
-		y1 = (((float)object_red[i].y_stop)/((float)rgbtexture.Height));
+		x0 = x1i + (x0i-x1i)*(((float)object_red[i].x_start)/((float)rgbtexture.Width));
+		x1 = x1i + (x0i-x1i)*(((float)object_red[i].x_stop)/((float)rgbtexture.Width));
+		y0 = y1i + (y0i-y1i)*(((float)object_red[i].y_start)/((float)rgbtexture.Height));
+		y1 = y1i + (y0i-y1i)*(((float)object_red[i].y_stop)/((float)rgbtexture.Height));
 		DBG("%f %f %f %f", x0,y0,x1,y1);
-		//DrawBox(x0,y0,x1,y1,1.0f,1.0f,0.0f, render_target);
-		DrawBox(0.4,0.4,0.5,0.5,1.0f,0.0f,1.0f, render_target);
+		DrawBox(x0,y0,x1,y1,1.0f,1.0f,0.0f, render_target);
+		//DrawBox(-0.5,-0.5,0.5,0.5,1.0f,0.0f,1.0f, render_target);
 	}
 }
 
