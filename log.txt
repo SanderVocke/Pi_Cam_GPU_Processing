@@ -5,3 +5,6 @@ Creating Textures.
 Max texture size: 3379
 Dedonut: 2010x153
 Starting process loop.
+RIGHT speed mismatch
+LEFT speed mismatch
+RIGHT speed mismatch
