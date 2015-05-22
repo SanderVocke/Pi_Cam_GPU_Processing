@@ -812,8 +812,21 @@ void showTexWindow(float lowh){
 void doInput(void){
 	int ch = getch();
 	if(ch==ERR){ //no keypress detected? for now set the motor speeds to 0 again.
-		gHaveI2C = setSpeed(RIGHT_MOTOR,0);
-		gHaveI2C = setSpeed(LEFT_MOTOR, 0);
+		struct timespec temp;
+		long diffl, diffr, diffu, diffd;
+		clock_gettime(CLOCK_REALTIME, &temp);
+		diffl = temp.tv_nsec - t_left.tv_nsec;
+		diffr = temp.tv_nsec - t_right.tv_nsec;
+		diffu = temp.tv_nsec - t_up.tv_nsec;
+		diffd = temp.tv_nsec - t_down.tv_nsec;
+		if(diffl < 0) diffl += 1000000000;
+		if(diffr < 0) diffr += 1000000000;
+		if(diffu < 0) diffu += 1000000000;
+		if(diffd < 0) diffd += 1000000000;
+		if(diffr>60000000 && diffl>60000000 && diffu>60000000 && diffd>60000000){
+			gHaveI2C = setSpeed(RIGHT_MOTOR,0);
+			gHaveI2C = setSpeed(LEFT_MOTOR, 0);
+		}		
 	}
 	else{ //there was a key detected. check out what we should do.
 		while(ch != ERR) //for each key found...
