@@ -90,10 +90,11 @@ struct timespec t_up, t_down, t_left, t_right;
 long int nsec_up, nsec_down, nsec_left, nsec_right;
 
 //DEFINE CPU-SIDE HANDLES (CLASS OBJECTS) FOR ALL OPENGL TEXTURES WE WILL USE
-GfxTexture ytexture, utexture, vtexture, rgbtexture, thresholdtexture;
+GfxTexture ytexture, utexture, vtexture, rgbtexture, thresholdtexture, erodetexture, dilatetexture;
 GfxTexture dedonutmap, horsumtexture1, horsumtexture2, versumtexture1, versumtexture2;
 GfxTexture fileinputtexture;
 GfxTexture lowdisptexture;
+//add erode/dilate textures here!
 
 #define UPDATERATE 10
 #define MAX_COORDS 100
@@ -175,6 +176,12 @@ int main(int argc, const char **argv)
 	thresholdtexture.CreateRGBA(dWidth,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	thresholdtexture.GenerateFrameBuffer();
 	
+	//Morphological filtering textures erode and dilate
+	erodetexture.CreateRGBA(dWidth,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	erodetexture.GenerateFrameBuffer();
+	dilatetexture.CreateRGBA(dWidth,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	dilatetexture.GenerateFrameBuffer();
+	
 	//the textures below hold the summation results. It is a two-stage summation: therefore there are two textures for this with different sizes.
 	//the two-stage approach is because of the GLSL limitation on Pi that allows only reading 64 pixels max per shader.
 	horsumtexture1.CreateRGBA((dWidth/64)+1,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
@@ -185,6 +192,8 @@ int main(int argc, const char **argv)
 	versumtexture1.GenerateFrameBuffer();
 	versumtexture2.CreateRGBA(dWidth,1,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	versumtexture2.GenerateFrameBuffer();
+	
+	//initialize the new textures here!
 	
 
 	//showWindowd RGB textures
@@ -273,12 +282,19 @@ int main(int argc, const char **argv)
 		}
 		
 		//make thresholded
-		DrawThresholdRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &thresholdtexture); //perform (filtering and) thresholding
+		DrawThresholdRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &thresholdtexture); //perform thresholding
+		// Erode and dilate 
+		/** Morphological Opening */
+		DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform erosion [ in the Opening phase, the temporary outputs 
+		DrawDilate(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform dilation		are stored in the wrong texture, for texture re-use]
+		/** Morphological Closing */
+		DrawDilate(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform dilation	  [ in the Closing phase, they are in right order ]
+		DrawErode(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform erosion
 		
 		//sum rows/columns
-		DrawHorSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
+		DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
 		DrawHorSum2(&horsumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture2); //second (final) horizontal summer stage
-		DrawVerSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
+		DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
 		DrawVerSum2(&versumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture2); //second (final) vertical summer stage		
 		
 		clock_gettime(CLOCK_REALTIME, &t_draw); //benchmarking
@@ -350,8 +366,9 @@ int main(int argc, const char **argv)
 void renderDebugWindow(GfxTexture* render_target){
 	
 	if(render_target == NULL){
-		DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target);
+		//DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target);
 		DrawTextureRect(&thresholdtexture, 0.8f, -0.2f, -1.0f, -1.0f, render_target);
+		DrawTextureRect(&erodetexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target);
 		DrawTextureRect(&horsumtexture1, 0.95f, -0.2f, 0.8f, -1.0f,  render_target);
 		DrawTextureRect(&horsumtexture2, 1.0f, -0.2f, 0.95f, -1.0f, render_target);
 		DrawTextureRect(&versumtexture1, 0.8f, 0.0f, -1.0f, -0.2f, render_target);
@@ -360,8 +377,9 @@ void renderDebugWindow(GfxTexture* render_target){
 	}
 	else{
 		drawBoxes(&rgbtexture, -1.0f,-1.0f,1.0f,1.0f);
-		DrawTextureRect(&rgbtexture, -1.0f, 0.2f, 0.8f, 1.0f, render_target);
+		//DrawTextureRect(&rgbtexture, -1.0f, 0.2f, 0.8f, 1.0f, render_target);
 		DrawTextureRect(&thresholdtexture, -1.0f, -1.0f, 0.8f, -0.2f, render_target);
+		DrawTextureRect(&erodetexture, -1.0f, 0.2f, 0.8f, 1.0f, render_target);
 		DrawTextureRect(&horsumtexture1, 0.8f, -1.0f, 0.95f, -0.2f,  render_target);
 		DrawTextureRect(&horsumtexture2, 0.95f, -1.0f, 1.0f, -0.2f, render_target);
 		DrawTextureRect(&versumtexture1, -1.0f, -0.2f, 0.8f, 0.0f, render_target);

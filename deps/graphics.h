@@ -82,5 +82,7 @@ void DrawVerSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 void DrawVerSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 void DrawCoordinates(GfxTexture* hortexture, GfxTexture* vertexture, float x0, float y0, float x1, float y1, float numcoords, GfxTexture* render_target);
 void DrawBox(float x0, float y0, float x1,float y1,float R,float G,float B,GfxTexture* render_target);
+void DrawErode(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
+void DrawDilate(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 
 void UpdateShaders(void);
