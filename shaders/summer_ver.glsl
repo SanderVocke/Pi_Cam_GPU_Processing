@@ -13,7 +13,7 @@ void main(void)
 	//make the sum variable
 	float sum_red = 0.0;
 	float sum_blue = 0.0;
-	float pos = tcoord[1]-step;
+	float pos = tcoord[1]-step*31.0;
 	vec4 pixel;
 	//iterate over 64 source pixels using this step, summing their content	
 	for(int i=0;i<64;i++){

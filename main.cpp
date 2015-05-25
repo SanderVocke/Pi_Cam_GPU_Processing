@@ -61,7 +61,7 @@ struct object{
 	int x_stop;
 	int y_start;
 	int y_stop;
-	
+	bool confirmed;
 };
 
 struct centroid c_red[200];
@@ -120,6 +120,7 @@ void doInput(void);
 void renderDebugWindow(GfxTexture* render_target);
 void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float y1i);
 void drawBoxInRGB(int x0i, int y0i, int x1i, int y1i, float R, float G, float B);
+void checkObject(struct object* obj, bool red);
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
@@ -756,6 +757,9 @@ void analyzeResults(void){
 				object_red[red_centroid_total].x_stop =  box_red_x[g].x_stop;
 				object_red[red_centroid_total].y_start = box_red_y[h].y_start;
 				object_red[red_centroid_total].y_stop= box_red_y[h].y_stop;
+				object_red[red_centroid_total].confirmed = false;
+				
+				checkObject(&(object_red[red_centroid_total]), true);
 				
 				
 				
@@ -783,6 +787,8 @@ void analyzeResults(void){
 				object_blue[blue_centroid_total].x_stop =  box_blue_x[g].x_stop;
 				object_blue[blue_centroid_total].y_start = box_blue_y[h].y_start;
 				object_blue[blue_centroid_total].y_stop= box_blue_y[h].y_stop;
+				object_blue[blue_centroid_total].confirmed = false;
+				checkObject(&(object_blue[blue_centroid_total]), false);
 				blue_centroid_total++;
 				
 			}
@@ -821,8 +827,44 @@ void analyzeResults(void){
 		 }
 	  }
 	   //DBG(" * total possibilities %d \n", total);  
-	drawBoxInRGB(10, 10, 1000, 20, 1.0f, 0.0f, 0.0f);
+	//drawBoxInRGB(10, 10, 1000, 20, 1.0f, 0.0f, 0.0f);
 	return;
+}
+
+void checkObject(struct object* obj, bool red){
+	//not red = blue ;)
+
+	int xstartl, xstopl, xstep, ystep;
+	
+	//by default, the object is NOT confirmed.
+	obj->confirmed = false;
+	
+	//low-resolution versions of xstart and xstop
+	xstartl = obj->x_start / 64;
+	xstopl = obj->x_stop / 64;	
+	if(xstopl > (horsumtexture1.Width-1)) xstopl = (horsumtexture1.Width-1); //clamp
+	
+	//adjust step size to check maximum of 32x8 pixels (skipping some in case of huge objects)
+	ystep = (obj->y_stop - obj->y_start)/32;
+	if(!ystep) ystep = 1;
+	xstep = (xstopl-xstartl)/8;
+	if(!xstep) xstep = 1;
+	
+	
+	//for new object dimensions (if applicable)
+	int xstartnl = xstartl;
+	int xstopnl = xstopl;
+	int ystartn = obj->y_start;
+	int ystopn = obj->y_stop;
+	
+	//offset of color inside pixel (red or blue)
+	int coloroffset = (red) ? 0 : 2;
+	
+	for(int x = xstartl; x<=xstopl; x+=xstep){
+		for(int y = obj->y_start; y <= obj->y_stop; y+=ystep){
+			if(((char*)horsumtexture1.image)[(horsumtexture1.Width*y+x)*4+coloroffset]) obj->confirmed = true;
+		}
+	}
 }
 
 //-0.830746 0.294118 -0.857612 0.236601
@@ -831,12 +873,24 @@ void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float
 	int i;
 	float x0,y0,x1,y1;
 	for(i=0; i<red_centroid_total; i++){
+		if(!object_red[i].confirmed) continue;
 		x0 = x0i + (x1i-x0i)*(((float)object_red[i].x_start)/((float)rgbtexture.Width));
 		x1 = x0i + (x1i-x0i)*(((float)object_red[i].x_stop)/((float)rgbtexture.Width));
 		y0 = y0i + (y1i-y0i)*(((float)object_red[i].y_start)/((float)rgbtexture.Height));
 		y1 = y0i + (y1i-y0i)*(((float)object_red[i].y_stop)/((float)rgbtexture.Height));
 		//DBG("%f %f %f %f", x0,y0,x1,y1);
-		DrawBox(x0,y0,x1,y1,1.0f,1.0f,0.0f, render_target);
+		DrawBox(x0,y0,x1,y1,1.0f,0.0f,0.0f, render_target);
+		//DrawBox(-0.5,-0.5,0.5,0.5,1.0f,0.0f,1.0f, render_target);
+	}
+	
+	for(i=0; i<blue_centroid_total; i++){
+		if(!object_blue[i].confirmed) continue;
+		x0 = x0i + (x1i-x0i)*(((float)object_blue[i].x_start)/((float)rgbtexture.Width));
+		x1 = x0i + (x1i-x0i)*(((float)object_blue[i].x_stop)/((float)rgbtexture.Width));
+		y0 = y0i + (y1i-y0i)*(((float)object_blue[i].y_start)/((float)rgbtexture.Height));
+		y1 = y0i + (y1i-y0i)*(((float)object_blue[i].y_stop)/((float)rgbtexture.Height));
+		//DBG("%f %f %f %f", x0,y0,x1,y1);
+		DrawBox(x0,y0,x1,y1,0.0f,0.0f,1.0f, render_target);
 		//DrawBox(-0.5,-0.5,0.5,0.5,1.0f,0.0f,1.0f, render_target);
 	}
 	

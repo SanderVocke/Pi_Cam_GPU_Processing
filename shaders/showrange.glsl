@@ -20,8 +20,11 @@ void main(void)
 		v = 1.0 - (1.0-range[3])*((tcoord.y-0.5)*2.0);
 	}
 	
-	h = range[0] + (range[1]-range[0])*tcoord.x;
-	if(h > 1.0) h -= 1.0;	
+	if(range[1]>range[0]) h = range[0] + (range[1]-range[0])*tcoord.x;
+	else{
+		h = range[0] + (range[1]+1.0-range[0])*tcoord.x;
+		if(h>1.0) h = h-1.0;
+	}	
 	
 	gl_FragColor = vec4(hsv2rgb(vec3(h,s,v)),1.0);
 }
