@@ -860,12 +860,40 @@ void checkObject(struct object* obj, bool red){
 	//offset of color inside pixel (red or blue)
 	int coloroffset = (red) ? 0 : 2;
 	
+	bool started = false;
+	bool present = false;
 	for(int x = xstartl; x<=xstopl; x+=xstep){
 		for(int y = obj->y_start; y <= obj->y_stop; y+=ystep){
-			if(((char*)horsumtexture1.image)[(horsumtexture1.Width*y+x)*4+coloroffset]) obj->confirmed = true; //if we find at least one pixel of the right color, there is an object here.
-			
-			//HERE, DO SIMPLE ROW/COLUMN-BASED METHOD TO MINIMIZE BOX / SPLIT UP IF MULTIPLE OBJECTS.
+			if(((char*)horsumtexture1.image)[(horsumtexture1.Width*y+x)*4+coloroffset]){
+				obj->confirmed = true; //if we find at least one pixel of the right color, there is an object here.
+				present = true;
+			}			
 		}
+		if((!started) && present){
+			started = true;
+			if(x*64>obj->x_start) obj->x_start = x*64;
+		}
+		else if(started && (!present)){
+			started = false;
+			if(x*64<obj->x_stop) obj->x_stop = x*64;
+		}
+		present = false;
+	}	
+	started = present = false;
+	for(int y = obj->y_start; y <= obj->y_stop; y+=ystep){
+		for(int x = xstartl; x<=xstopl; x+=xstep){	
+			if(((char*)horsumtexture1.image)[(horsumtexture1.Width*y+x)*4+coloroffset]) present = true;
+			//HERE, ROW-BASED METHOD TO MINIMIZE BOX / SPLIT UP IF MULTIPLE OBJECTS.			
+		}
+		if((!started) && present){
+			started = true;
+			if(y>obj->y_start) obj->y_start = y;
+		}
+		else if(started && (!present)){
+			started = false;
+			if(y<obj->y_stop) obj->y_stop = y;
+		}
+		present = false;		
 	}
 }
 
