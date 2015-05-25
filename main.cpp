@@ -366,9 +366,10 @@ int main(int argc, const char **argv)
 void renderDebugWindow(GfxTexture* render_target){
 	
 	if(render_target == NULL){
-		//DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target);
-		DrawTextureRect(&thresholdtexture, 0.8f, -0.2f, -1.0f, -1.0f, render_target);
-		DrawTextureRect(&erodetexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target);
+		DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target);
+		//DrawTextureRect(&thresholdtexture, 0.8f, -0.2f, -1.0f, -1.0f, render_target);
+		//DrawTextureRect(&erodetexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target); //draw eroded where input was before
+		DrawTextureRect(&erodetexture, 0.8f, -0.2f, -1.0f, -1.0f, render_target); //draw eroded where thresholded was before
 		DrawTextureRect(&horsumtexture1, 0.95f, -0.2f, 0.8f, -1.0f,  render_target);
 		DrawTextureRect(&horsumtexture2, 1.0f, -0.2f, 0.95f, -1.0f, render_target);
 		DrawTextureRect(&versumtexture1, 0.8f, 0.0f, -1.0f, -0.2f, render_target);
@@ -376,15 +377,16 @@ void renderDebugWindow(GfxTexture* render_target){
 		drawBoxes(render_target, 0.8f, 1.0f, -1.0f, 0.2f);
 	}
 	else{
-		drawBoxes(&rgbtexture, -1.0f,-1.0f,1.0f,1.0f);
-		//DrawTextureRect(&rgbtexture, -1.0f, 0.2f, 0.8f, 1.0f, render_target);
-		DrawTextureRect(&thresholdtexture, -1.0f, -1.0f, 0.8f, -0.2f, render_target);
-		DrawTextureRect(&erodetexture, -1.0f, 0.2f, 0.8f, 1.0f, render_target);
+		//drawBoxes(&rgbtexture, -1.0f,-1.0f,1.0f,1.0f);
+		DrawTextureRect(&rgbtexture, -1.0f, 0.2f, 0.8f, 1.0f, render_target);
+		//DrawTextureRect(&thresholdtexture, -1.0f, -1.0f, 0.8f, -0.2f, render_target);
+		//DrawTextureRect(&erodetexture, -1.0f, 0.2f, 0.8f, 1.0f, render_target); //draw eroded where input was before
+		DrawTextureRect(&erodetexture, -1.0f, -1.0f, 0.8f, -0.2f, render_target); //draw eroded where thresholded was before
 		DrawTextureRect(&horsumtexture1, 0.8f, -1.0f, 0.95f, -0.2f,  render_target);
 		DrawTextureRect(&horsumtexture2, 0.95f, -1.0f, 1.0f, -0.2f, render_target);
 		DrawTextureRect(&versumtexture1, -1.0f, -0.2f, 0.8f, 0.0f, render_target);
 		DrawTextureRect(&versumtexture2, -1.0f, 0.05f, 0.8f, 0.15f, render_target);	
-		//drawBoxes(render_target, -1.0f, 0.2f, 0.8f, 1.0f );
+		drawBoxes(render_target, -1.0f, 0.2f, 0.8f, 1.0f );
 	}
 }
 
