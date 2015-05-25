@@ -266,9 +266,7 @@ int main(int argc, const char **argv)
 		vtexture.SetPixels(data+vpos);
 		cam->EndReadFrame(0);
 		
-		clock_gettime(CLOCK_REALTIME, &t_putframe); //benchmarking
-		
-		
+		clock_gettime(CLOCK_REALTIME, &t_putframe); //benchmarking		
 		
 		//PART THAT INSTRUCTS OPENGL TO START EXECUTING THE SHADER CODE (.glsl files) ON THE GPU
 		//begin frame: a call from the graphics.h/cpp module that starts the rendering pipeline for this frame.
@@ -296,6 +294,8 @@ int main(int argc, const char **argv)
 		DrawHorSum2(&horsumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture2); //second (final) horizontal summer stage
 		DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
 		DrawVerSum2(&versumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture2); //second (final) vertical summer stage		
+		
+		Finish(); //for accurate benchmarking
 		
 		clock_gettime(CLOCK_REALTIME, &t_draw); //benchmarking
 		
