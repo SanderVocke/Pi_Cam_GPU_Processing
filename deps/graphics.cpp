@@ -29,12 +29,14 @@ GfxShader GHorSumFS, GVerSumFS;
 GfxShader GCoordFS;
 GfxShader GThresholdFS;
 GfxShader GErodeFS, GDilateFS;
+GfxShader GRangeFS;
 GfxProgram GDirectProg;
 GfxProgram GSimpleProg;
 GfxProgram GYUVProg;
 GfxProgram GHorSumProg, GVerSumProg;
 GfxProgram GThresholdProg;
 GfxProgram GErodeProg, GDilateProg;
+GfxProgram GRangeProg;
 GLuint GQuadVertexBuffer;
 GLuint GLinesVertexBuffer;
 
@@ -179,6 +181,7 @@ void UpdateShaders(void){
 	GErodeFS.LoadFragmentShader("./shaders/erodefragshader_ours.glsl");
 	GDilateFS.LoadFragmentShader("./shaders/dilatefragshader_ours.glsl");
 	GDirectFS.LoadFragmentShader("./shaders/color.glsl");
+	GRangeFS.LoadFragmentShader("./shaders/showrange.glsl");
 	GSimpleProg.Create(&GSimpleVS,&GSimpleFS);
 	GYUVProg.Create(&GSimpleVS,&GYUVFS);
 	GHorSumProg.Create(&GSimpleVS,&GHorSumFS);
@@ -187,6 +190,7 @@ void UpdateShaders(void){
 	GErodeProg.Create(&GSimpleVS,&GErodeFS);
 	GDilateProg.Create(&GSimpleVS,&GDilateFS);
 	GDirectProg.Create(&GDirectVS, &GDirectFS);
+	GRangeProg.Create(&GSimpleVS, &GRangeFS);
 	check();
 }
 
@@ -336,7 +340,46 @@ bool GfxProgram::Create(GfxShader* vertex_shader, GfxShader* fragment_shader)
 	return true;	
 }
 
-void DrawThresholdRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target)
+void DrawRangeRect(float x0, float y0, float x1, float y1,
+ float hmin, float hmax, float smin, float vmin,
+ GfxTexture* render_target)
+{
+	if(render_target)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
+		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
+		check();
+	}
+
+	glUseProgram(GRangeProg.GetId());	check();
+
+	glUniform2f(glGetUniformLocation(GRangeProg.GetId(),"offset"),x0,y0);
+	glUniform2f(glGetUniformLocation(GRangeProg.GetId(),"scale"),x1-x0,y1-y0);
+	glUniform4f(glGetUniformLocation(GRangeProg.GetId(),"range"),hmin, hmax, smin, vmin);
+	check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
+
+	GLuint loc = glGetAttribLocation(GThresholdProg.GetId(),"vertex");
+	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
+	glEnableVertexAttribArray(loc);	check();
+	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 ); check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	if(render_target)
+	{
+		//glFinish();	check();
+		//glFlush(); check();
+		glBindFramebuffer(GL_FRAMEBUFFER,0);
+		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
+	}
+}
+
+void DrawThresholdRect(GfxTexture* texture, float x0, float y0, float x1, float y1,
+ float redmin, float redmax, float redsmin, float redvmin,
+ float bluemin, float bluemax, float bluesmin, float bluevmin,
+ GfxTexture* render_target)
 {
 	if(render_target)
 	{
@@ -349,6 +392,8 @@ void DrawThresholdRect(GfxTexture* texture, float x0, float y0, float x1, float 
 
 	glUniform2f(glGetUniformLocation(GThresholdProg.GetId(),"offset"),x0,y0);
 	glUniform2f(glGetUniformLocation(GThresholdProg.GetId(),"scale"),x1-x0,y1-y0);
+	glUniform4f(glGetUniformLocation(GThresholdProg.GetId(),"redrange"),redmin, redmax, redsmin, redvmin);
+	glUniform4f(glGetUniformLocation(GThresholdProg.GetId(),"bluerange"),bluemin, bluemax, bluesmin, bluevmin);
 	glUniform1i(glGetUniformLocation(GThresholdProg.GetId(),"tex"), 0);
 	check();
 

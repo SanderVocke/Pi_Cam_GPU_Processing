@@ -1,6 +1,8 @@
 //VARYING AND UNIFORM VARIABLES: AUTOMATICALLY SET BEFORE STARTING (BY HOST OR VERTEX SHADER)
 varying vec2 tcoord; //gives our own coordinate as normalized floating point (x,y)
 uniform sampler2D tex; //input texture (panoramic camera image in RGBA)
+uniform vec4 redrange; //red thresholding range (min, max, minS, minV). If max<min, we take everything above min and below max (wrap-around).
+uniform vec4 bluerange; //same for blue.
 
 vec3 rgb2hsv(vec3 c) //this function converts a vec3 pixel from RGB to HSV. (copied from example code)
 {
@@ -24,8 +26,23 @@ vec3 doThreshold(vec3 hsv) //this function does the thresholding on a RGB pixel,
 {
     vec3 outThreshold;
 	outThreshold	= vec3(0.0,0.0,0.0);
-    if((hsv[0] >= 0.85) && (hsv[0] <= 1.0) && (hsv[1] > 0.3) && (hsv[2] > 0.3)) outThreshold[0] = 1.0;
-	if((hsv[0] >= 0.40) && (hsv[0] <= 0.85) && (hsv[1] > 0.3) && (hsv[2] > 0.3)) outThreshold[2] = 1.0;
+	if(redrange[0] < redrange[1]){
+		if((hsv[0] >= redrange[0]) && (hsv[0] <= redrange[1]) && (hsv[1] > redrange[2]) && (hsv[2] > redrange[3])) outThreshold[0] = 1.0;
+	}
+	else{
+		if(((hsv[0] >= redrange[1]) || (hsv[0] <= redrange[0])) && (hsv[1] > redrange[2]) && (hsv[2] > redrange[3])) outThreshold[0] = 1.0;
+	}
+	
+	if(bluerange[0] < bluerange[1]){
+		if((hsv[0] >= bluerange[0]) && (hsv[0] <= bluerange[1]) && (hsv[1] > bluerange[2]) && (hsv[2] > bluerange[3])) outThreshold[2] = 1.0;
+	}
+	else{
+		if(((hsv[0] >= bluerange[1]) || (hsv[0] <= bluerange[0])) && (hsv[1] > bluerange[2]) && (hsv[2] > bluerange[3])) outThreshold[2] = 1.0;
+	}	
+	
+	
+    //if((hsv[0] >= 0.85) && (hsv[0] <= 1.0) && (hsv[1] > 0.3) && (hsv[2] > 0.3)) outThreshold[0] = 1.0;
+	//if((hsv[0] >= 0.40) && (hsv[0] <= 0.85) && (hsv[1] > 0.3) && (hsv[2] > 0.3)) outThreshold[2] = 1.0;
 	return outThreshold;
 }
 

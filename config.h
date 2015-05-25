@@ -11,6 +11,8 @@ typedef struct config_t{
 	int CAPTURE_HEIGHT;
 	int CAPTURE_FPS;
 	int LOWRES_WIDTH;
+	float REDPARAMS[4];
+	float BLUEPARAMS[4];
 }config_t;
 
 extern config_t g_conf;

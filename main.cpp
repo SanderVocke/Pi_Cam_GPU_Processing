@@ -28,6 +28,18 @@ bool renderScreen = true;
 bool imageAvailable = true;
 bool doImage = true;
 
+float redparams[4];
+float blueparams[4];
+
+int redadj = 0;
+int blueadj = 0;
+const char* redprops[] = {
+	"Hmin", "Hmax", "Smin", "Vmin"
+};
+const char* blueprops[] = {
+	"Hmin", "Hmax", "Smin", "Vmin"
+};
+
 //For post-processing on CPU
 struct centroid{
 	int x;
@@ -111,13 +123,16 @@ void drawBoxInRGB(int x0i, int y0i, int x1i, int y1i, float R, float G, float B)
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
-#define NUMKEYS 6
+#define NUMKEYS 9
 const char* keys[NUMKEYS] = {
 	"arrow keys: move bot",
 	"s: show snapshot window",
 	"w: save framebuffers",
 	"r: turn HDMI live rendering on/off",
 	"i: use PNG input image instead of camera stream",
+	"t/g: change which thres param to tweak (red/blue resp.)",
+	"y/h: course tweak of parameter (red/blue resp.)",
+	"u/j: fine tweak of parameter (red/blue resp.)",
 	"q: quit"
 };
 
@@ -129,6 +144,10 @@ int main(int argc, const char **argv)
 	OPENLOG; //start log file.
 	updateStats(); //baseline CPU usage stats.
 	initConfig(); //get program settings from the config.txt file.
+	for(int i =0; i<4; i++){
+		redparams[i] = g_conf.REDPARAMS[i];
+		blueparams[i] = g_conf.BLUEPARAMS[i];
+	}
 	if(startI2CMotor()) gHaveI2C = true; //Start I2C.
 
 	//init graphics and camera
@@ -280,7 +299,10 @@ int main(int argc, const char **argv)
 		}
 		
 		//make thresholded
-		DrawThresholdRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &thresholdtexture); //perform thresholding
+		DrawThresholdRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, 
+			redparams[0], redparams[1], redparams[2], redparams[3],
+			blueparams[0], blueparams[1], blueparams[2], blueparams[3],
+			&thresholdtexture); //perform thresholding
 		// Erode and dilate 
 		/** Morphological Opening */
 		DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform erosion [ in the Opening phase, the temporary outputs 
@@ -374,6 +396,12 @@ void renderDebugWindow(GfxTexture* render_target){
 		DrawTextureRect(&horsumtexture2, 1.0f, -0.2f, 0.95f, -1.0f, render_target);
 		DrawTextureRect(&versumtexture1, 0.8f, 0.0f, -1.0f, -0.2f, render_target);
 		DrawTextureRect(&versumtexture2, 0.8f, 0.15f, -1.0f, 0.05f, render_target);	
+		DrawRangeRect(0.8f, 1.0f, 1.0f, 0.6f,
+			redparams[0], redparams[1], redparams[2], redparams[3],
+			render_target);
+		DrawRangeRect(0.8f, 0.6f, 1.0f, 0.2f,
+			blueparams[0], blueparams[1], blueparams[2], blueparams[3],
+			render_target);
 		drawBoxes(render_target, 0.8f, 1.0f, -1.0f, 0.2f);
 	}
 	else{
@@ -386,6 +414,12 @@ void renderDebugWindow(GfxTexture* render_target){
 		DrawTextureRect(&horsumtexture2, 0.95f, -1.0f, 1.0f, -0.2f, render_target);
 		DrawTextureRect(&versumtexture1, -1.0f, -0.2f, 0.8f, 0.0f, render_target);
 		DrawTextureRect(&versumtexture2, -1.0f, 0.05f, 0.8f, 0.15f, render_target);	
+		DrawRangeRect(0.8f, 0.2f, 1.0f, 0.6f,
+			redparams[0], redparams[1], redparams[2], redparams[3],
+			render_target);
+		DrawRangeRect(0.8f, 0.6f, 1.0f, 1.0f,
+			blueparams[0], blueparams[1], blueparams[2], blueparams[3],
+			render_target);
 		drawBoxes(render_target, -1.0f, 0.2f, 0.8f, 1.0f );
 	}
 }
@@ -411,8 +445,10 @@ void renderDebugWindow(GfxTexture* render_target){
 #define REDCOL 40
 #define CONTROLLINE 0
 #define CONTROLCOL 30
-#define DBGLINE (CONTROLLINE + NUMKEYS+3)
-#define DBGCOL 30
+#define THRESLINE (REDLINE + 2)
+#define THRESCOL 0
+#define DBGLINE (THRESLINE + 3)
+#define DBGCOL 0
 void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, long nsec_getdata, long nsec_processdata){
 	clear();
 	
@@ -467,6 +503,10 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 		//else if(i<(total_red_x+total_red_y)) mvprintw(REDLINE+i+1,REDCOL, "Y found: (?,%d)      ",red_y[i-total_red_x]);
 		//else mvprintw(REDLINE+i+1,REDCOL,"(not found)                 ");
 	//}
+	
+	//print the HSV thresholding thresholds
+	mvprintw(THRESLINE, THRESCOL, "Red Hmin: %f Hmax: %f Smin: %f Vmin: %f Adjusting: %s", redparams[0], redparams[1], redparams[2], redparams[3], redprops[redadj]);
+	mvprintw(THRESLINE+1, THRESCOL, "Blue Hmin: %f Hmax: %f Smin: %f Vmin: %f Adjusting: %s", blueparams[0], blueparams[1], blueparams[2], blueparams[3], blueprops[blueadj]);
 	
 	//Print the keyboard control instructions
 	mvprintw(CONTROLLINE, CONTROLCOL,"Controls:");
@@ -914,6 +954,28 @@ void doInput(void){
 			case 'i': //render from image instead of camera (if we have an image!)
 				if(imageAvailable) doImage = !doImage;
 				else doImage = false;
+				break;
+			case 't':
+				redadj = (redadj + 1)%4;
+				break;
+			case 'y':
+				redparams[redadj] += 0.1f;
+				if(redparams[redadj] > 1.0f) redparams[redadj] -= 1.0f;
+				break;
+			case 'u':
+				redparams[redadj] += 0.01f;
+				if(redparams[redadj] > 1.0f) redparams[redadj] -= 1.0f;
+				break;
+			case 'g':
+				blueadj = (blueadj + 1)%4;
+				break;
+			case 'h':
+				blueparams[blueadj] += 0.1f;
+				if(blueparams[blueadj] > 1.0f) blueparams[blueadj] -= 1.0f;
+				break;
+			case 'j':
+				blueparams[blueadj] += 0.01f;
+				if(blueparams[blueadj] > 1.0f) blueparams[blueadj] -= 1.0f;
 				break;
 			case 'q': //quit
 				endwin();
