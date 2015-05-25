@@ -862,7 +862,9 @@ void checkObject(struct object* obj, bool red){
 	
 	for(int x = xstartl; x<=xstopl; x+=xstep){
 		for(int y = obj->y_start; y <= obj->y_stop; y+=ystep){
-			if(((char*)horsumtexture1.image)[(horsumtexture1.Width*y+x)*4+coloroffset]) obj->confirmed = true;
+			if(((char*)horsumtexture1.image)[(horsumtexture1.Width*y+x)*4+coloroffset]) obj->confirmed = true; //if we find at least one pixel of the right color, there is an object here.
+			
+			//HERE, DO SIMPLE ROW/COLUMN-BASED METHOD TO MINIMIZE BOX / SPLIT UP IF MULTIPLE OBJECTS.
 		}
 	}
 }
