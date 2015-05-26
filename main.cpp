@@ -85,6 +85,9 @@ struct object object_red[300];
 struct object object_blue_valid[300];
 struct object object_red_valid[300];
 
+struct object target[3];
+int targetfound;
+
 int blue_x [30];
 int blue_y [30];
 int red_x [30];
@@ -867,27 +870,42 @@ void analyzeResults(void){
 			}
 		
 		
-		int total =0;
-		for( int i = 0; i< red_centroid_total; i++ )
-      { 
-	     for( int j = 0; j<blue_centroid_total; j++ )
+		targetfound=0;
+		for( int i = 0; i< red_centroid_total_valid; i++ )
+        { 
+	     for( int j = 0; j<blue_centroid_total_valid; j++ )
 		 {
 			 if (
-				 ( c_blue[j].y > c_red[i].y )&& (
-				                               ( ( c_red[i].x < c_blue[j].x)&& (c_blue[j].x < (c_red[i].x+50))) ||
-											   (((c_red[i].x - 50)<c_blue[j].x )&&(c_blue[j].x<c_red[i].x  ))
+				 ( object_blue_valid[j].c_y  > object_red_valid[i].c_y )&& (
+				                               ( ( object_red_valid[i].c_x   < object_blue_valid[j].c_x )&& (object_blue_valid[j].c_x < (object_red_valid[i].c_x  +(object_red_valid[i].size_x)))) ||
+											   (((object_red_valid[i].c_x - (object_red_valid[i].size_x))<object_blue_valid[j].c_x )&&(object_blue_valid[j].c_x<object_red_valid[i].c_x   ))
 											   )
 											   
-											   
-									
-											   
-			 )
-
-			
-         
-		    { 
+				 )
 				
-				total++;
+				{	
+				
+				if(targetfound<3){
+				
+				     target[targetfound].x_start  =  object_red[i].x_start;
+				     target[targetfound].x_stop  =  object_red[i].x_stop; 
+				     target[targetfound].y_start =   object_red[i].y_start;
+				     target[targetfound].y_stop  =  object_red[i].y_stop; 
+				     target[targetfound].c_x       =  object_red[i].c_x; 
+				     target[targetfound].c_y       =  object_red[i].c_y;  
+				     target[targetfound].size_x  =  object_red[i]. size_x;
+				     target[targetfound].size_y  =  object_red[i].size_y;
+				     target[targetfound].confirmed  = true;   
+				     targetfound++;
+				
+				     break;
+				    }
+				}
+         
+			
+			
+				
+				
 			    //DBG(" * Contour_blue[%d] - Cx(%d) = %d \n", j,j, c_blue[j].x );
 			    //DBG(" * Contour_blue[%d] - Cy(%d) = %d \n", j,j, c_blue[j].y );
 			    //DBG(" * Contour_red[%d] - Cx(%d) = %d \n", i,i, c_red[i].x );
@@ -896,7 +914,8 @@ void analyzeResults(void){
 			}
 
 		 }
-	  }
+	DBG("targets found: %d", targetfound);
+	DBG("1st target %d %d", target[0].c_x, target[0].c_y);
 	   //DBG(" * total possibilities %d \n", total);  
 	//drawBoxInRGB(10, 10, 1000, 20, 1.0f, 0.0f, 0.0f);
 	return;
@@ -984,6 +1003,8 @@ void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float
 		//DrawBox(-0.5,-0.5,0.5,0.5,1.0f,0.0f,1.0f, render_target);
 	}
 	
+	
+	
 	for(i=0; i<blue_centroid_total_valid; i++){
 		if(!object_blue_valid[i].confirmed) continue;
 		x0 = x0i + (x1i-x0i)*(((float)object_blue_valid[i].x_start)/((float)rgbtexture.Width));
@@ -993,6 +1014,26 @@ void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float
 		//DBG("%f %f %f %f", x0,y0,x1,y1);
 		DrawBox(x0,y0,x1,y1,0.0f,0.0f,1.0f, render_target);
 		//DrawBox(-0.5,-0.5,0.5,0.5,1.0f,0.0f,1.0f, render_target);
+	}
+	
+	DBG("targetfound %d", targetfound);
+	for(i=0; i<targetfound; i++){
+		int xstart,xstop,ystart,ystop;
+		xstart = target[i].x_start-10;
+		xstop = target[i].x_stop +10;
+		ystart = target[i].y_start-10;
+		ystop = target[i].y_stop +10;
+		if(xstart<0) xstart = 0;
+		if(xstop>(rgbtexture.Width-1)) xstop = rgbtexture.Width-1;
+		if(ystart<0) ystart = 0;
+		if(ystop>(rgbtexture.Width-1)) ystop = rgbtexture.Width-1;
+		x0 = x0i + (x1i-x0i)*(((float)xstart)/((float)rgbtexture.Width));
+		x1 = x0i + (x1i-x0i)*(((float)xstop)/((float)rgbtexture.Width));
+		y0 = y0i + (y1i-y0i)*(((float)ystart)/((float)rgbtexture.Height));
+		y1 = y0i + (y1i-y0i)*(((float)ystop)/((float)rgbtexture.Height));
+		//DBG("%f %f %f %f", x0,y0,x1,y1);
+		DrawBox(x0,y0,x1,y1,1.0f,1.0f,0.0f, render_target);
+		DBG("%d %d %d %d", target[i].x_start, target[i].x_stop, target[i].y_start, target[i].y_stop);
 	}
 	
 	//DrawBox(-1.0f,0.2f,0.8f,1.0f,1.0f,1.0f,0.0f, render_target);

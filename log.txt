@@ -1,0 +1,6765 @@
+LEFT dir mismatch 2
+LEFT dir mismatch 2
+I2C ERROR!
+Start.
+Initializing graphics and camera.
+Camera resolution: 640x640
+Creating Textures.
+Max texture size: 3379
+Dedonut: 2010x153
+Starting process loop.
+targets found: 1
+1st target 1434 82
+targetfound 1
+1408 1467 68 97
+targets found: 1
+1st target 1434 82
+targetfound 1
+1408 1467 68 97
+targets found: 1
+1st target 1434 82
+targetfound 1
+1408 1467 68 97
+targets found: 1
+1st target 1434 82
+targetfound 1
+1408 1467 68 97
+targets found: 1
+1st target 1434 82
+targetfound 1
+1408 1467 68 97
+targets found: 1
+1st target 1434 82
+targetfound 1
+1408 1467 68 97
+targets found: 1
+1st target 1434 82
+targetfound 1
+1408 1467 68 97
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1069 92
+targetfound 1
+989 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1066 92
+targetfound 1
+984 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 91
+targetfound 1
+984 1151 69 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 91
+targetfound 1
+985 1151 69 114
+targets found: 1
+1st target 1068 91
+targetfound 1
+985 1151 69 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 114
+targets found: 1
+1st target 1068 91
+targetfound 1
+985 1151 69 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 91
+targetfound 1
+985 1151 69 114
+targets found: 1
+1st target 1068 91
+targetfound 1
+985 1151 69 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 91
+targetfound 1
+984 1151 69 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 114
+targets found: 1
+1st target 1068 91
+targetfound 1
+985 1151 69 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 91
+targetfound 1
+985 1151 69 114
+targets found: 1
+1st target 1068 91
+targetfound 1
+985 1151 69 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 91
+targetfound 1
+985 1151 69 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 91
+targetfound 1
+985 1151 69 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1069 92
+targetfound 1
+989 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1067 91
+targetfound 1
+985 1149 69 114
+targets found: 1
+1st target 1070 92
+targetfound 1
+989 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1067 92
+targetfound 1
+985 1149 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 91
+targetfound 1
+985 1151 69 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 114
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 115
+targets found: 1
+1st target 1068 92
+targetfound 1
+984 1153 70 115
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 115
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 115
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 69 115
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 115
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 69 115
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 115
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 115
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 115
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 115
+targets found: 1
+1st target 1068 92
+targetfound 1
+985 1151 70 115
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 69 115
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 69 115
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 115
+targets found: 1
+1st target 1067 92
+targetfound 1
+984 1151 70 115
+targets found: 1
+1st target 1064 92
+targetfound 1
+980 1149 69 115
+targets found: 1
+1st target 1060 92
+targetfound 1
+980 1140 69 115
+targets found: 1
+1st target 1061 92
+targetfound 1
+980 1142 69 115
+targets found: 1
+1st target 1060 92
+targetfound 1
+980 1140 69 115
+targets found: 1
+1st target 1060 91
+targetfound 1
+980 1140 68 115
+targets found: 1
+1st target 1060 92
+targetfound 1
+980 1141 69 115
+targets found: 1
+1st target 1061 92
+targetfound 1
+980 1143 69 115
+targets found: 1
+1st target 1062 92
+targetfound 1
+980 1144 69 115
+targets found: 1
+1st target 1064 91
+targetfound 1
+980 1149 68 115
+targets found: 1
+1st target 1064 90
+targetfound 1
+980 1149 67 113
+targets found: 1
+1st target 1068 88
+targetfound 1
+985 1151 67 110
+targets found: 1
+1st target 1069 86
+targetfound 1
+990 1149 65 108
+targets found: 1
+1st target 1068 85
+targetfound 1
+989 1147 64 107
+targets found: 1
+1st target 1066 85
+targetfound 1
+990 1143 64 106
+targets found: 1
+1st target 1067 83
+targetfound 1
+994 1141 64 103
+targets found: 1
+1st target 1066 82
+targetfound 1
+994 1139 64 101
+targets found: 1
+1st target 1061 80
+targetfound 1
+990 1132 62 99
+targets found: 1
+1st target 1061 79
+targetfound 1
+994 1128 61 96
+targets found: 1
+1st target 1055 79
+targetfound 1
+994 1117 60 90
+targets found: 1
+1st target 1051 70
+targetfound 1
+991 1112 56 85
+targets found: 1
+1st target 1049 70
+targetfound 1
+991 1108 56 84
+targets found: 1
+1st target 1047 68
+targetfound 1
+991 1104 55 81
+targets found: 1
+1st target 1044 65
+targetfound 1
+991 1097 53 78
+targets found: 1
+1st target 1045 65
+targetfound 1
+995 1096 53 78
+targets found: 1
+1st target 1037 65
+targetfound 1
+983 1092 53 78
+targets found: 1
+1st target 1039 65
+targetfound 1
+987 1092 53 78
+targets found: 1
+1st target 1043 65
+targetfound 1
+995 1092 53 78
+targets found: 1
+1st target 1043 65
+targetfound 1
+995 1091 53 78
+targets found: 1
+1st target 1045 66
+targetfound 1
+995 1096 55 78
+targets found: 1
+1st target 1047 66
+targetfound 1
+999 1096 55 78
+targets found: 1
+1st target 1047 66
+targetfound 1
+999 1096 55 78
+targets found: 1
+1st target 1049 66
+targetfound 1
+1003 1096 55 78
+targets found: 1
+1st target 1048 67
+targetfound 1
+999 1097 56 78
+targets found: 1
+1st target 1048 68
+targetfound 1
+999 1097 56 80
+targets found: 1
+1st target 1048 68
+targetfound 1
+999 1097 56 80
+targets found: 1
+1st target 1048 68
+targetfound 1
+999 1097 56 80
+targets found: 1
+1st target 1048 68
+targetfound 1
+999 1097 56 80
+targets found: 1
+1st target 1048 68
+targetfound 1
+999 1097 56 80
+targets found: 1
+1st target 1048 68
+targetfound 1
+999 1097 56 80
+targets found: 1
+1st target 1048 68
+targetfound 1
+999 1097 56 80
+targets found: 1
+1st target 1050 68
+targetfound 1
+1003 1097 56 80
+targets found: 1
+1st target 1049 68
+targetfound 1
+999 1100 56 80
+targets found: 1
+1st target 1052 68
+targetfound 1
+1003 1101 57 80
+targets found: 1
+1st target 1050 68
+targetfound 1
+999 1101 56 81
+targets found: 1
+1st target 1052 69
+targetfound 1
+1003 1101 57 82
+targets found: 1
+1st target 1053 70
+targetfound 1
+1003 1104 57 83
+targets found: 1
+1st target 1053 71
+targetfound 1
+1003 1104 60 83
+targets found: 1
+1st target 1055 71
+targetfound 1
+1024 1104 60 83
+targets found: 1
+1st target 1056 71
+targetfound 1
+1024 1106 60 83
+targets found: 1
+1st target 1056 71
+targetfound 1
+1024 1106 59 83
+targets found: 1
+1st target 1056 71
+targetfound 1
+1024 1106 60 83
+targets found: 1
+1st target 1052 71
+targetfound 1
+1003 1102 60 83
+targets found: 1
+1st target 1052 71
+targetfound 1
+1003 1102 60 83
+targets found: 1
+1st target 1048 71
+targetfound 1
+999 1098 60 83
+targets found: 1
+1st target 1044 71
+targetfound 1
+995 1093 60 83
+targets found: 1
+1st target 1040 69
+targetfound 1
+991 1089 57 82
+targets found: 1
+1st target 1033 68
+targetfound 1
+983 1083 57 79
+targets found: 1
+1st target 1023 65
+targetfound 1
+975 1071 53 78
+targets found: 1
+1st target 1011 63
+targetfound 1
+960 1062 53 74
+targets found: 1
+1st target 1005 63
+targetfound 1
+960 1055 53 74
+targets found: 1
+1st target 993 60
+targetfound 1
+960 1046 50 71
+targets found: 1
+1st target 981 61
+targetfound 1
+933 1030 50 72
+targets found: 1
+1st target 973 61
+targetfound 1
+924 1022 50 73
+targets found: 1
+1st target 964 61
+targetfound 1
+913 1015 50 73
+targets found: 1
+1st target 950 61
+targetfound 1
+902 999 50 73
+targets found: 1
+1st target 936 65
+targetfound 1
+896 983 53 77
+targets found: 1
+1st target 910 64
+targetfound 1
+871 949 54 74
+targets found: 1
+1st target 910 64
+targetfound 1
+871 949 54 74
+targets found: 1
+1st target 910 64
+targetfound 1
+871 949 54 74
+targets found: 1
+1st target 908 64
+targetfound 1
+867 949 54 74
+targets found: 1
+1st target 908 63
+targetfound 1
+867 949 53 74
+targets found: 1
+1st target 908 64
+targetfound 1
+867 949 54 74
+targets found: 1
+1st target 908 64
+targetfound 1
+867 949 54 74
+targets found: 1
+1st target 909 64
+targetfound 1
+870 949 54 74
+targets found: 1
+1st target 910 64
+targetfound 1
+871 949 54 74
+targets found: 1
+1st target 910 64
+targetfound 1
+871 949 54 74
+targets found: 1
+1st target 908 64
+targetfound 1
+867 949 54 74
+targets found: 1
+1st target 907 64
+targetfound 1
+867 947 54 74
+targets found: 1
+1st target 899 63
+targetfound 1
+860 939 53 74
+targets found: 1
+1st target 888 62
+targetfound 1
+849 927 52 72
+targets found: 1
+1st target 872 61
+targetfound 1
+834 910 51 71
+targets found: 1
+1st target 852 59
+targetfound 1
+814 890 50 69
+targets found: 1
+1st target 841 59
+targetfound 1
+807 875 50 68
+targets found: 1
+1st target 823 56
+targetfound 1
+793 853 48 64
+targets found: 1
+1st target 809 55
+targetfound 1
+778 840 47 63
+targets found: 1
+1st target 803 55
+targetfound 1
+777 830 47 63
+targets found: 1
+1st target 788 52
+targetfound 1
+768 814 45 60
+targets found: 1
+1st target 784 52
+targetfound 1
+768 808 45 60
+targets found: 1
+1st target 784 52
+targetfound 1
+768 808 45 60
+targets found: 1
+1st target 781 51
+targetfound 1
+768 805 45 58
+targets found: 1
+1st target 781 51
+targetfound 1
+768 805 45 58
+targets found: 1
+1st target 778 51
+targetfound 1
+768 802 46 57
+targets found: 1
+1st target 777 51
+targetfound 1
+768 802 46 57
+targets found: 1
+1st target 779 52
+targetfound 1
+768 802 46 58
+targets found: 1
+1st target 780 51
+targetfound 1
+768 802 46 56
+targets found: 1
+1st target 780 51
+targetfound 1
+768 803 46 57
+targets found: 1
+1st target 780 52
+targetfound 1
+768 803 46 58
+targets found: 1
+1st target 783 53
+targetfound 1
+768 808 47 60
+targets found: 1
+1st target 783 54
+targetfound 1
+768 809 48 61
+targets found: 1
+1st target 782 56
+targetfound 1
+768 805 50 63
+targets found: 1
+1st target 781 57
+targetfound 1
+768 805 50 64
+targets found: 1
+1st target 782 58
+targetfound 1
+768 805 52 64
+targets found: 1
+1st target 782 58
+targetfound 1
+768 805 53 64
+targets found: 1
+1st target 785 59
+targetfound 1
+768 807 53 65
+targets found: 1
+1st target 782 59
+targetfound 1
+768 807 53 65
+targets found: 1
+1st target 783 59
+targetfound 1
+768 807 53 65
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 0
+1st target 783 59
+targetfound 0
+targets found: 1
+1st target 1167 68
+targetfound 1
+1162 1172 64 72
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 1
+1st target 1167 68
+targetfound 1
+1163 1171 64 72
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 0
+1st target 1167 68
+targetfound 0
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1077 95
+targetfound 1
+984 1171 71 119
+targets found: 1
+1st target 1080 95
+targetfound 1
+988 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1077 95
+targetfound 1
+984 1171 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1077 95
+targetfound 1
+984 1171 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1080 95
+targetfound 1
+988 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1077 95
+targetfound 1
+984 1171 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1080 95
+targetfound 1
+988 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1080 95
+targetfound 1
+988 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1080 95
+targetfound 1
+988 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1080 95
+targetfound 1
+988 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1077 95
+targetfound 1
+984 1171 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1077 95
+targetfound 1
+984 1171 71 120
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1077 95
+targetfound 1
+984 1171 71 119
+targets found: 1
+1st target 1077 95
+targetfound 1
+984 1171 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1080 95
+targetfound 1
+988 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1077 95
+targetfound 1
+984 1170 71 119
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 94
+targetfound 1
+984 1172 71 118
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 119
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 70 121
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 71 120
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 70 121
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 70 120
+targets found: 1
+1st target 1080 95
+targetfound 1
+988 1172 70 121
+targets found: 1
+1st target 1077 95
+targetfound 1
+984 1171 70 121
+targets found: 1
+1st target 1078 95
+targetfound 1
+984 1172 70 121
+targets found: 1
+1st target 1092 94
+targetfound 1
+1024 1172 70 119
+targets found: 1
+1st target 1099 96
+targetfound 1
+1027 1171 72 120
+targets found: 1
+1st target 1099 95
+targetfound 1
+1027 1172 70 121
+targets found: 1
+1st target 1097 94
+targetfound 1
+1024 1172 70 118
+targets found: 1
+1st target 1097 94
+targetfound 1
+1024 1172 70 119
+targets found: 2
+1st target 1019 94
+targetfound 2
+1017 1022 70 118
+1027 1172 70 118
+targets found: 1
+1st target 1103 89
+targetfound 1
+1035 1172 67 111
+targets found: 1
+1st target 1103 84
+targetfound 1
+1035 1171 64 105
+targets found: 1
+1st target 1101 78
+targetfound 1
+1041 1162 56 94
+targets found: 1
+1st target 1099 77
+targetfound 1
+1040 1159 55 89
+targets found: 1
+1st target 1087 67
+targetfound 1
+1031 1144 52 83
+targets found: 1
+1st target 1081 64
+targetfound 1
+1031 1132 50 78
+targets found: 1
+1st target 1079 63
+targetfound 1
+1031 1128 50 77
+targets found: 1
+1st target 1086 64
+targetfound 1
+1046 1127 52 77
+targets found: 1
+1st target 1086 65
+targetfound 1
+1046 1127 53 77
+targets found: 1
+1st target 1088 64
+targetfound 1
+1050 1127 52 76
+targets found: 1
+1st target 1092 63
+targetfound 1
+1058 1127 52 75
+targets found: 1
+1st target 1101 62
+targetfound 1
+1088 1134 53 71
+targets found: 1
+1st target 1105 61
+targetfound 1
+1088 1138 53 70
+targets found: 1
+1st target 1109 61
+targetfound 1
+1088 1138 54 69
+targets found: 0
+1st target 1109 61
+targetfound 0
+targets found: 0
+1st target 1109 61
+targetfound 0
+targets found: 0
+1st target 1109 61
+targetfound 0
+targets found: 1
+1st target 1090 60
+targetfound 1
+1088 1112 55 66
+targets found: 1
+1st target 1086 60
+targetfound 1
+1088 1103 55 66
+targets found: 1
+1st target 1080 59
+targetfound 1
+1061 1100 53 66
+targets found: 1
+1st target 1077 59
+targetfound 1
+1061 1093 53 65
+targets found: 1
+1st target 1070 57
+targetfound 1
+1053 1087 55 62
+targets found: 1
+1st target 1066 57
+targetfound 1
+1053 1079 52 62
+targets found: 1
+1st target 1064 57
+targetfound 1
+1049 1079 52 62
+targets found: 1
+1st target 1064 56
+targetfound 1
+1049 1079 50 62
+targets found: 1
+1st target 1064 57
+targetfound 1
+1049 1079 52 63
+targets found: 1
+1st target 1064 57
+targetfound 1
+1049 1079 52 63
+targets found: 2
+1st target 1062 45
+targetfound 2
+1045 1079 42 49
+1045 1079 53 63
+targets found: 2
+1st target 1062 58
+targetfound 2
+1045 1079 53 63
+1045 1079 88 100
+targets found: 2
+1st target 1064 58
+targetfound 2
+1050 1079 53 63
+1050 1079 88 100
+targets found: 2
+1st target 1064 58
+targetfound 2
+1050 1079 53 63
+1050 1079 88 100
+targets found: 2
+1st target 1064 58
+targetfound 2
+1049 1079 53 63
+1049 1079 88 100
+targets found: 2
+1st target 1068 58
+targetfound 2
+1053 1083 55 63
+1053 1083 90 99
+targets found: 1
+1st target 1064 94
+targetfound 1
+1053 1076 88 100
+targets found: 2
+1st target 1066 58
+targetfound 2
+1053 1080 53 63
+1053 1080 88 100
+targets found: 2
+1st target 1065 58
+targetfound 2
+1050 1080 53 63
+1050 1080 88 100
+targets found: 1
+1st target 1052 91
+targetfound 1
+961 1143 68 115
+targets found: 1
+1st target 1055 94
+targetfound 1
+964 1147 69 120
+targets found: 1
+1st target 1056 94
+targetfound 1
+966 1147 69 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 118
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 69 119
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 69 119
+targets found: 1
+1st target 1057 93
+targetfound 1
+967 1147 70 117
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 118
+targets found: 1
+1st target 1056 94
+targetfound 1
+966 1147 69 119
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 119
+targets found: 1
+1st target 1056 95
+targetfound 1
+966 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 120
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 120
+targets found: 1
+1st target 1060 94
+targetfound 1
+970 1151 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1060 94
+targetfound 1
+970 1151 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 71 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 120
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1057 95
+targetfound 1
+967 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 69 119
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 120
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+969 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1056 94
+targetfound 1
+966 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1056 94
+targetfound 1
+966 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+969 1147 69 118
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 119
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+969 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 71 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 71 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+969 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 120
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 118
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 120
+targets found: 1
+1st target 1056 94
+targetfound 1
+966 1147 70 118
+targets found: 1
+1st target 1056 94
+targetfound 1
+966 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 70 119
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 71 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 120
+targets found: 1
+1st target 1058 93
+targetfound 1
+969 1147 69 118
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 95
+targetfound 1
+969 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1056 94
+targetfound 1
+966 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1056 94
+targetfound 1
+966 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 120
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 120
+targets found: 1
+1st target 1056 94
+targetfound 1
+966 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 69 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 71 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 71 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 69 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1056 94
+targetfound 1
+966 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+969 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1057 94
+targetfound 1
+967 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 69 119
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 70 117
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 119
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 95
+targetfound 1
+970 1147 70 120
+targets found: 1
+1st target 1058 93
+targetfound 1
+970 1147 69 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
+targets found: 1
+1st target 1058 94
+targetfound 1
+970 1147 70 118
