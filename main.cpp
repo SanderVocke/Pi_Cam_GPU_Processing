@@ -62,6 +62,10 @@ struct object{
 	int x_stop;
 	int y_start;
 	int y_stop;
+	int c_x;
+	int c_y;
+	int size_x;
+	int size_y;
 	bool confirmed;
 };
 
@@ -69,6 +73,8 @@ struct centroid c_red[200];
 struct centroid c_blue[200];
 int red_centroid_total = 0;
 int blue_centroid_total = 0;
+int red_centroid_total_valid= 0;
+int blue_centroid_total_valid= 0;
 
 struct box_x  box_blue_x[200];
 struct box_x  box_red_x[200];
@@ -76,6 +82,8 @@ struct box_y  box_red_y[200];
 struct box_y  box_blue_y[200];
 struct object object_blue[300];
 struct object object_red[300];
+struct object object_blue_valid[300];
+struct object object_red_valid[300];
 
 int blue_x [30];
 int blue_y [30];
@@ -764,10 +772,12 @@ void analyzeResults(void){
 			for (h=0; h<total_red_y;h++)
 			
 			{
-				c_red[red_centroid_total].x = red_x[g];
-				c_red[red_centroid_total].y = red_y[h];
-				object_red[red_centroid_total].x_start = box_red_x[g].x_start;
+				object_red[red_centroid_total].c_x = red_x[g];
+				object_red[red_centroid_total].c_y = red_y[h];
+				object_red[red_centroid_total].size_x = box_red_x[g].x_stop -  box_red_x[g].x_start ;
+				object_red[red_centroid_total].size_y = box_red_y[h].y_stop- box_red_y[h].y_start ;
 				
+				object_red[red_centroid_total].x_start = box_red_x[g].x_start;
 				object_red[red_centroid_total].x_stop =  box_red_x[g].x_stop;
 				object_red[red_centroid_total].y_start = box_red_y[h].y_start;
 				object_red[red_centroid_total].y_stop= box_red_y[h].y_stop;
@@ -789,14 +799,18 @@ void analyzeResults(void){
 		}
 		 //DBG(" * Total red centroids %d\n",red_centroid_total);
 		
+		
+		
 	blue_centroid_total =0; 
 		for (g=0; g<total_blue_x;g++)
 		{   
 			for (h=0; h<total_blue_y;h++)
 			
 			{
-				c_blue[blue_centroid_total].x = blue_x[g];
-				c_blue[blue_centroid_total].y = blue_y[h];
+				object_blue[blue_centroid_total].c_x = blue_x[g];
+				object_blue[blue_centroid_total].c_y = blue_y[h];
+				object_blue[blue_centroid_total].size_x = box_blue_x[g].x_stop -  box_blue_x[g].x_start ;
+				object_blue[blue_centroid_total].size_y = box_blue_y[h].y_stop- box_blue_y[h].y_start ;
 				object_blue[blue_centroid_total].x_start = box_blue_x[g].x_start;
 				object_blue[blue_centroid_total].x_stop =  box_blue_x[g].x_stop;
 				object_blue[blue_centroid_total].y_start = box_blue_y[h].y_start;
@@ -809,6 +823,49 @@ void analyzeResults(void){
 		}
 
 		//DBG(" * Total blue centroids %d\n",blue_centroid_total  );
+		
+		    blue_centroid_total_valid =0;
+			for (g=0; g< blue_centroid_total ;g++)
+			
+			{    
+			   if (object_blue[g].confirmed == true)
+			   {
+				object_blue_valid[blue_centroid_total_valid].x_start       = object_blue[g].x_start;
+				object_blue_valid[blue_centroid_total_valid].x_stop       = object_blue[g].x_stop;
+				object_blue_valid[blue_centroid_total_valid].y_start       = object_blue[g].y_start;
+				object_blue_valid[blue_centroid_total_valid].y_stop       = object_blue[g].y_stop;
+				object_blue_valid[blue_centroid_total_valid].c_x            = object_blue[g].c_x;
+				object_blue_valid[blue_centroid_total_valid].c_y            = object_blue[g].c_y;
+				object_blue_valid[blue_centroid_total_valid].size_x       = object_blue[g]. size_x;
+				object_blue_valid[blue_centroid_total_valid].size_y       = object_blue[g].size_y;
+				object_blue_valid[blue_centroid_total_valid].confirmed = true;   
+			   }
+				
+				
+				blue_centroid_total_valid++;
+			}
+			
+			red_centroid_total_valid =0;
+			for (g=0; g< red_centroid_total ;g++)
+			
+			{    
+			   if (object_red[g].confirmed == true)
+			   {
+				object_red_valid[red_centroid_total_valid].x_start  =  object_red[g].x_start;
+				object_red_valid[red_centroid_total_valid].x_stop  =  object_red[g].x_stop; 
+				object_red_valid[red_centroid_total_valid].y_start =   object_red[g].y_start;
+				object_red_valid[red_centroid_total_valid].y_stop  =  object_red[g].y_stop; 
+				object_red_valid[red_centroid_total_valid].c_x       =  object_red[g].c_x; 
+				object_red_valid[red_centroid_total_valid].c_y       =  object_red[g].c_y;  
+				object_red_valid[red_centroid_total_valid].size_x  =  object_red[g]. size_x;
+				object_red_valid[red_centroid_total_valid].size_y  =  object_red[g].size_y;
+				object_red_valid[red_centroid_total_valid].confirmed  = true;   
+			   }
+				
+				
+				red_centroid_total_valid++;
+			}
+		
 		
 		int total =0;
 		for( int i = 0; i< red_centroid_total; i++ )
@@ -916,23 +973,23 @@ void checkObject(struct object* obj, bool red){
 void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float y1i){
 	int i;
 	float x0,y0,x1,y1;
-	for(i=0; i<red_centroid_total; i++){
-		if(!object_red[i].confirmed) continue;
-		x0 = x0i + (x1i-x0i)*(((float)object_red[i].x_start)/((float)rgbtexture.Width));
-		x1 = x0i + (x1i-x0i)*(((float)object_red[i].x_stop)/((float)rgbtexture.Width));
-		y0 = y0i + (y1i-y0i)*(((float)object_red[i].y_start)/((float)rgbtexture.Height));
-		y1 = y0i + (y1i-y0i)*(((float)object_red[i].y_stop)/((float)rgbtexture.Height));
+	for(i=0; i<red_centroid_total_valid; i++){
+		if(!object_red_valid[i].confirmed) continue;
+		x0 = x0i + (x1i-x0i)*(((float)object_red_valid[i].x_start)/((float)rgbtexture.Width));
+		x1 = x0i + (x1i-x0i)*(((float)object_red_valid[i].x_stop)/((float)rgbtexture.Width));
+		y0 = y0i + (y1i-y0i)*(((float)object_red_valid[i].y_start)/((float)rgbtexture.Height));
+		y1 = y0i + (y1i-y0i)*(((float)object_red_valid[i].y_stop)/((float)rgbtexture.Height));
 		//DBG("%f %f %f %f", x0,y0,x1,y1);
 		DrawBox(x0,y0,x1,y1,1.0f,0.0f,0.0f, render_target);
 		//DrawBox(-0.5,-0.5,0.5,0.5,1.0f,0.0f,1.0f, render_target);
 	}
 	
-	for(i=0; i<blue_centroid_total; i++){
-		if(!object_blue[i].confirmed) continue;
-		x0 = x0i + (x1i-x0i)*(((float)object_blue[i].x_start)/((float)rgbtexture.Width));
-		x1 = x0i + (x1i-x0i)*(((float)object_blue[i].x_stop)/((float)rgbtexture.Width));
-		y0 = y0i + (y1i-y0i)*(((float)object_blue[i].y_start)/((float)rgbtexture.Height));
-		y1 = y0i + (y1i-y0i)*(((float)object_blue[i].y_stop)/((float)rgbtexture.Height));
+	for(i=0; i<blue_centroid_total_valid; i++){
+		if(!object_blue_valid[i].confirmed) continue;
+		x0 = x0i + (x1i-x0i)*(((float)object_blue_valid[i].x_start)/((float)rgbtexture.Width));
+		x1 = x0i + (x1i-x0i)*(((float)object_blue_valid[i].x_stop)/((float)rgbtexture.Width));
+		y0 = y0i + (y1i-y0i)*(((float)object_blue_valid[i].y_start)/((float)rgbtexture.Height));
+		y1 = y0i + (y1i-y0i)*(((float)object_blue_valid[i].y_stop)/((float)rgbtexture.Height));
 		//DBG("%f %f %f %f", x0,y0,x1,y1);
 		DrawBox(x0,y0,x1,y1,0.0f,0.0f,1.0f, render_target);
 		//DrawBox(-0.5,-0.5,0.5,0.5,1.0f,0.0f,1.0f, render_target);
