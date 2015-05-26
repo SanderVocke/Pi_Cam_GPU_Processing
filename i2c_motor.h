@@ -3,6 +3,7 @@
 
 #include "common.h"
 #define MAX_SPEED 150
+#define MAX_B_SPEED 50
 
 typedef enum motor{
 	LEFT_MOTOR,

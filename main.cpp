@@ -28,6 +28,10 @@ bool renderScreen = true;
 bool imageAvailable = true;
 bool doImage = true;
 bool doFilter = true;
+bool doBehave = false;
+
+int dspeed[2];
+direction_t ddir[2];
 
 float redparams[4];
 float blueparams[4];
@@ -133,12 +137,17 @@ void renderDebugWindow(GfxTexture* render_target);
 void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float y1i);
 void drawBoxInRGB(int x0i, int y0i, int x1i, int y1i, float R, float G, float B);
 void checkObject(struct object* obj, bool red);
+void doBehaviour(void);
+void doSetSpeedDir(motor_t motor, direction_t dir, int speed);
+void doSetSpeed(motor_t motor, int speed);
+void doSetDirection(motor_t motor, direction_t dir);
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
-#define NUMKEYS 10
+#define NUMKEYS 11
 const char* keys[NUMKEYS] = {
 	"arrow keys: move bot",
+	"b: turn autonomous behaviour on/off",
 	"s: show snapshot window",
 	"w: save framebuffers",
 	"r: turn HDMI live rendering on/off",
@@ -353,6 +362,13 @@ int main(int argc, const char **argv)
 		//DATA ANALYSIS ON CPU
 		analyzeResults();
 		
+		//BEHAVIOUR
+		if(doBehave) doBehaviour();
+		else{
+			doSetSpeed(RIGHT_MOTOR,0);
+			doSetSpeed(LEFT_MOTOR, 0);
+		}
+		
 		//if 's' was pressed, showWindow will be true. Then we need to render our textures onto low-resolution versions for faster capturing back to CPU.
 		if(showWindow){
 			renderDebugWindow(&lowdisptexture); //render to texture
@@ -451,7 +467,9 @@ void renderDebugWindow(GfxTexture* render_target){
 #define STATSCOL 0
 #define SPEEDLINE (STATSLINE + 7)
 #define SPEEDCOL 0
-#define I2CLINE (SPEEDLINE + 3)
+#define BEHAVELINE (SPEEDLINE + 3)
+#define BEHAVECOL 0
+#define I2CLINE (BEHAVELINE+1)
 #define I2CCOL 0
 #define HDMILINE (I2CLINE+1)
 #define HDMICOL 0
@@ -486,10 +504,16 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	mvprintw(STATSLINE+5,STATSCOL,"CPU4: %d  ",cpu4_stats.load);
 	
 	//Print robot motor states.
-	mvprintw(SPEEDLINE,SPEEDCOL,"Left Speed: %d     ",
-		getDirection(LEFT_MOTOR)==FORWARD ? getSpeed(LEFT_MOTOR) : -1*((int)getSpeed(LEFT_MOTOR)));
-	mvprintw(SPEEDLINE+1,SPEEDCOL,"Right Speed: %d     ",
-		getDirection(RIGHT_MOTOR)==FORWARD ? getSpeed(RIGHT_MOTOR) : -1*((int)getSpeed(RIGHT_MOTOR)));
+	mvprintw(SPEEDLINE,SPEEDCOL,"Left Speed: %d / %d  ",
+		getDirection(LEFT_MOTOR)==FORWARD ? getSpeed(LEFT_MOTOR) : -1*((int)getSpeed(LEFT_MOTOR)),
+		ddir[(int)LEFT_MOTOR]==FORWARD ? dspeed[(int)LEFT_MOTOR] : -1*dspeed[(int)LEFT_MOTOR]);
+	mvprintw(SPEEDLINE+1,SPEEDCOL,"Right Speed: %d / %d   ",
+		getDirection(RIGHT_MOTOR)==FORWARD ? getSpeed(RIGHT_MOTOR) : -1*((int)getSpeed(RIGHT_MOTOR)),
+		ddir[(int)RIGHT_MOTOR]==FORWARD ? dspeed[(int)RIGHT_MOTOR] : -1*dspeed[(int)RIGHT_MOTOR]);
+	
+	//Print whether autonomously moving
+	if(doBehave) mvprintw(BEHAVELINE, BEHAVECOL, "BRAIN ON ");
+	else mvprintw(BEHAVELINE, BEHAVECOL, "BRAIN OFF");
 	
 	//Print I2C driver state (ON or FAIL)
 	if(gHaveI2C) mvprintw(I2CLINE,I2CCOL,"I2C ON  ");
@@ -517,13 +541,13 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	
 	//print the objects we found (for now, x and y axis separately!)
 	int i;
-	mvprintw(BLUELINE, BLUECOL, "Blue objects found: %d      ", blue_centroid_total);
+	mvprintw(BLUELINE, BLUECOL, "Red blobs: %d Blue blobs: %d Targets: %d      ", red_centroid_total, blue_centroid_total, targetfound);
 	//for(i=0; i<20; i++){
 		//if(i<total_blue_x) mvprintw(i+BLUELINE+1,BLUECOL, "X found: (%d,?)      ",blue_x[i]);
 		//else if(i<(total_blue_x+total_blue_y)) mvprintw(i+BLUELINE+1,BLUECOL,  "Y found: (?,%d)      ",blue_y[i-total_blue_x]);
 		//else mvprintw(i+BLUELINE+1,BLUECOL, "(not found)                  ");
 	//}
-	mvprintw(REDLINE, REDCOL, "Red objects found: %d      ", red_centroid_total);
+	//mvprintw(REDLINE, REDCOL, "Red objects found: %d      ", red_centroid_total);
 	//for(i=0; i<20; i++){
 		//if(i<total_red_x) mvprintw(REDLINE+i+1,REDCOL, "X found: (%d,?)      ",red_x[i]);
 		//else if(i<(total_red_x+total_red_y)) mvprintw(REDLINE+i+1,REDCOL, "Y found: (?,%d)      ",red_y[i-total_red_x]);
@@ -875,8 +899,16 @@ void analyzeResults(void){
         { 
 	     for( int j = 0; j<blue_centroid_total_valid; j++ )
 		 {
-			 if (
-				 ( object_blue_valid[j].c_y  > object_red_valid[i].c_y )&& (
+			 if 
+				 (
+				                               ( 
+											        ( object_red_valid[i].c_y  < object_blue_valid[j].c_y )
+												   &&
+                                                   ( object_red_valid[i].c_y  + (object_red_valid[i].size_y) >object_blue_valid[j].c_y )											   
+											  
+											  )
+											   &&
+											   (
 				                               ( ( object_red_valid[i].c_x   < object_blue_valid[j].c_x )&& (object_blue_valid[j].c_x < (object_red_valid[i].c_x  +(object_red_valid[i].size_x)))) ||
 											   (((object_red_valid[i].c_x - (object_red_valid[i].size_x))<object_blue_valid[j].c_x )&&(object_blue_valid[j].c_x<object_red_valid[i].c_x   ))
 											   )
@@ -914,8 +946,8 @@ void analyzeResults(void){
 			}
 
 		 }
-	DBG("targets found: %d", targetfound);
-	DBG("1st target %d %d", target[0].c_x, target[0].c_y);
+	//DBG("targets found: %d", targetfound);
+	//DBG("1st target %d %d", target[0].c_x, target[0].c_y);
 	   //DBG(" * total possibilities %d \n", total);  
 	//drawBoxInRGB(10, 10, 1000, 20, 1.0f, 0.0f, 0.0f);
 	return;
@@ -1016,7 +1048,7 @@ void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float
 		//DrawBox(-0.5,-0.5,0.5,0.5,1.0f,0.0f,1.0f, render_target);
 	}
 	
-	DBG("targetfound %d", targetfound);
+	//DBG("targetfound %d", targetfound);
 	for(i=0; i<targetfound; i++){
 		int xstart,xstop,ystart,ystop;
 		xstart = target[i].x_start-10;
@@ -1033,7 +1065,7 @@ void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float
 		y1 = y0i + (y1i-y0i)*(((float)ystop)/((float)rgbtexture.Height));
 		//DBG("%f %f %f %f", x0,y0,x1,y1);
 		DrawBox(x0,y0,x1,y1,1.0f,1.0f,0.0f, render_target);
-		DBG("%d %d %d %d", target[i].x_start, target[i].x_stop, target[i].y_start, target[i].y_stop);
+		//DBG("%d %d %d %d", target[i].x_start, target[i].x_stop, target[i].y_start, target[i].y_stop);
 	}
 	
 	//DrawBox(-1.0f,0.2f,0.8f,1.0f,1.0f,1.0f,0.0f, render_target);
@@ -1080,8 +1112,8 @@ void doInput(void){
 		if(diffu < 0) diffu += 1000000000;
 		if(diffd < 0) diffd += 1000000000;
 		if(diffr>60000000 && diffl>60000000 && diffu>60000000 && diffd>60000000){
-			gHaveI2C = setSpeed(RIGHT_MOTOR,0);
-			gHaveI2C = setSpeed(LEFT_MOTOR, 0);
+			doSetSpeed(RIGHT_MOTOR,0);
+			doSetSpeed(LEFT_MOTOR, 0);
 		}		
 	}
 	else{ //there was a key detected. check out what we should do.
@@ -1096,8 +1128,8 @@ void doInput(void){
 				if(diff < 0) diff += 1000000000;
 				t_left = temp;
 				if(diff<=60000000){
-					gHaveI2C = setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
-					gHaveI2C = setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
+					doSetSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
+					doSetSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
 				}
 				break;
 			case KEY_UP://up key! if these are coming at high frequency (being held down), turn the motors forward.	
@@ -1106,8 +1138,8 @@ void doInput(void){
 				if(diff < 0) diff += 1000000000;
 				t_up = temp;
 				if(diff<=60000000){
-					gHaveI2C = setSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
-					gHaveI2C = setSpeedDir(LEFT_MOTOR, FORWARD, MAX_SPEED);
+					doSetSpeedDir(RIGHT_MOTOR,FORWARD, MAX_SPEED);
+					doSetSpeedDir(LEFT_MOTOR, FORWARD, MAX_SPEED);
 				}
 				break;
 			case KEY_DOWN://down key! if these are coming at high frequency (being held down), turn the motors backward.	
@@ -1116,8 +1148,8 @@ void doInput(void){
 				if(diff < 0) diff += 1000000000;
 				t_down = temp;
 				if(diff<=60000000){
-					gHaveI2C = setSpeedDir(RIGHT_MOTOR,BACKWARD, MAX_SPEED);
-					gHaveI2C = setSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
+					doSetSpeedDir(RIGHT_MOTOR,BACKWARD, MAX_SPEED);
+					doSetSpeedDir(LEFT_MOTOR, BACKWARD, MAX_SPEED);
 				}
 				break;
 			case KEY_RIGHT://right key! if these are coming at high frequency (being held down), turn the motors into a right turn.	
@@ -1126,8 +1158,8 @@ void doInput(void){
 				if(diff < 0) diff += 1000000000;
 				t_right = temp;
 				if(diff<=60000000){
-					gHaveI2C = setSpeedDir(RIGHT_MOTOR, BACKWARD, MAX_SPEED);
-					gHaveI2C = setSpeedDir(LEFT_MOTOR,FORWARD, MAX_SPEED);
+					doSetSpeedDir(RIGHT_MOTOR, BACKWARD, MAX_SPEED);
+					doSetSpeedDir(LEFT_MOTOR,FORWARD, MAX_SPEED);
 				}
 				break;
 			case 's': //save framebuffers
@@ -1177,6 +1209,10 @@ void doInput(void){
 				if(doFilter) doFilter = false;
 				else doFilter = true;
 				break;
+			case 'b':
+				if(doBehave) doBehave = false;
+				else doBehave = true;
+				break;
 			case 'q': //quit
 				endwin();
 				exit(1);
@@ -1187,4 +1223,53 @@ void doInput(void){
 			ch = getch();
 		}
 	}
+}
+
+void doBehaviour(void){
+	//first, calculate the angle to the target.
+	if(!targetfound){
+		//no target
+		doSetSpeed(LEFT_MOTOR,0);
+		doSetSpeed(RIGHT_MOTOR,0);
+		return;
+	}
+	int angle = target[0].c_x - (rgbtexture.Width/2); //subtract middle of image from X coordinate to find something proportional to angle from middle.
+	angle *= 360;
+	angle /= rgbtexture.Width; //normalize to 360 degrees
+	
+	int absangle = (angle<0) ? -angle : angle;
+	
+	if(absangle < 10){
+		doSetSpeedDir(LEFT_MOTOR, FORWARD, MAX_B_SPEED);
+		doSetSpeedDir(RIGHT_MOTOR, FORWARD, MAX_B_SPEED);
+	}
+	else if(angle>0){
+		doSetSpeedDir(LEFT_MOTOR, FORWARD, MAX_B_SPEED);
+		doSetSpeedDir(RIGHT_MOTOR, BACKWARD, MAX_B_SPEED);
+	}
+	else{
+		doSetSpeedDir(LEFT_MOTOR, BACKWARD, MAX_B_SPEED);
+		doSetSpeedDir(RIGHT_MOTOR, FORWARD, MAX_B_SPEED);
+	}
+	
+	return;
+}
+
+void doSetSpeedDir(motor_t motor, direction_t dir, int speed){
+	gHaveI2C = setSpeedDir(motor, dir, speed);
+	dspeed[(int)motor]=speed;
+	ddir[(int)motor]=dir;
+	return;
+}
+
+void doSetSpeed(motor_t motor, int speed){
+	gHaveI2C = setSpeed(motor, speed);
+	dspeed[(int)motor]=speed;
+	return;
+}
+
+void doSetDirection(motor_t motor, direction_t dir){
+	gHaveI2C = setDirection(motor, dir);
+	ddir[(int)motor]=dir;
+	return;
 }
