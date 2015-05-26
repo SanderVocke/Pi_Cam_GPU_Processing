@@ -27,6 +27,7 @@ bool showWindow = false;
 bool renderScreen = true;
 bool imageAvailable = true;
 bool doImage = true;
+bool doFilter = true;
 
 float redparams[4];
 float blueparams[4];
@@ -124,12 +125,13 @@ void checkObject(struct object* obj, bool red);
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
-#define NUMKEYS 9
+#define NUMKEYS 10
 const char* keys[NUMKEYS] = {
 	"arrow keys: move bot",
 	"s: show snapshot window",
 	"w: save framebuffers",
 	"r: turn HDMI live rendering on/off",
+	"f: filtering on/off (erosion/dilation)",
 	"i: use PNG input image instead of camera stream",
 	"t/g: change which thres param to tweak (red/blue resp.)",
 	"y/h: course tweak of parameter (red/blue resp.)",
@@ -181,9 +183,9 @@ int main(int argc, const char **argv)
 	//these textures will store the image data coming from the camera.
 	//the camera records in YUV color space. Each color component is stored in a SEPARATE buffer, which is why
 	//we have three separate textures for them.
-	ytexture.CreateGreyScale(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
-	utexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
-	vtexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
+	ytexture.CreateGreyScale(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	utexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	vtexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	
 	//Main combined RGB textures
 	//rgbtexture will hold the result of transforming the separate y,u,v textures into a single RGBA format texture.
@@ -304,19 +306,25 @@ int main(int argc, const char **argv)
 			redparams[0], redparams[1], redparams[2], redparams[3],
 			blueparams[0], blueparams[1], blueparams[2], blueparams[3],
 			&thresholdtexture); //perform thresholding
-		// Erode and dilate 
-		/** Morphological Opening */
-		DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform erosion [ in the Opening phase, the temporary outputs 
-		DrawDilate(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform dilation		are stored in the wrong texture, for texture re-use]
-		/** Morphological Closing */
-		DrawDilate(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform dilation	  [ in the Closing phase, they are in right order ]
-		DrawErode(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform erosion
 		
+		if(doFilter){
+			// Erode and dilate 
+			/** Morphological Opening */
+			DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform erosion [ in the Opening phase, the temporary outputs 
+			DrawDilate(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform dilation		are stored in the wrong texture, for texture re-use]
+			/** Morphological Closing */
+			DrawDilate(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform dilation	  [ in the Closing phase, they are in right order ]
+			DrawErode(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform erosion
+		}
+		else{
+			DrawTextureRect(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture);
+		}
 		//sum rows/columns
 		DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
 		DrawHorSum2(&horsumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture2); //second (final) horizontal summer stage
 		DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
 		DrawVerSum2(&versumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture2); //second (final) vertical summer stage		
+		
 		
 		Finish(); //for accurate benchmarking
 		
@@ -438,7 +446,9 @@ void renderDebugWindow(GfxTexture* render_target){
 #define HDMICOL 0
 #define IMGLINE (HDMILINE+1)
 #define IMGCOL 0
-#define BENCHLINE (IMGLINE + 2)
+#define FILTERLINE (IMGLINE + 1)
+#define FILTERCOL 0
+#define BENCHLINE (FILTERLINE + 2)
 #define BENCHCOL 0
 #define BLUELINE (BENCHLINE + 8)
 #define BLUECOL 0
@@ -481,6 +491,10 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	//Print whether we are rendering an image or a camera stream
 	if(doImage) mvprintw(IMGLINE,IMGCOL, "Input from: './inputs/input.png'     ");
 	else mvprintw(IMGLINE,IMGCOL,"Input from: CAMERA                          ");
+	
+	//Print whether we are filtering
+	if(doFilter) mvprintw(FILTERLINE, FILTERCOL, "Filtering: ON    ");
+	else  mvprintw(FILTERLINE, FILTERCOL, "Filtering: OFF    ");
 	
 	//Print benchmarking results
 	mvprintw(BENCHLINE,BENCHCOL,"msec Curses: %d   ",nsec_curses/1000000);
@@ -1060,6 +1074,10 @@ void doInput(void){
 			case 'j':
 				blueparams[blueadj] += 0.01f;
 				if(blueparams[blueadj] > 1.0f) blueparams[blueadj] -= 1.0f;
+				break;
+			case 'f':
+				if(doFilter) doFilter = false;
+				else doFilter = true;
 				break;
 			case 'q': //quit
 				endwin();
