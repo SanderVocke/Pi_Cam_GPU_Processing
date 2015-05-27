@@ -1,6 +1,3 @@
-LEFT dir mismatch 2
-LEFT dir mismatch 2
-I2C ERROR!
 Start.
 Initializing graphics and camera.
 Camera resolution: 640x640

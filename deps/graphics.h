@@ -68,6 +68,7 @@ public:
 	void Save(const char* fname);
 	void Show(SDL_Rect* target);
 	void Get();
+	void GetTo(void* ptr);
 };
 
 void SaveFrameBuffer(const char* fname);

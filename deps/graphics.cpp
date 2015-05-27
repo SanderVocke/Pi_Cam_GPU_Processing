@@ -858,3 +858,13 @@ void GfxTexture::Get()
 	check();
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
 }
+
+void GfxTexture::GetTo(void* ptr)
+{
+	if(ptr == NULL) return;
+	glBindFramebuffer(GL_FRAMEBUFFER,FramebufferId);
+	check();
+	glReadPixels(0,0,Width,Height,IsRGBA ? GL_RGBA : GL_LUMINANCE, GL_UNSIGNED_BYTE, ptr);
+	check();
+	glBindFramebuffer(GL_FRAMEBUFFER,0);
+}

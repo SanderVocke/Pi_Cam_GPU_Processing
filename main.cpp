@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <cmath>
 #include "i2c_motor.h"
+#include "fbmap.h"
 
 #include "GLES2/gl2.h"
 #include "EGL/egl.h"
@@ -29,6 +30,7 @@ bool imageAvailable = true;
 bool doImage = true;
 bool doFilter = true;
 bool doBehave = false;
+bool doMap = false;
 
 int dspeed[2];
 direction_t ddir[2];
@@ -109,6 +111,8 @@ struct timespec gettime_now;
 double total_time_s = 0;
 bool do_pipeline = false;
 
+CCamera* cam;
+
 //more timing stuff to benchmark each step inside the loop separately.
 struct timespec t_start, t_curses, t_readframe, t_putframe, t_draw, t_getdata, t_processdata;
 long int nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata;
@@ -144,7 +148,7 @@ void doSetDirection(motor_t motor, direction_t dir);
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
-#define NUMKEYS 11
+#define NUMKEYS 13
 const char* keys[NUMKEYS] = {
 	"arrow keys: move bot",
 	"b: turn autonomous behaviour on/off",
@@ -153,9 +157,11 @@ const char* keys[NUMKEYS] = {
 	"r: turn HDMI live rendering on/off",
 	"f: filtering on/off (erosion/dilation)",
 	"i: use PNG input image instead of camera stream",
+	"m: enable memory-mapped framebuffer",
 	"t/g: change which thres param to tweak (red/blue resp.)",
 	"y/h: course tweak of parameter (red/blue resp.)",
 	"u/j: fine tweak of parameter (red/blue resp.)",
+	"1/2/3/4: Exposure, Metering, AWB, FX resp."
 	"q: quit"
 };
 
@@ -176,12 +182,15 @@ int main(int argc, const char **argv)
 	//init graphics and camera
 	DBG("Start.");
 	DBG("Initializing graphics and camera.");
-	CCamera* cam = StartCamera(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, g_conf.CAPTURE_FPS, 1, false); //Init camera object
+	cam = StartCamera(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, g_conf.CAPTURE_FPS, 1, false); //Init camera object
 	InitGraphics(); //Init OpenGL environment
 	DBG("Camera resolution: %dx%d", g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT);
 	
 	//set camera settings
-	raspicamcontrol_set_metering_mode(cam->CameraComponent, METERINGMODE_AVERAGE); //set the metering mode to average over the entire image.
+	raspicamcontrol_set_metering_mode(cam->CameraComponent, MeteringMode_Enum[current_MeteringMode]);
+	raspicamcontrol_set_awb_mode(cam->CameraComponent, AWB_Enum[current_AWB]);
+	//raspicamcontrol_set_fx(cam->CameraComponent, FX_Enum[current_FX]);
+	raspicamcontrol_set_exposure_mode(cam->CameraComponent, Exposure_Enum[current_Exposure]);
 	
 	//NOW ALLOCATE SPACE FOR ALL THESE TEXTURES
 	DBG("Creating Textures.");
@@ -355,7 +364,7 @@ int main(int argc, const char **argv)
 		versumtexture2.Get();
 		horsumtexture2.Get();
 		versumtexture1.Get();
-		horsumtexture1.Get();		
+		horsumtexture1.Get();
 		
 		clock_gettime(CLOCK_REALTIME, &t_getdata); //benchmarking
 		
@@ -375,6 +384,12 @@ int main(int argc, const char **argv)
 		}		
 		else if(renderScreen){//if on-screen rendering to HDMI is active, draw all textures in the pipeline to the screen framebuffer as well.
 			renderDebugWindow(NULL); //render to screen
+		}
+		if(doMap){ //write to fb map
+			//DBG("Writing to memmap @ %lu.", (unsigned long)getMapAddr());
+			if(!showWindow) renderDebugWindow(&lowdisptexture); //render to texture
+			lowdisptexture.GetTo(getMapAddr());
+			//*((char*)getMapAddr()) = 'a';
 		}
 		
 		EndFrame();
@@ -484,7 +499,9 @@ void renderDebugWindow(GfxTexture* render_target){
 #define REDLINE BLUELINE
 #define REDCOL 40
 #define CONTROLLINE 0
-#define CONTROLCOL 30
+#define CONTROLCOL 40
+#define SETTINGSLINE (CONTROLLINE + 3 + NUMKEYS)
+#define SETTINGSCOL CONTROLCOL
 #define THRESLINE (REDLINE + 2)
 #define THRESCOL 0
 #define DBGLINE (THRESLINE + 3)
@@ -562,6 +579,12 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	mvprintw(CONTROLLINE, CONTROLCOL,"Controls:");
 	int h=0;
 	for(h=0; h<NUMKEYS; h++) mvprintw(CONTROLLINE+h+2,CONTROLCOL,keys[h]);
+	
+	//Print the camera settings.
+	mvprintw(SETTINGSLINE, SETTINGSCOL, "EXPOSURE: %s", Exposure_Name_Enum[current_Exposure]);
+	mvprintw(SETTINGSLINE+1, SETTINGSCOL, "AWB: %s", AWB_Name_Enum[current_AWB]);
+	mvprintw(SETTINGSLINE+2, SETTINGSCOL, "FX: %s", FX_Name_Enum[current_FX]);
+	mvprintw(SETTINGSLINE+3, SETTINGSCOL, "METERING: %s", MeteringMode_Name_Enum[current_MeteringMode]);
 	
 	//print debug messages
 	mvprintw(DBGLINE, DBGCOL, "LAST %d DEBUG MESSAGES:", NUMDBG);
@@ -1213,6 +1236,31 @@ void doInput(void){
 				if(doBehave) doBehave = false;
 				else doBehave = true;
 				break;
+			case 'm':
+				initFBMap(&lowdisptexture);
+				doMap = true;
+				DBG("Mapping enabled. Size %dx%d.", lowdisptexture.Width, lowdisptexture.Height);
+				break;
+			case '1':
+				current_Exposure++;
+				if(current_Exposure >= NUM_EXPOSURE) current_Exposure = 0;
+				raspicamcontrol_set_exposure_mode(cam->CameraComponent, Exposure_Enum[current_Exposure]);
+				break;
+			case '2':
+				current_MeteringMode++;
+				if(current_MeteringMode >= NUM_METERINGMODE) current_MeteringMode = 0;
+				raspicamcontrol_set_metering_mode(cam->CameraComponent, MeteringMode_Enum[current_MeteringMode]);
+				break;
+			case '3':
+				current_AWB++;
+				if(current_AWB >= NUM_AWB) current_AWB = 0;
+				raspicamcontrol_set_awb_mode(cam->CameraComponent, AWB_Enum[current_AWB]);
+				break;
+			case '4':
+				current_FX++;
+				if(current_FX >= NUM_FX) current_FX = 0;
+				//raspicamcontrol_set_fx(cam->CameraComponent, FX_Enum[current_FX]);
+				break;
 			case 'q': //quit
 				endwin();
 				exit(1);
@@ -1233,7 +1281,7 @@ void doBehaviour(void){
 		doSetSpeed(RIGHT_MOTOR,0);
 		return;
 	}
-	int angle = target[0].c_x - (rgbtexture.Width/2); //subtract middle of image from X coordinate to find something proportional to angle from middle.
+	int angle = (rgbtexture.Width/2)-target[0].c_x; //subtract middle of image from X coordinate to find something proportional to angle from middle.
 	angle *= 360;
 	angle /= rgbtexture.Width; //normalize to 360 degrees
 	
