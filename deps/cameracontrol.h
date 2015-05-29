@@ -37,10 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef RASPICAMCONTROL_H_
 #define RASPICAMCONTROL_H_
 
-extern "C"
-{
 #include "interface/mmal/mmal.h"
-};
 
 /* Various parameters
  *

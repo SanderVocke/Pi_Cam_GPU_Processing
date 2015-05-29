@@ -161,7 +161,7 @@ const char* keys[NUMKEYS] = {
 	"t/g: change which thres param to tweak (red/blue resp.)",
 	"y/h: course tweak of parameter (red/blue resp.)",
 	"u/j: fine tweak of parameter (red/blue resp.)",
-	"1/2/3/4: Exposure, Metering, AWB, FX resp."
+	"1/2/3/4: Exposure, Metering, AWB, FX resp.",
 	"q: quit"
 };
 
