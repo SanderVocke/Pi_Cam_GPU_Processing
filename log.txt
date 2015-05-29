@@ -8,3 +8,5 @@ Creating Textures.
 Max texture size: 3379
 Dedonut: 2010x153
 Starting process loop.
+I2C ERROR!
+I2C ERROR!

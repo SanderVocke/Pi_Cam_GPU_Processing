@@ -31,6 +31,7 @@ bool doImage = true;
 bool doFilter = true;
 bool doBehave = false;
 bool doMap = false;
+bool do_Behaviour2 = false;
 
 int dspeed[2];
 direction_t ddir[2];
@@ -142,13 +143,14 @@ void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float
 void drawBoxInRGB(int x0i, int y0i, int x1i, int y1i, float R, float G, float B);
 void checkObject(struct object* obj, bool red);
 void doBehaviour(void);
+void doBehaviour2(void);
 void doSetSpeedDir(motor_t motor, direction_t dir, int speed);
 void doSetSpeed(motor_t motor, int speed);
 void doSetDirection(motor_t motor, direction_t dir);
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
-#define NUMKEYS 13
+#define NUMKEYS 14
 const char* keys[NUMKEYS] = {
 	"arrow keys: move bot",
 	"b: turn autonomous behaviour on/off",
@@ -162,6 +164,7 @@ const char* keys[NUMKEYS] = {
 	"y/h: course tweak of parameter (red/blue resp.)",
 	"u/j: fine tweak of parameter (red/blue resp.)",
 	"1/2/3/4: Exposure, Metering, AWB, FX resp.",
+	"p: toggle behaviour algorithm",
 	"q: quit"
 };
 
@@ -529,7 +532,10 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 		ddir[(int)RIGHT_MOTOR]==FORWARD ? dspeed[(int)RIGHT_MOTOR] : -1*dspeed[(int)RIGHT_MOTOR]);
 	
 	//Print whether autonomously moving
-	if(doBehave) mvprintw(BEHAVELINE, BEHAVECOL, "BRAIN ON ");
+	if(doBehave){
+		if(do_Behaviour2) mvprintw(BEHAVELINE, BEHAVECOL, "BRAIN doBehaviour2()");
+		else mvprintw(BEHAVELINE, BEHAVECOL, "BRAIN doBehaviour() ");
+	}
 	else mvprintw(BEHAVELINE, BEHAVECOL, "BRAIN OFF");
 	
 	//Print I2C driver state (ON or FAIL)
@@ -1236,6 +1242,10 @@ void doInput(void){
 				if(doBehave) doBehave = false;
 				else doBehave = true;
 				break;
+			case 'p':
+				if(do_Behaviour2) do_Behaviour2 = false;
+				else do_Behaviour2 = true;
+				break;
 			case 'm':
 				initFBMap(&lowdisptexture);
 				doMap = true;
@@ -1273,6 +1283,45 @@ void doInput(void){
 	}
 }
 
+void doBehaviour2(void){
+	/* PRAVEEN: HERE IS A STUB TO DO THE ALTERNATIVE BEHAVIOUR! 
+	
+	You can look at the DoBehaviour below for an example. 
+	Some information:
+	- this function will be called on every single frame (5-15 frames per second depending on performance).
+	- the integer variable "targetfound" says how many targets were found. There can be maximum 3 targets found.
+	- the array target[] holds the targets that were found (up to 3). If 1 target was found only, it is in target[0]. the second one is in target[1] etc.
+	- each entry in the target[] array is an "object" struct, which looks like:
+	
+	struct object{
+		int x_start; //leftmost x position of object (left side of box around the target)
+		int x_stop; //rightmost x position (right side of box around the target)
+		int y_start; //same for y (low = higher in image)
+		int y_stop; //same for y
+		int c_x; //center x point of target object based on weight
+		int c_y; //center y point
+		int size_x; //equal to x_stop-x_start
+		int size_y; //equal to y_stop-y_start
+		bool confirmed; //you can ingnore this (should always be true).
+	};
+	
+	You can convert the x and y position of the target into real-world coordinates:
+	- to find the angle with respect to the bot, use the method shown below in DoBehaviour.
+	- to find the distance you could do something with size_x and/or size_y (bigger = closer).
+	- once you have angle and distance (polar coordinates), you can convert to cartesian coordinates if you want.
+		(note that it will be quite unaccurate because the distance is only a rough guess).
+		
+	Controlling the bot can be done using the doSetSpeed and doSetSpeedDir functions also shown below.
+	Speed is 0 to 255 (I prefer you use 0 to MAX_SPEED so we can easily set a global maximum later), 
+	direction is one of FORWARD or BACKWARD.
+	
+	GOOD LUCK!
+	
+	*/
+	
+	return;
+}
+
 void doBehaviour(void){
 	//first, calculate the angle to the target.
 	if(!targetfound){
@@ -1282,7 +1331,7 @@ void doBehaviour(void){
 		return;
 	}
 	int angle = (rgbtexture.Width/2)-target[0].c_x; //subtract middle of image from X coordinate to find something proportional to angle from middle.
-	angle *= 360;
+	angle *= 180;
 	angle /= rgbtexture.Width; //normalize to 360 degrees
 	
 	int absangle = (angle<0) ? -angle : angle;
