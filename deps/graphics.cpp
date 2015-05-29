@@ -350,8 +350,11 @@ void DrawRangeRect(float x0, float y0, float x1, float y1,
 		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
 		check();
 	}
+	
+	static bool first = true;
 
 	glUseProgram(GRangeProg.GetId());	check();
+
 
 	glUniform2f(glGetUniformLocation(GRangeProg.GetId(),"offset"),x0,y0);
 	glUniform2f(glGetUniformLocation(GRangeProg.GetId(),"scale"),x1-x0,y1-y0);
@@ -374,6 +377,8 @@ void DrawRangeRect(float x0, float y0, float x1, float y1,
 		glBindFramebuffer(GL_FRAMEBUFFER,0);
 		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
 	}
+	
+	first = false;
 }
 
 void DrawThresholdRect(GfxTexture* texture, float x0, float y0, float x1, float y1,
@@ -387,15 +392,20 @@ void DrawThresholdRect(GfxTexture* texture, float x0, float y0, float x1, float 
 		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
 		check();
 	}
+	
+	static bool first = true;
 
 	glUseProgram(GThresholdProg.GetId());	check();
 
-	glUniform2f(glGetUniformLocation(GThresholdProg.GetId(),"offset"),x0,y0);
-	glUniform2f(glGetUniformLocation(GThresholdProg.GetId(),"scale"),x1-x0,y1-y0);
+	if(first){
+		glUniform2f(glGetUniformLocation(GThresholdProg.GetId(),"offset"),x0,y0);
+		glUniform2f(glGetUniformLocation(GThresholdProg.GetId(),"scale"),x1-x0,y1-y0);
+		glUniform1i(glGetUniformLocation(GThresholdProg.GetId(),"tex"), 0);
+		check();
+	}
+	
 	glUniform4f(glGetUniformLocation(GThresholdProg.GetId(),"redrange"),redmin, redmax, redsmin, redvmin);
 	glUniform4f(glGetUniformLocation(GThresholdProg.GetId(),"bluerange"),bluemin, bluemax, bluesmin, bluevmin);
-	glUniform1i(glGetUniformLocation(GThresholdProg.GetId(),"tex"), 0);
-	check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
 	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
@@ -414,6 +424,8 @@ void DrawThresholdRect(GfxTexture* texture, float x0, float y0, float x1, float 
 		glBindFramebuffer(GL_FRAMEBUFFER,0);
 		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
 	}
+	
+	first = false;
 }
 
 void DrawErode(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target)
@@ -425,13 +437,17 @@ void DrawErode(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxT
 		check();
 	}
 
+	static bool first = true;
+	
 	glUseProgram(GErodeProg.GetId());	check();
 
-	glUniform2f(glGetUniformLocation(GErodeProg.GetId(),"offset"),x0,y0);
-	glUniform2f(glGetUniformLocation(GErodeProg.GetId(),"scale"),x1-x0,y1-y0);
-	glUniform1i(glGetUniformLocation(GErodeProg.GetId(),"tex"), 0);
-	glUniform2f(glGetUniformLocation(GErodeProg.GetId(),"texelsize"),(1.0f/(float)texture->Width),(1.0f/(float)texture->Height));
-	check();
+	if(first){
+		glUniform2f(glGetUniformLocation(GErodeProg.GetId(),"offset"),x0,y0);
+		glUniform2f(glGetUniformLocation(GErodeProg.GetId(),"scale"),x1-x0,y1-y0);
+		glUniform1i(glGetUniformLocation(GErodeProg.GetId(),"tex"), 0);
+		glUniform2f(glGetUniformLocation(GErodeProg.GetId(),"texelsize"),(1.0f/(float)texture->Width),(1.0f/(float)texture->Height));
+		check();
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
 	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
@@ -450,6 +466,8 @@ void DrawErode(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxT
 		glBindFramebuffer(GL_FRAMEBUFFER,0);
 		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
 	}
+	
+	first = false;
 }
 
 void DrawDilate(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target)
@@ -460,14 +478,18 @@ void DrawDilate(GfxTexture* texture, float x0, float y0, float x1, float y1, Gfx
 		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
 		check();
 	}
+	
+	static bool first = true;
 
 	glUseProgram(GDilateProg.GetId());	check();
 
-	glUniform2f(glGetUniformLocation(GDilateProg.GetId(),"offset"),x0,y0);
-	glUniform2f(glGetUniformLocation(GDilateProg.GetId(),"scale"),x1-x0,y1-y0);
-	glUniform1i(glGetUniformLocation(GDilateProg.GetId(),"tex"), 0);
-	glUniform2f(glGetUniformLocation(GErodeProg.GetId(),"texelsize"),(1.0f/(float)texture->Width),(1.0f/(float)texture->Height));
-	check();
+	if(first){
+		glUniform2f(glGetUniformLocation(GDilateProg.GetId(),"offset"),x0,y0);
+		glUniform2f(glGetUniformLocation(GDilateProg.GetId(),"scale"),x1-x0,y1-y0);
+		glUniform1i(glGetUniformLocation(GDilateProg.GetId(),"tex"), 0);
+		glUniform2f(glGetUniformLocation(GErodeProg.GetId(),"texelsize"),(1.0f/(float)texture->Width),(1.0f/(float)texture->Height));
+		check();
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
 	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
@@ -486,6 +508,8 @@ void DrawDilate(GfxTexture* texture, float x0, float y0, float x1, float y1, Gfx
 		glBindFramebuffer(GL_FRAMEBUFFER,0);
 		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
 	}
+	
+	first = false;
 }
 
 void DrawTextureRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target)
@@ -496,12 +520,14 @@ void DrawTextureRect(GfxTexture* texture, float x0, float y0, float x1, float y1
 		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
 		check();
 	}
+	
+	static bool first = true;
 
 	glUseProgram(GSimpleProg.GetId());	check();
 
 	glUniform2f(glGetUniformLocation(GSimpleProg.GetId(),"offset"),x0,y0);
 	glUniform2f(glGetUniformLocation(GSimpleProg.GetId(),"scale"),x1-x0,y1-y0);
-	glUniform1i(glGetUniformLocation(GSimpleProg.GetId(),"tex"), 0);
+	if(first) glUniform1i(glGetUniformLocation(GSimpleProg.GetId(),"tex"), 0);
 	check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
@@ -521,6 +547,8 @@ void DrawTextureRect(GfxTexture* texture, float x0, float y0, float x1, float y1
 		glBindFramebuffer(GL_FRAMEBUFFER,0);
 		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
 	}
+	
+	first = false;
 }
 
 void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* vtexture, GfxTexture* maptex, float x0, float y0, float x1, float y1, GfxTexture* render_target)
@@ -531,16 +559,20 @@ void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* 
 		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
 		check();
 	}
+	
+	static bool first = true;
 
 	glUseProgram(GYUVProg.GetId());	check();
 
-	glUniform2f(glGetUniformLocation(GYUVProg.GetId(),"offset"),x0,y0);
-	glUniform2f(glGetUniformLocation(GYUVProg.GetId(),"scale"),x1-x0,y1-y0);
-	glUniform1i(glGetUniformLocation(GYUVProg.GetId(),"tex0"), 0);
-	glUniform1i(glGetUniformLocation(GYUVProg.GetId(),"tex1"), 1);
-	glUniform1i(glGetUniformLocation(GYUVProg.GetId(),"tex2"), 2);
-	glUniform1i(glGetUniformLocation(GYUVProg.GetId(),"maptex"), 3);
-	check();
+	if(first){
+		glUniform2f(glGetUniformLocation(GYUVProg.GetId(),"offset"),x0,y0);
+		glUniform2f(glGetUniformLocation(GYUVProg.GetId(),"scale"),x1-x0,y1-y0);
+		glUniform1i(glGetUniformLocation(GYUVProg.GetId(),"tex0"), 0);
+		glUniform1i(glGetUniformLocation(GYUVProg.GetId(),"tex1"), 1);
+		glUniform1i(glGetUniformLocation(GYUVProg.GetId(),"tex2"), 2);
+		glUniform1i(glGetUniformLocation(GYUVProg.GetId(),"maptex"), 3);
+		check();
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
 	glActiveTexture(GL_TEXTURE0);
@@ -568,6 +600,8 @@ void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* 
 		glBindFramebuffer(GL_FRAMEBUFFER,0);
 		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
 	}
+	
+	first = false;
 }
 
 void DrawHorSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
@@ -577,14 +611,19 @@ void DrawHorSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
 		check();
 	}
+	
+	static bool first = true;
 
 	glUseProgram(GHorSumProg.GetId());	check();
 
-	glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"offset"),x0,y0);
-	glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"scale"),x1-x0,y1-y0);
-	glUniform1i(glGetUniformLocation(GHorSumProg.GetId(),"tex"), 0);
+	if(first){
+		glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"offset"),x0,y0);
+		glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"scale"),x1-x0,y1-y0);
+		glUniform1i(glGetUniformLocation(GHorSumProg.GetId(),"tex"), 0);	
+		check();
+	}
+	
 	glUniform1f(glGetUniformLocation(GHorSumProg.GetId(),"step"), 1.0f/((float)texture->GetWidth()));
-	check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
 	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
@@ -603,6 +642,8 @@ void DrawHorSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 		glBindFramebuffer(GL_FRAMEBUFFER,0);
 		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
 	}
+	
+	first = false;
 }
 void DrawHorSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
 	if(render_target)
@@ -611,14 +652,19 @@ void DrawHorSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
 		check();
 	}
+	
+	static bool first = true;
 
 	glUseProgram(GHorSumProg.GetId());	check();
 
-	glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"offset"),x0,y0);
-	glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"scale"),x1-x0,y1-y0);
-	glUniform1i(glGetUniformLocation(GHorSumProg.GetId(),"tex"), 0);
+	if(first){
+		glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"offset"),x0,y0);
+		glUniform2f(glGetUniformLocation(GHorSumProg.GetId(),"scale"),x1-x0,y1-y0);
+		glUniform1i(glGetUniformLocation(GHorSumProg.GetId(),"tex"), 0);
+		check();
+	}
+	
 	glUniform1f(glGetUniformLocation(GHorSumProg.GetId(),"step"), 1.0f/((float)texture->GetWidth()));
-	check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
 	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
@@ -637,6 +683,8 @@ void DrawHorSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 		glBindFramebuffer(GL_FRAMEBUFFER,0);
 		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
 	}
+	
+	first = false;
 }
 void DrawVerSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
 	if(render_target)
@@ -646,13 +694,16 @@ void DrawVerSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 		check();
 	}
 
+	static bool first = true;
+	
 	glUseProgram(GVerSumProg.GetId());	check();
 
-	glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"offset"),x0,y0);
-	glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"scale"),x1-x0,y1-y0);
-	glUniform1i(glGetUniformLocation(GVerSumProg.GetId(),"tex"), 0);
-	glUniform1f(glGetUniformLocation(GVerSumProg.GetId(),"step"), 1.0f/((float)texture->GetHeight()));
-	check();
+	if(first){
+		glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"offset"),x0,y0);
+		glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"scale"),x1-x0,y1-y0);
+		glUniform1i(glGetUniformLocation(GVerSumProg.GetId(),"tex"), 0);
+		check();
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
 	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
@@ -671,6 +722,8 @@ void DrawVerSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 		glBindFramebuffer(GL_FRAMEBUFFER,0);
 		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
 	}
+	
+	first = false;
 }
 void DrawVerSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
 	if(render_target)
@@ -679,14 +732,19 @@ void DrawVerSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
 		check();
 	}
+	
+	static bool first = true;
 
 	glUseProgram(GVerSumProg.GetId());	check();
 
-	glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"offset"),x0,y0);
-	glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"scale"),x1-x0,y1-y0);
-	glUniform1i(glGetUniformLocation(GVerSumProg.GetId(),"tex"), 0);
+	if(first){
+		glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"offset"),x0,y0);
+		glUniform2f(glGetUniformLocation(GVerSumProg.GetId(),"scale"),x1-x0,y1-y0);
+		glUniform1i(glGetUniformLocation(GVerSumProg.GetId(),"tex"), 0);
+		check();
+	}
+	
 	glUniform1f(glGetUniformLocation(GVerSumProg.GetId(),"step"), 1.0f/((float)texture->GetHeight()));
-	check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
 	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
@@ -705,6 +763,8 @@ void DrawVerSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 		glBindFramebuffer(GL_FRAMEBUFFER,0);
 		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
 	}
+	
+	first = false;
 }
 
 void DrawBox(float x0, float y0, float x1,float y1,float R,float G,float B,GfxTexture*render_target){

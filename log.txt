@@ -3,10 +3,9 @@ LEFT dir mismatch 2
 I2C ERROR!
 Start.
 Initializing graphics and camera.
-Camera resolution: 640x640
+Camera resolution: 1024x1024
 Creating Textures.
 Max texture size: 3379
-Dedonut: 2010x153
+Dedonut: 2048x244
 Starting process loop.
-I2C ERROR!
-I2C ERROR!
+Mapping enabled. Size 1280x896.

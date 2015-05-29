@@ -29,6 +29,14 @@ void initConfig(void){
 	sscanf(buf, "%*s %f %f %f %f", &g_conf.REDPARAMS[0], &g_conf.REDPARAMS[1], &g_conf.REDPARAMS[2], &g_conf.REDPARAMS[3]);
 	fgets(buf, CONFLINEBUFSZ, fp);
 	sscanf(buf, "%*s %f %f %f %f", &g_conf.BLUEPARAMS[0], &g_conf.BLUEPARAMS[1], &g_conf.BLUEPARAMS[2], &g_conf.BLUEPARAMS[3]);
+	fgets(buf, CONFLINEBUFSZ, fp);
+	sscanf(buf, "%*s %d", &g_conf.EXPOSURE);
+	fgets(buf, CONFLINEBUFSZ, fp);
+	sscanf(buf, "%*s %d", &g_conf.AWB);
+	fgets(buf, CONFLINEBUFSZ, fp);
+	sscanf(buf, "%*s %d", &g_conf.METERING);
+	fgets(buf, CONFLINEBUFSZ, fp);
+	sscanf(buf, "%*s %d", &g_conf.FX);
 	fclose(fp);	
 	g_conf.ready = true;
 }
@@ -45,5 +53,9 @@ void writeConfig(void){
 	fprintf(fp, "LOWRES_WIDTH %d\n", g_conf.LOWRES_WIDTH);
 	fprintf(fp, "RED_PARAMS %f %f %f %f\n", g_conf.REDPARAMS[0], g_conf.REDPARAMS[1], g_conf.REDPARAMS[2], g_conf.REDPARAMS[3]);
 	fprintf(fp, "BLUE_PARAMS %f %f %f %f\n", g_conf.BLUEPARAMS[0], g_conf.BLUEPARAMS[1], g_conf.BLUEPARAMS[2], g_conf.BLUEPARAMS[3]);
+	fprintf(fp, "EXPOSURE %d\n", g_conf.EXPOSURE);
+	fprintf(fp, "AWB %d\n", g_conf.AWB);
+	fprintf(fp, "METERING %d\n", g_conf.METERING);
+	fprintf(fp, "FX %d\n", g_conf.FX);
 	fclose(fp);
 }

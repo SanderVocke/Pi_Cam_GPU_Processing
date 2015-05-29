@@ -28,10 +28,18 @@ bool showWindow = false;
 bool renderScreen = true;
 bool imageAvailable = true;
 bool doImage = true;
-bool doFilter = true;
 bool doBehave = false;
 bool doMap = false;
 bool do_Behaviour2 = false;
+
+int filterLevel = 0;
+#define FILTER_LEVELS 4
+typedef enum filterLevels_t{
+	FILTER_OFF = 0,
+	FILTER_ERODE,
+	FILTER_OPEN,
+	FILTER_OPENCLOSE
+}filterLevels_t;
 
 int dspeed[2];
 direction_t ddir[2];
@@ -157,7 +165,7 @@ const char* keys[NUMKEYS] = {
 	"s: show snapshot window",
 	"w: save framebuffers",
 	"r: turn HDMI live rendering on/off",
-	"f: filtering on/off (erosion/dilation)",
+	"f: filtering level (erosion/dilation)",
 	"i: use PNG input image instead of camera stream",
 	"m: enable memory-mapped framebuffer",
 	"t/g: change which thres param to tweak (red/blue resp.)",
@@ -190,9 +198,13 @@ int main(int argc, const char **argv)
 	DBG("Camera resolution: %dx%d", g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT);
 	
 	//set camera settings
+	current_MeteringMode = g_conf.METERING;
+	current_Exposure = g_conf.EXPOSURE;
+	current_FX = g_conf.FX;
+	current_AWB = g_conf.AWB;
 	raspicamcontrol_set_metering_mode(cam->CameraComponent, MeteringMode_Enum[current_MeteringMode]);
 	raspicamcontrol_set_awb_mode(cam->CameraComponent, AWB_Enum[current_AWB]);
-	//raspicamcontrol_set_fx(cam->CameraComponent, FX_Enum[current_FX]);
+	raspicamcontrol_set_imageFX(cam->CameraComponent, FX_Enum[current_FX]);
 	raspicamcontrol_set_exposure_mode(cam->CameraComponent, Exposure_Enum[current_Exposure]);
 	
 	//NOW ALLOCATE SPACE FOR ALL THESE TEXTURES
@@ -339,20 +351,26 @@ int main(int argc, const char **argv)
 			blueparams[0], blueparams[1], blueparams[2], blueparams[3],
 			&thresholdtexture); //perform thresholding
 		
-		if(doFilter){
-			// Erode and dilate 
-			/** Morphological Opening */
+		if(filterLevel == FILTER_OFF){
+			DrawHorSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
+		}
+		else if(filterLevel == FILTER_ERODE){
+			DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform erosion [ in the Opening phase, the temporary outputs 
+			DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
+		}
+		else if(filterLevel == FILTER_OPEN){
 			DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform erosion [ in the Opening phase, the temporary outputs 
 			DrawDilate(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform dilation		are stored in the wrong texture, for texture re-use]
-			/** Morphological Closing */
+			DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
+		}
+		else if(filterLevel == FILTER_OPENCLOSE){
+			DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform erosion [ in the Opening phase, the temporary outputs 
+			DrawDilate(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform dilation		are stored in the wrong texture, for texture re-use]
 			DrawDilate(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform dilation	  [ in the Closing phase, they are in right order ]
 			DrawErode(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform erosion
+			DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
 		}
-		else{
-			DrawTextureRect(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture);
-		}
-		//sum rows/columns
-		DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
+		
 		DrawHorSum2(&horsumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture2); //second (final) horizontal summer stage
 		DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
 		DrawVerSum2(&versumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture2); //second (final) vertical summer stage		
@@ -551,8 +569,20 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	else mvprintw(IMGLINE,IMGCOL,"Input from: CAMERA                          ");
 	
 	//Print whether we are filtering
-	if(doFilter) mvprintw(FILTERLINE, FILTERCOL, "Filtering: ON    ");
-	else  mvprintw(FILTERLINE, FILTERCOL, "Filtering: OFF    ");
+	switch(filterLevel){
+	case FILTER_OFF:
+		mvprintw(FILTERLINE, FILTERCOL, "Filtering: OFF   ");
+		break;
+	case FILTER_ERODE:
+		mvprintw(FILTERLINE, FILTERCOL, "Filtering: Erode    ");
+		break;
+	case FILTER_OPEN:
+		mvprintw(FILTERLINE, FILTERCOL, "Filtering: Open    ");
+		break;
+	case FILTER_OPENCLOSE:
+		mvprintw(FILTERLINE, FILTERCOL, "Filtering: Open+Close   ");
+		break;
+	}
 	
 	//Print benchmarking results
 	mvprintw(BENCHLINE,BENCHCOL,"msec Curses: %d   ",nsec_curses/1000000);
@@ -1235,8 +1265,8 @@ void doInput(void){
 				if(blueparams[blueadj] > 1.0f) blueparams[blueadj] -= 1.0f;
 				break;
 			case 'f':
-				if(doFilter) doFilter = false;
-				else doFilter = true;
+				filterLevel++;
+				if(filterLevel >= FILTER_LEVELS) filterLevel = 0;
 				break;
 			case 'b':
 				if(doBehave) doBehave = false;
@@ -1269,7 +1299,7 @@ void doInput(void){
 			case '4':
 				current_FX++;
 				if(current_FX >= NUM_FX) current_FX = 0;
-				//raspicamcontrol_set_fx(cam->CameraComponent, FX_Enum[current_FX]);
+				raspicamcontrol_set_imageFX(cam->CameraComponent, FX_Enum[current_FX]);
 				break;
 			case 'q': //quit
 				endwin();

@@ -79,7 +79,7 @@ extern const MMAL_PARAM_AWBMODE_T AWB_Enum[NUM_AWB];
 #define NUM_FX 20
 extern int current_FX;
 extern const char* FX_Name_Enum[NUM_FX];
-extern const int FX_Enum[NUM_FX];
+extern const MMAL_PARAM_IMAGEFX_T FX_Enum[NUM_FX];
 
 #define METERINGMODE_AVERAGE 	MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE
 #define METERINGMODE_SPOT 		MMAL_PARAM_EXPOSUREMETERINGMODE_SPOT
