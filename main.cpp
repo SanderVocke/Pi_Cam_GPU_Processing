@@ -953,6 +953,7 @@ void analyzeResults(void){
 	#define DIV_BELOWSIZE 1
 	#define DIV_BESIDESIZE 2
 	#define MULT_SIZE 2
+	#define DIV_OVERLAP 100 //practically disabled
 	for( int i = 0; i< red_centroid_total; i++ )
 	{ 
 		for( int j = 0; j<blue_centroid_total; j++ )
@@ -972,9 +973,9 @@ void analyzeResults(void){
 					(object_blue[j].size_x < object_red[i].size_x*MULT_SIZE) &&
 					(object_blue[j].size_y < object_red[i].size_y*MULT_SIZE)
 					&&
-					//Blue object must be at least partially overlapping with red object in x axis.
-					(object_blue[j].x_start<object_red[i].x_stop) &&
-					(object_blue[j].x_stop>object_red[i].x_start)
+					//Blue object must be at least partially overlapping with red object in x axis (with some margin).
+					(object_blue[j].x_start<object_red[i].x_stop+object_red[i].size_x/DIV_OVERLAP) &&
+					(object_blue[j].x_stop>object_red[i].x_start-object_red[i].size_x/DIV_OVERLAP)
 					){
 				//if(
 				//(	
@@ -1343,9 +1344,14 @@ void doInput(void){
 				else do_Behaviour2 = true;
 				break;
 			case 'm':
-				initFBMap(&lowdisptexture);
-				doMap = true;
-				DBG("Mapping enabled. Size %dx%d.", lowdisptexture.Width, lowdisptexture.Height);
+				if(!doMap){
+					initFBMap(&lowdisptexture);
+					doMap = true;
+					DBG("Mapping enabled. Size %dx%d.", lowdisptexture.Width, lowdisptexture.Height);
+				}
+				else{
+					doMap = false;
+				}
 				break;
 			case '1':
 				current_Exposure++;
