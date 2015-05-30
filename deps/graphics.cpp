@@ -11,6 +11,17 @@
 #include "window.h"
 #include <SDL/SDL.h>
 #include "common.h"
+#include "config.h"
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <vc_mem.h>
+
+#include <malloc.h>
+#include <stdint.h>
+#include <errno.h>
 
 #define check() assert(glGetError() == 0)
 
@@ -25,6 +36,7 @@ GfxShader GDirectFS;
 GfxShader GSimpleVS;
 GfxShader GSimpleFS;
 GfxShader GYUVFS;
+GfxShader GYUVCompFS;
 GfxShader GHorSumFS, GVerSumFS;
 GfxShader GCoordFS;
 GfxShader GThresholdFS;
@@ -33,6 +45,7 @@ GfxShader GRangeFS;
 GfxProgram GDirectProg;
 GfxProgram GSimpleProg;
 GfxProgram GYUVProg;
+GfxProgram GYUVCompProg;
 GfxProgram GHorSumProg, GVerSumProg;
 GfxProgram GThresholdProg;
 GfxProgram GErodeProg, GDilateProg;
@@ -40,8 +53,61 @@ GfxProgram GRangeProg;
 GLuint GQuadVertexBuffer;
 GLuint GLinesVertexBuffer;
 
+uint32_t imgptr;
+#define PAGE_SIZE (4*1024)
+#define BLOCK_SIZE (128*1024)
+
 void Finish(){
 	glFinish();
+}
+
+int doSearch(char* string, int len){
+	int fd;
+	char *p;
+	volatile unsigned char *vc;
+	unsigned long address, size, base;
+	int i;
+	
+	fd = open("/dev/vc-mem", O_RDWR | O_SYNC);
+	if (fd == -1)	{
+		DBG("unable to open /dev/vc-mem ...");
+		return 1;
+	}
+	ioctl(fd, VC_MEM_IOC_MEM_PHYS_ADDR, &address);
+	DBG("VC_MEM_IOC_MEM_PHYS_ADDR = %p", (char *)address);
+	
+	ioctl(fd, VC_MEM_IOC_MEM_SIZE, &size);
+	DBG("VC_MEM_IOC_MEM_SIZE = %d", size);
+	
+	ioctl(fd, VC_MEM_IOC_MEM_BASE, &base);
+	DBG("VC_MEM_IOC_MEM_BASE = %p", (char *)base);
+	
+	vc = (unsigned char *)mmap(	0,	size,	PROT_READ|PROT_WRITE,	MAP_SHARED,	fd,	0);
+	if (vc == (unsigned char *)-1)	{
+		DBG("mmap failed %s", strerror(errno));
+		return -1;
+	}
+	
+	DBG("vc = %p", vc);
+	
+	DBG("Searching VCMEM...");
+	for (i = 0; i < size; i++)	{
+		if (strcmp((char *)&vc[i], "Broadcom") == 0)
+		{
+			DBG("found Broadcom @ %d", i);
+			DBG("%2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x\n",
+			vc[i], vc[i+1], vc[i+2], vc[i+3], vc[i+4], vc[i+5], vc[i+6], vc[i+7]);
+		}
+		if (strcmp((char *)&vc[i], "Sander is cool.") == 0)
+		{
+			DBG("found Sander is cool @ %d", i);
+			//DBG("%2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x\n",
+			//vc[i], vc[i+1], vc[i+2], vc[i+3], vc[i+4], vc[i+5], vc[i+6], vc[i+7]);
+		}
+	}
+	DBG("Finished searching VCMEM.");
+	
+	close(fd);
 }
 
 void InitGraphics()
@@ -55,6 +121,7 @@ void InitGraphics()
 
 	DISPMANX_ELEMENT_HANDLE_T dispman_element;
 	DISPMANX_DISPLAY_HANDLE_T dispman_display;
+	DISPMANX_RESOURCE_HANDLE_T dispman_resource;
 	DISPMANX_UPDATE_HANDLE_T dispman_update;
 	VC_RECT_T dst_rect;
 	VC_RECT_T src_rect;
@@ -117,9 +184,10 @@ void InitGraphics()
 
 	dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
 	dispman_update = vc_dispmanx_update_start( 0 );
+	dispman_resource = vc_dispmanx_resource_create (VC_IMAGE_RGB565,GScreenWidth,GScreenHeight,&imgptr);
 
 	dispman_element = vc_dispmanx_element_add ( dispman_update, dispman_display,
-		0/*layer*/, &dst_rect, 0/*src*/,
+		0/*layer*/, &dst_rect, dispman_resource,//0/*src*/,
 		&src_rect, DISPMANX_PROTECTION_NONE, 0 /*alpha*/, 0/*clamp*/, (DISPMANX_TRANSFORM_T)0/*transform*/);
 
 	nativewindow.element = dispman_element;
@@ -137,7 +205,20 @@ void InitGraphics()
 	result = eglMakeCurrent(GDisplay, GSurface, GSurface, GContext);
 	assert(EGL_FALSE != result);
 	check();
-
+	
+	//write signature
+	VC_RECT_T testrect;
+	testrect.x = 0;
+	testrect.y = 0;
+	testrect.width = 32;
+	testrect.height = 1;
+	char testdata[32] = "Sander is cool.                ";
+	//int r = vc_dispmanx_resource_write_data (dispman_resource,VC_IMAGE_RGB565,(GScreenWidth/32+1)*32,testdata,&testrect);
+	//DBG("Writedata result: %d", r);
+	//find it
+	doSearch(NULL, 0);
+	
+	
 	// Set background color and clear buffers
 	glClearColor(0.15f, 0.25f, 0.35f, 1.0f);
 	glClear( GL_COLOR_BUFFER_BIT );
@@ -182,6 +263,7 @@ void UpdateShaders(void){
 	GDilateFS.LoadFragmentShader("./shaders/dilatefragshader_ours.glsl");
 	GDirectFS.LoadFragmentShader("./shaders/color.glsl");
 	GRangeFS.LoadFragmentShader("./shaders/showrange.glsl");
+	GYUVCompFS.LoadFragmentShader("./shaders/auxiliary/yuvtorgba_dedonut_comp.glsl");
 	GSimpleProg.Create(&GSimpleVS,&GSimpleFS);
 	GYUVProg.Create(&GSimpleVS,&GYUVFS);
 	GHorSumProg.Create(&GSimpleVS,&GHorSumFS);
@@ -191,6 +273,7 @@ void UpdateShaders(void){
 	GDilateProg.Create(&GSimpleVS,&GDilateFS);
 	GDirectProg.Create(&GDirectVS, &GDirectFS);
 	GRangeProg.Create(&GSimpleVS, &GRangeFS);
+	GYUVCompProg.Create(&GSimpleVS, &GYUVCompFS);
 	check();
 }
 
@@ -540,6 +623,61 @@ void DrawTextureRect(GfxTexture* texture, float x0, float y0, float x1, float y1
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	if(render_target)
+	{
+		//glFinish();	check();
+		//glFlush(); check();
+		glBindFramebuffer(GL_FRAMEBUFFER,0);
+		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
+	}
+	
+	first = false;
+}
+
+void DrawYUVTextureRectComp(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* vtexture, float x0, float y0, float x1, float y1, GfxTexture* render_target)
+{
+	if(render_target)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
+		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
+		check();
+	}
+	
+	static bool first = true;
+
+	glUseProgram(GYUVCompProg.GetId());	check();
+
+	if(first){
+		glUniform2f(glGetUniformLocation(GYUVCompProg.GetId(),"offset"),x0,y0);
+		glUniform2f(glGetUniformLocation(GYUVCompProg.GetId(),"scale"),x1-x0,y1-y0);
+		glUniform4f(glGetUniformLocation(GYUVCompProg.GetId(),"donutparams"),
+			g_conf.DONUTXRATIO,
+			g_conf.DONUTYRATIO,
+			g_conf.DONUTINNERRATIO,
+			g_conf.DONUTOUTERRATIO);
+		glUniform1i(glGetUniformLocation(GYUVCompProg.GetId(),"tex0"), 0);
+		glUniform1i(glGetUniformLocation(GYUVCompProg.GetId(),"tex1"), 1);
+		glUniform1i(glGetUniformLocation(GYUVCompProg.GetId(),"tex2"), 2);
+		check();
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D,ytexture->GetId());	check();
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D,utexture->GetId());	check();
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D,vtexture->GetId());	check();
+	glActiveTexture(GL_TEXTURE0);
+
+	GLuint loc = glGetAttribLocation(GYUVCompProg.GetId(),"vertex");
+	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
+	glEnableVertexAttribArray(loc);	check();
+	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 ); check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	if(render_target)
 	{
 		//glFinish();	check();

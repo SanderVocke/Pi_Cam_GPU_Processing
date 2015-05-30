@@ -339,7 +339,8 @@ int main(int argc, const char **argv)
 		BeginFrame();
 			
 		if(!doImage){ //normal case: render from the camera stream.
-			DrawYUVTextureRect(&ytexture,&utexture,&vtexture,&dedonutmap,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
+			//DrawYUVTextureRect(&ytexture,&utexture,&vtexture,&dedonutmap,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
+			DrawYUVTextureRectComp(&ytexture,&utexture,&vtexture,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
 		}
 		else{ //render from the static PNG image texture we made.
 			DrawTextureRect(&fileinputtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgbtexture);

@@ -3,6 +3,7 @@ LEFT dir mismatch 2
 I2C ERROR!
 Start.
 Initializing graphics and camera.
+unable to open /dev/vc-mem ...
 Camera resolution: 1024x1024
 Creating Textures.
 Max texture size: 3379

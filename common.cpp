@@ -84,7 +84,7 @@ const char* FX_Name_Enum[NUM_FX] = {
 	"FX_COLOURBALANCE",
 	"FX_CARTOON"
 };
-const int FX_Enum[NUM_FX] = {
+const MMAL_PARAM_IMAGEFX_T FX_Enum[NUM_FX] = {
 	MMAL_PARAM_IMAGEFX_NONE             ,
 	MMAL_PARAM_IMAGEFX_NEGATIVE         ,
 	MMAL_PARAM_IMAGEFX_SOLARIZE         ,

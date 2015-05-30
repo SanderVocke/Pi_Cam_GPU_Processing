@@ -81,6 +81,7 @@ void DrawRangeRect(float x0, float y0, float x1, float y1,
  float hmin, float hmax, float smin, float vmin,
  GfxTexture* render_target);
 void DrawTextureRect(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
+void DrawYUVTextureRectComp(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* vtexture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* vtexture, GfxTexture* maptex, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 void DrawDeDonutTextureRect(GfxTexture* texture, GfxTexture* dedonutmap, float x0, float y0, float x1, float y1, GfxTexture* render_target);
 void DrawHorSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target);
