@@ -25,14 +25,13 @@ unsigned int msgi = 0;
 int dWidth, dHeight; //width and height of "dedonuted" image
 bool gHaveI2C = false;
 bool showWindow = false;
-bool renderScreen = true;
+bool renderScreen = false;
 bool imageAvailable = true;
-bool doImage = true;
+bool doImage = false;
 bool doBehave = false;
 bool doMap = false;
 bool do_Behaviour2 = false;
 
-int filterLevel = 0;
 #define FILTER_LEVELS 4
 typedef enum filterLevels_t{
 	FILTER_OFF = 0,
@@ -40,6 +39,8 @@ typedef enum filterLevels_t{
 	FILTER_OPEN,
 	FILTER_OPENCLOSE
 }filterLevels_t;
+
+int filterLevel = FILTER_ERODE;
 
 int dspeed[2];
 direction_t ddir[2];
@@ -354,15 +355,18 @@ int main(int argc, const char **argv)
 		
 		if(filterLevel == FILTER_OFF){
 			DrawHorSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
+			DrawVerSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
 		}
 		else if(filterLevel == FILTER_ERODE){
 			DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform erosion [ in the Opening phase, the temporary outputs 
 			DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
+			DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
 		}
 		else if(filterLevel == FILTER_OPEN){
 			DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform erosion [ in the Opening phase, the temporary outputs 
 			DrawDilate(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform dilation		are stored in the wrong texture, for texture re-use]
 			DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
+			DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
 		}
 		else if(filterLevel == FILTER_OPENCLOSE){
 			DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform erosion [ in the Opening phase, the temporary outputs 
@@ -370,10 +374,10 @@ int main(int argc, const char **argv)
 			DrawDilate(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform dilation	  [ in the Closing phase, they are in right order ]
 			DrawErode(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform erosion
 			DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
+			DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
 		}
 		
 		DrawHorSum2(&horsumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture2); //second (final) horizontal summer stage
-		DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
 		DrawVerSum2(&versumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture2); //second (final) vertical summer stage		
 		
 		
@@ -464,7 +468,8 @@ void renderDebugWindow(GfxTexture* render_target){
 		DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target);
 		//DrawTextureRect(&thresholdtexture, 0.8f, -0.2f, -1.0f, -1.0f, render_target);
 		//DrawTextureRect(&erodetexture, 0.8f, 1.0f, -1.0f, 0.2f, render_target); //draw eroded where input was before
-		DrawTextureRect(&erodetexture, 0.8f, -0.2f, -1.0f, -1.0f, render_target); //draw eroded where thresholded was before
+		if(filterLevel >= FILTER_ERODE)	DrawTextureRect(&erodetexture, 0.8f, -0.2f, -1.0f, -1.0f, render_target); //draw eroded where thresholded was before
+		else DrawTextureRect(&thresholdtexture, 0.8f, -0.2f, -1.0f, -1.0f, render_target); //draw eroded where thresholded was before
 		DrawTextureRect(&horsumtexture1, 0.95f, -0.2f, 0.8f, -1.0f,  render_target);
 		DrawTextureRect(&horsumtexture2, 1.0f, -0.2f, 0.95f, -1.0f, render_target);
 		DrawTextureRect(&versumtexture1, 0.8f, 0.0f, -1.0f, -0.2f, render_target);
@@ -482,7 +487,8 @@ void renderDebugWindow(GfxTexture* render_target){
 		DrawTextureRect(&rgbtexture, -1.0f, 0.2f, 0.8f, 1.0f, render_target);
 		//DrawTextureRect(&thresholdtexture, -1.0f, -1.0f, 0.8f, -0.2f, render_target);
 		//DrawTextureRect(&erodetexture, -1.0f, 0.2f, 0.8f, 1.0f, render_target); //draw eroded where input was before
-		DrawTextureRect(&erodetexture, -1.0f, -1.0f, 0.8f, -0.2f, render_target); //draw eroded where thresholded was before
+		if(filterLevel >= FILTER_ERODE)	DrawTextureRect(&erodetexture, -1.0f, -1.0f, 0.8f, -0.2f, render_target); //draw eroded where thresholded was before
+		else DrawTextureRect(&thresholdtexture, -1.0f, -1.0f, 0.8f, -0.2f, render_target); //draw eroded where thresholded was before
 		DrawTextureRect(&horsumtexture1, 0.8f, -1.0f, 0.95f, -0.2f,  render_target);
 		DrawTextureRect(&horsumtexture2, 0.95f, -1.0f, 1.0f, -0.2f, render_target);
 		DrawTextureRect(&versumtexture1, -1.0f, -0.2f, 0.8f, 0.0f, render_target);

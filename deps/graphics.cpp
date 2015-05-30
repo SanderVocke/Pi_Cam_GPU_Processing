@@ -842,6 +842,8 @@ void DrawVerSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 		glUniform1i(glGetUniformLocation(GVerSumProg.GetId(),"tex"), 0);
 		check();
 	}
+	
+	glUniform1f(glGetUniformLocation(GVerSumProg.GetId(),"step"), 1.0f/((float)texture->GetHeight()));
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
 	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
