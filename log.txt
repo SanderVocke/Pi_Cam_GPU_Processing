@@ -6,7 +6,7 @@ Initializing graphics and camera.
 unable to open /dev/vc-mem ...
 Camera resolution: 1024x1024
 Creating Textures.
-Max texture size: 3379
 Dedonut: 2048x244
+Low-res: 640x448
 Starting process loop.
-Mapping enabled. Size 1280x896.
+Mapping enabled. Size 640x448.

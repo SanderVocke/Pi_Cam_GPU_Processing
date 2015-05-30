@@ -18,6 +18,11 @@
 
 #define PI (3.141592653589793)
 
+#define MAX_TARGETS 10
+
+#define MIN(A, B) ((A<B)?A:B)
+#define MAX(A, B) ((A<B)?B:A)
+
 FILE * logfile;
 char messages[NUMDBG][300];
 unsigned int msgi = 0;
@@ -101,7 +106,7 @@ struct object object_red[300];
 struct object object_blue_valid[300];
 struct object object_red_valid[300];
 
-struct object target[3];
+struct object target[MAX_TARGETS];
 int targetfound;
 
 int blue_x [30];
@@ -211,7 +216,7 @@ int main(int argc, const char **argv)
 	//NOW ALLOCATE SPACE FOR ALL THESE TEXTURES
 	DBG("Creating Textures.");
 	//DeDonut RGB textures
-	DBG("Max texture size: %d", GL_MAX_TEXTURE_SIZE);
+	//DBG("Max texture size: %d", GL_MAX_TEXTURE_SIZE);
 	initDeDonutTextures(&dedonutmap); //(Create and also fill in its values, see function)
 	
 	//input image texture: if we are rendering from an input image instead of the camera, the data is in this.
@@ -270,6 +275,7 @@ int main(int argc, const char **argv)
 	if(!lowh) lowh = 1;
 	lowdisptexture.CreateRGBA(g_conf.LOWRES_WIDTH, lowh, NULL, (GLfloat) GL_LINEAR, (GLfloat) GL_CLAMP_TO_EDGE);
 	lowdisptexture.GenerateFrameBuffer();
+	DBG("Low-res: %dx%d", g_conf.LOWRES_WIDTH, lowh);
 	
 	
 	//Start the processing loop.
@@ -983,6 +989,7 @@ void analyzeResults(void){
 				
 				{	
 				
+				/*
 				if(targetfound<3){
 				
 				     target[targetfound].x_start  =  object_red[i].x_start;
@@ -994,6 +1001,23 @@ void analyzeResults(void){
 				     target[targetfound].size_x  =  object_red[i]. size_x;
 				     target[targetfound].size_y  =  object_red[i].size_y;
 				     target[targetfound].confirmed  = true;   
+				     targetfound++;
+				
+				     break;
+				    }
+				}
+				*/
+				if(targetfound<MAX_TARGETS){
+				
+				     target[targetfound].x_start  =  	MIN(object_red[i].x_start, object_blue[i].x_start);
+				     target[targetfound].x_stop  =  	MAX(object_red[i].x_stop, object_blue[i].x_stop); 
+				     target[targetfound].y_start =   	MIN(object_red[i].y_start, object_blue[i].y_start);
+				     target[targetfound].y_stop  =  	MAX(object_red[i].y_stop, object_blue[i].y_stop); 
+				     target[targetfound].c_x       =  	object_red[i].c_x;       //base these things on red only
+				     target[targetfound].c_y       =  	object_red[i].c_y;       //base these things on red only
+				     target[targetfound].size_x  =  	object_red[i].size_x;    //base these things on red only
+				     target[targetfound].size_y  =  	object_red[i].size_y;    //base these things on red only
+				     target[targetfound].confirmed  = 	true;   
 				     targetfound++;
 				
 				     break;
@@ -1117,10 +1141,10 @@ void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float
 	//DBG("targetfound %d", targetfound);
 	for(i=0; i<targetfound; i++){
 		int xstart,xstop,ystart,ystop;
-		xstart = target[i].x_start-10;
-		xstop = target[i].x_stop +10;
-		ystart = target[i].y_start-10;
-		ystop = target[i].y_stop +10;
+		xstart = target[i].x_start-3;
+		xstop = target[i].x_stop +3;
+		ystart = target[i].y_start-3;
+		ystop = target[i].y_stop +3;
 		if(xstart<0) xstart = 0;
 		if(xstop>(rgbtexture.Width-1)) xstop = rgbtexture.Width-1;
 		if(ystart<0) ystart = 0;
@@ -1326,7 +1350,7 @@ void doBehaviour2(void){
 	You can look at the DoBehaviour below for an example. 
 	Some information:
 	- this function will be called on every single frame (5-15 frames per second depending on performance).
-	- the integer variable "targetfound" says how many targets were found. There can be maximum 3 targets found.
+	- the integer variable "targetfound" says how many targets were found. There can be maximum MAX_TARGETS targets found.
 	- the array target[] holds the targets that were found (up to 3). If 1 target was found only, it is in target[0]. the second one is in target[1] etc.
 	- each entry in the target[] array is an "object" struct, which looks like:
 	
