@@ -943,6 +943,7 @@ bool GfxTexture::CreateRGBA(int width, int height, const void* data, GLfloat Min
 {
 	Width = width;
 	Height = height;
+	if(Id) glDeleteTextures(1, &Id);
 	glGenTextures(1, &Id);
 	check();
 	glBindTexture(GL_TEXTURE_2D, Id);
@@ -964,6 +965,7 @@ bool GfxTexture::CreateGreyScale(int width, int height, const void* data, GLfloa
 {
 	Width = width;
 	Height = height;
+	if(Id) glDeleteTextures(1, &Id);
 	glGenTextures(1, &Id);
 	check();
 	glBindTexture(GL_TEXTURE_2D, Id);

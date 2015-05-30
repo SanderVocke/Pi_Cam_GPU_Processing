@@ -11,6 +11,7 @@
 #include <cmath>
 #include "i2c_motor.h"
 #include "fbmap.h"
+#include "dirent.h"
 
 #include "GLES2/gl2.h"
 #include "EGL/egl.h"
@@ -94,8 +95,6 @@ struct centroid c_red[200];
 struct centroid c_blue[200];
 int red_centroid_total = 0;
 int blue_centroid_total = 0;
-int red_centroid_total_valid= 0;
-int blue_centroid_total_valid= 0;
 
 struct box_x  box_blue_x[200];
 struct box_x  box_red_x[200];
@@ -103,8 +102,6 @@ struct box_y  box_red_y[200];
 struct box_y  box_blue_y[200];
 struct object object_blue[300];
 struct object object_red[300];
-struct object object_blue_valid[300];
-struct object object_red_valid[300];
 
 struct object target[MAX_TARGETS];
 int targetfound;
@@ -127,6 +124,11 @@ double total_time_s = 0;
 bool do_pipeline = false;
 
 CCamera* cam;
+
+#define MAX_FILES 100
+int num_input_files = 0;
+int current_input_file = 0;
+char input_files[MAX_FILES][100];
 
 //more timing stuff to benchmark each step inside the loop separately.
 struct timespec t_start, t_curses, t_readframe, t_putframe, t_draw, t_getdata, t_processdata;
@@ -195,6 +197,22 @@ int main(int argc, const char **argv)
 		blueparams[i] = g_conf.BLUEPARAMS[i];
 	}
 	if(startI2CMotor()) gHaveI2C = true; //Start I2C.
+	
+	//get filename list
+	DIR *dir;
+	struct dirent *ent;
+	if ((dir = opendir("./inputs/")) != NULL) {
+		/* print all the files and directories within directory */
+		while((ent = readdir(dir)) != NULL) {
+			if(strcmp(ent->d_name, ".")==0) continue;
+			if(strcmp(ent->d_name, "..")==0) continue;
+			sprintf(input_files[num_input_files], "./inputs/%s", ent->d_name);
+			num_input_files++;
+			if(num_input_files>=MAX_FILES) break;
+		}
+		closedir (dir);
+	}
+	DBG("%d input files found.", num_input_files);
 
 	//init graphics and camera
 	DBG("Start.");
@@ -220,13 +238,20 @@ int main(int argc, const char **argv)
 	initDeDonutTextures(&dedonutmap); //(Create and also fill in its values, see function)
 	
 	//input image texture: if we are rendering from an input image instead of the camera, the data is in this.
-	unsigned char * inputbuf;
-	unsigned int w,h;
-	LodePNGState lstate;
-	lodepng_decode32_file(&inputbuf, &w, &h, "./inputs/input.png");
-	if(w>0 && h>0){
-		fileinputtexture.CreateRGBA(w,h,(const void*)inputbuf,(GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
-		imageAvailable = true;
+	if(num_input_files > 0){
+		unsigned char * inputbuf;
+		unsigned int w,h;
+		LodePNGState lstate;
+		lodepng_decode32_file(&inputbuf, &w, &h, input_files[current_input_file]);
+		if(w>0 && h>0){
+			fileinputtexture.CreateRGBA(w,h,(const void*)inputbuf,(GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
+			imageAvailable = true;
+		}
+		free(inputbuf);
+	}
+	else{
+		fileinputtexture.CreateRGBA(64,64,NULL,(GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
+		imageAvailable = false;
 	}
 	
 	//create YUV textures
@@ -344,7 +369,7 @@ int main(int argc, const char **argv)
 		//PART THAT INSTRUCTS OPENGL TO START EXECUTING THE SHADER CODE (.glsl files) ON THE GPU
 		//begin frame: a call from the graphics.h/cpp module that starts the rendering pipeline for this frame.
 		BeginFrame();
-			
+		
 		if(!doImage){ //normal case: render from the camera stream.
 			//DrawYUVTextureRect(&ytexture,&utexture,&vtexture,&dedonutmap,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
 			DrawYUVTextureRectComp(&ytexture,&utexture,&vtexture,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
@@ -355,9 +380,9 @@ int main(int argc, const char **argv)
 		
 		//make thresholded
 		DrawThresholdRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, 
-			redparams[0], redparams[1], redparams[2], redparams[3],
-			blueparams[0], blueparams[1], blueparams[2], blueparams[3],
-			&thresholdtexture); //perform thresholding
+		redparams[0], redparams[1], redparams[2], redparams[3],
+		blueparams[0], blueparams[1], blueparams[2], blueparams[3],
+		&thresholdtexture); //perform thresholding
 		
 		if(filterLevel == FILTER_OFF){
 			DrawHorSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
@@ -450,7 +475,7 @@ int main(int argc, const char **argv)
 		total_frameset_time_s += double(time_difference)/1000000000.0;
 		start_time = gettime_now.tv_nsec;
 		float fr = float(double(UPDATERATE)/total_frameset_time_s);
-			
+		
 		//print the screen once every so many iterations
 		if((i%UPDATERATE)==0)
 		{			//draw the terminal window
@@ -481,16 +506,17 @@ void renderDebugWindow(GfxTexture* render_target){
 		DrawTextureRect(&versumtexture1, 0.8f, 0.0f, -1.0f, -0.2f, render_target);
 		DrawTextureRect(&versumtexture2, 0.8f, 0.15f, -1.0f, 0.05f, render_target);	
 		DrawRangeRect(0.8f, 1.0f, 1.0f, 0.6f,
-			redparams[0], redparams[1], redparams[2], redparams[3],
-			render_target);
+		redparams[0], redparams[1], redparams[2], redparams[3],
+		render_target);
 		DrawRangeRect(0.8f, 0.6f, 1.0f, 0.2f,
-			blueparams[0], blueparams[1], blueparams[2], blueparams[3],
-			render_target);
+		blueparams[0], blueparams[1], blueparams[2], blueparams[3],
+		render_target);
 		drawBoxes(render_target, 0.8f, 1.0f, -1.0f, 0.2f);
 	}
 	else{
 		//drawBoxes(&rgbtexture, -1.0f,-1.0f,1.0f,1.0f);
 		DrawTextureRect(&rgbtexture, -1.0f, 0.2f, 0.8f, 1.0f, render_target);
+		//DrawTextureRect(&horsumtexture1, -1.0f, 0.2f, 0.8f, 1.0f, render_target);
 		//DrawTextureRect(&thresholdtexture, -1.0f, -1.0f, 0.8f, -0.2f, render_target);
 		//DrawTextureRect(&erodetexture, -1.0f, 0.2f, 0.8f, 1.0f, render_target); //draw eroded where input was before
 		if(filterLevel >= FILTER_ERODE)	DrawTextureRect(&erodetexture, -1.0f, -1.0f, 0.8f, -0.2f, render_target); //draw eroded where thresholded was before
@@ -500,11 +526,11 @@ void renderDebugWindow(GfxTexture* render_target){
 		DrawTextureRect(&versumtexture1, -1.0f, -0.2f, 0.8f, 0.0f, render_target);
 		DrawTextureRect(&versumtexture2, -1.0f, 0.05f, 0.8f, 0.15f, render_target);	
 		DrawRangeRect(0.8f, 0.2f, 1.0f, 0.6f,
-			redparams[0], redparams[1], redparams[2], redparams[3],
-			render_target);
+		redparams[0], redparams[1], redparams[2], redparams[3],
+		render_target);
 		DrawRangeRect(0.8f, 0.6f, 1.0f, 1.0f,
-			blueparams[0], blueparams[1], blueparams[2], blueparams[3],
-			render_target);
+		blueparams[0], blueparams[1], blueparams[2], blueparams[3],
+		render_target);
 		drawBoxes(render_target, -1.0f, 0.2f, 0.8f, 1.0f );
 	}
 }
@@ -556,11 +582,11 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	
 	//Print robot motor states.
 	mvprintw(SPEEDLINE,SPEEDCOL,"Left Speed: %d / %d  ",
-		getDirection(LEFT_MOTOR)==FORWARD ? getSpeed(LEFT_MOTOR) : -1*((int)getSpeed(LEFT_MOTOR)),
-		ddir[(int)LEFT_MOTOR]==FORWARD ? dspeed[(int)LEFT_MOTOR] : -1*dspeed[(int)LEFT_MOTOR]);
+	getDirection(LEFT_MOTOR)==FORWARD ? getSpeed(LEFT_MOTOR) : -1*((int)getSpeed(LEFT_MOTOR)),
+	ddir[(int)LEFT_MOTOR]==FORWARD ? dspeed[(int)LEFT_MOTOR] : -1*dspeed[(int)LEFT_MOTOR]);
 	mvprintw(SPEEDLINE+1,SPEEDCOL,"Right Speed: %d / %d   ",
-		getDirection(RIGHT_MOTOR)==FORWARD ? getSpeed(RIGHT_MOTOR) : -1*((int)getSpeed(RIGHT_MOTOR)),
-		ddir[(int)RIGHT_MOTOR]==FORWARD ? dspeed[(int)RIGHT_MOTOR] : -1*dspeed[(int)RIGHT_MOTOR]);
+	getDirection(RIGHT_MOTOR)==FORWARD ? getSpeed(RIGHT_MOTOR) : -1*((int)getSpeed(RIGHT_MOTOR)),
+	ddir[(int)RIGHT_MOTOR]==FORWARD ? dspeed[(int)RIGHT_MOTOR] : -1*dspeed[(int)RIGHT_MOTOR]);
 	
 	//Print whether autonomously moving
 	if(doBehave){
@@ -578,7 +604,7 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	else mvprintw(HDMILINE,HDMICOL, "HDMI OFF     ");
 	
 	//Print whether we are rendering an image or a camera stream
-	if(doImage) mvprintw(IMGLINE,IMGCOL, "Input from: './inputs/input.png'     ");
+	if(doImage) mvprintw(IMGLINE,IMGCOL, "Input from: %s     ", input_files[current_input_file]);
 	else mvprintw(IMGLINE,IMGCOL,"Input from: CAMERA                          ");
 	
 	//Print whether we are filtering
@@ -609,15 +635,15 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	int i;
 	mvprintw(BLUELINE, BLUECOL, "Red blobs: %d Blue blobs: %d Targets: %d      ", red_centroid_total, blue_centroid_total, targetfound);
 	//for(i=0; i<20; i++){
-		//if(i<total_blue_x) mvprintw(i+BLUELINE+1,BLUECOL, "X found: (%d,?)      ",blue_x[i]);
-		//else if(i<(total_blue_x+total_blue_y)) mvprintw(i+BLUELINE+1,BLUECOL,  "Y found: (?,%d)      ",blue_y[i-total_blue_x]);
-		//else mvprintw(i+BLUELINE+1,BLUECOL, "(not found)                  ");
+	//if(i<total_blue_x) mvprintw(i+BLUELINE+1,BLUECOL, "X found: (%d,?)      ",blue_x[i]);
+	//else if(i<(total_blue_x+total_blue_y)) mvprintw(i+BLUELINE+1,BLUECOL,  "Y found: (?,%d)      ",blue_y[i-total_blue_x]);
+	//else mvprintw(i+BLUELINE+1,BLUECOL, "(not found)                  ");
 	//}
 	//mvprintw(REDLINE, REDCOL, "Red objects found: %d      ", red_centroid_total);
 	//for(i=0; i<20; i++){
-		//if(i<total_red_x) mvprintw(REDLINE+i+1,REDCOL, "X found: (%d,?)      ",red_x[i]);
-		//else if(i<(total_red_x+total_red_y)) mvprintw(REDLINE+i+1,REDCOL, "Y found: (?,%d)      ",red_y[i-total_red_x]);
-		//else mvprintw(REDLINE+i+1,REDCOL,"(not found)                 ");
+	//if(i<total_red_x) mvprintw(REDLINE+i+1,REDCOL, "X found: (%d,?)      ",red_x[i]);
+	//else if(i<(total_red_x+total_red_y)) mvprintw(REDLINE+i+1,REDCOL, "Y found: (?,%d)      ",red_y[i-total_red_x]);
+	//else mvprintw(REDLINE+i+1,REDCOL,"(not found)                 ");
 	//}
 	
 	//print the HSV thresholding thresholds
@@ -687,23 +713,23 @@ void initDeDonutTextures(GfxTexture *targetmap){
 	rin = g_conf.DONUTINNERRATIO;
 	rout = g_conf.DONUTOUTERRATIO;
 	for(i=0; i<width; i++)
-		for(j=0; j<height; j++){
-			//normalize coordinates
-			x = ((float)i)/(float)width;
-			y = ((float)j)/(float)height;
-			//calculations
-			phi = x*2*PI;
-			d = (1-y)*(rout-rin)+rin;
-			dx = d*sin(phi);
-			dy = d*cos(phi);
-			xout = cx+dx;
-			yout = cy+dy;
-			
-			//store in pixel form
-			data[(width*j+i)*4] = (int)(xout*255.0);
-			data[(width*j+i)*4+1] = (int)(yout*255.0);
-			data[(width*j+i)*4+3] = 255;
-		}
+	for(j=0; j<height; j++){
+		//normalize coordinates
+		x = ((float)i)/(float)width;
+		y = ((float)j)/(float)height;
+		//calculations
+		phi = x*2*PI;
+		d = (1-y)*(rout-rin)+rin;
+		dx = d*sin(phi);
+		dy = d*cos(phi);
+		xout = cx+dx;
+		yout = cy+dy;
+		
+		//store in pixel form
+		data[(width*j+i)*4] = (int)(xout*255.0);
+		data[(width*j+i)*4+1] = (int)(yout*255.0);
+		data[(width*j+i)*4+3] = 255;
+	}
 	targetmap->SetPixels(data);
 	free(data);	
 	
@@ -718,12 +744,12 @@ void analyzeResults(void){
 	int x_blow[40];
 	int x_rhigh[40];
 	int x_rlow[40];
-	total_red_x = 0; 
 	int set_blue = 1;
 	int set_red =1;
 	int k_blue=0;
 	int k_red=0;
 	total_blue_x  = 0;
+	total_red_x = 0; 
 	unsigned char * verptr = (unsigned char*)versumtexture2.image;
 	for(int j=0; j< (versumtexture2.Width); j++)
 	{   
@@ -737,7 +763,7 @@ void analyzeResults(void){
 				
 				set_blue =0;
 			}
-	     }
+		}
 		if (set_blue ==0)
 		{
 			if ((a1==0)||(j == (versumtexture2.Width) -1))
@@ -746,14 +772,14 @@ void analyzeResults(void){
 				x_blow[k_blue] =j;
 				box_blue_x[k_blue].x_stop=j;
 				set_blue =1;
-			
+				
 				sum_blue = (x_bhigh[k_blue] + ( x_blow[k_blue] -x_bhigh[k_blue] )/2);
 				blue_x[k_blue]=sum_blue;
 				//DBG(" * x_blue[%d]  = %d\n", total_blue_x,sum_blue);
 				k_blue++;
 			}
 		}
-		  
+		
 		//red x coordinates
 		a2 = verptr[j*4];
 		if (set_red ==1)
@@ -764,7 +790,7 @@ void analyzeResults(void){
 				box_red_x[k_red].x_start=j;
 				set_red =0;
 			}
-	     }
+		}
 		if (set_red ==0)
 		{
 			if ((a2==0)||(j == (versumtexture2.Width) -1))
@@ -773,7 +799,7 @@ void analyzeResults(void){
 				x_rlow[k_red] =j;
 				box_red_x[k_red].x_stop=j;
 				set_red =1;
-			
+				
 				sum_red = (x_rhigh[k_red] + ( x_rlow[k_red] -x_rhigh[k_red] )/2);
 				red_x[k_red]=sum_red;
 				//DBG(" * x_red[%d]  = %d\n", total_red_x,sum_red);
@@ -783,7 +809,7 @@ void analyzeResults(void){
 				//DBG(" * x_rhigh[%d]  = %d\n", total_red_y, box_red_x[k_red].x_start);
 				k_red++;
 			}
-		 }
+		}
 
 	}	
 	
@@ -810,7 +836,7 @@ void analyzeResults(void){
 				box_blue_y[k_blue].y_start=j;
 				set_blue =0;
 			}
-	    }
+		}
 
 		if (set_blue ==0)
 		{
@@ -826,20 +852,20 @@ void analyzeResults(void){
 				
 				k_blue++;
 			}
-	
-	 	}
-		 
+			
+		}
+		
 		//red 
 		a2 = horptr[j*4];;
 		if (set_red ==1)
 		{
-	       if(a2>0)
-		   {   
-		    	y_rhigh[k_red] =j;
+			if(a2>0)
+			{   
+				y_rhigh[k_red] =j;
 				box_red_y[k_red].y_start=j;
 				set_red =0;
-           }
-	    }
+			}
+		}
 
 		if (set_red ==0)
 		{
@@ -857,189 +883,159 @@ void analyzeResults(void){
 				//DBG(" * y_rlow[%d]  = %d\n", total_red_y,box_red_y[k_red].y_stop);
 				//DBG(" * y_rhigh[%d]  = %d\n", total_red_y,box_red_y[k_red].y_start);
 				//DBG(" * k_value[%d]  = %d\n", total_red_y,k_red);
-			
+				
 				k_red++;
 			}
 
-	 	}
+		}
 	}
 	
 	int g,h;
 	red_centroid_total =0; 
-		for (g=0; g<total_red_x;g++)
-		{   
-			for (h=0; h<total_red_y;h++)
+	for (g=0; g<total_red_x;g++)
+	{   
+		for (h=0; h<total_red_y;h++)
+		
+		{
+			object_red[red_centroid_total].c_x = red_x[g];
+			object_red[red_centroid_total].c_y = red_y[h];
+			object_red[red_centroid_total].size_x = box_red_x[g].x_stop -  box_red_x[g].x_start ;
+			object_red[red_centroid_total].size_y = box_red_y[h].y_stop- box_red_y[h].y_start ;
 			
-			{
-				object_red[red_centroid_total].c_x = red_x[g];
-				object_red[red_centroid_total].c_y = red_y[h];
-				object_red[red_centroid_total].size_x = box_red_x[g].x_stop -  box_red_x[g].x_start ;
-				object_red[red_centroid_total].size_y = box_red_y[h].y_stop- box_red_y[h].y_start ;
-				
-				object_red[red_centroid_total].x_start = box_red_x[g].x_start;
-				object_red[red_centroid_total].x_stop =  box_red_x[g].x_stop;
-				object_red[red_centroid_total].y_start = box_red_y[h].y_start;
-				object_red[red_centroid_total].y_stop= box_red_y[h].y_stop;
-				object_red[red_centroid_total].confirmed = false;
-				
-				checkObject(&(object_red[red_centroid_total]), true);
-				
-				
-				
-				//DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, NULL);
-				//DBG("%f %f %f %f \n", x0,y0,x1,y1);
-				//DBG("%d \n", object_red[red_centroid_total].x_start);
-				//DBG("%d \n", object_red[red_centroid_total].x_stop);
-				//DBG("%d \n", object_red[red_centroid_total].y_start);
-				//DBG("%d \n", object_red[red_centroid_total].y_start);				
-				//DrawBox(0.0f,0.0f,0.1f,0.1f,1.0f,1.0f,0.0f);
-				red_centroid_total++;
-			}
+			object_red[red_centroid_total].x_start = box_red_x[g].x_start;
+			object_red[red_centroid_total].x_stop =  box_red_x[g].x_stop;
+			object_red[red_centroid_total].y_start = box_red_y[h].y_start;
+			object_red[red_centroid_total].y_stop= box_red_y[h].y_stop;
+			object_red[red_centroid_total].confirmed = false;
+			
+			checkObject(&(object_red[red_centroid_total]), true);
+			
+			
+			
+			//DrawTextureRect(&rgbtexture, 0.8f, 1.0f, -1.0f, 0.2f, NULL);
+			//DBG("%f %f %f %f \n", x0,y0,x1,y1);
+			//DBG("%d \n", object_red[red_centroid_total].x_start);
+			//DBG("%d \n", object_red[red_centroid_total].x_stop);
+			//DBG("%d \n", object_red[red_centroid_total].y_start);
+			//DBG("%d \n", object_red[red_centroid_total].y_start);				
+			//DrawBox(0.0f,0.0f,0.1f,0.1f,1.0f,1.0f,0.0f);
+			if(object_red[red_centroid_total].confirmed) red_centroid_total++;
 		}
-		 //DBG(" * Total red centroids %d\n",red_centroid_total);
-		
-		
-		
+	}
+	//DBG(" * Total red centroids %d\n",red_centroid_total);
+	
+	
+	
 	blue_centroid_total =0; 
-		for (g=0; g<total_blue_x;g++)
-		{   
-			for (h=0; h<total_blue_y;h++)
+	for (g=0; g<total_blue_x;g++)
+	{   
+		for (h=0; h<total_blue_y;h++)
+		
+		{
+			object_blue[blue_centroid_total].c_x = blue_x[g];
+			object_blue[blue_centroid_total].c_y = blue_y[h];
+			object_blue[blue_centroid_total].size_x = box_blue_x[g].x_stop -  box_blue_x[g].x_start ;
+			object_blue[blue_centroid_total].size_y = box_blue_y[h].y_stop- box_blue_y[h].y_start ;
+			object_blue[blue_centroid_total].x_start = box_blue_x[g].x_start;
+			object_blue[blue_centroid_total].x_stop =  box_blue_x[g].x_stop;
+			object_blue[blue_centroid_total].y_start = box_blue_y[h].y_start;
+			object_blue[blue_centroid_total].y_stop= box_blue_y[h].y_stop;
+			object_blue[blue_centroid_total].confirmed = false;
+			checkObject(&(object_blue[blue_centroid_total]), false);
+			if(object_blue[blue_centroid_total].confirmed) blue_centroid_total++;
 			
-			{
-				object_blue[blue_centroid_total].c_x = blue_x[g];
-				object_blue[blue_centroid_total].c_y = blue_y[h];
-				object_blue[blue_centroid_total].size_x = box_blue_x[g].x_stop -  box_blue_x[g].x_start ;
-				object_blue[blue_centroid_total].size_y = box_blue_y[h].y_stop- box_blue_y[h].y_start ;
-				object_blue[blue_centroid_total].x_start = box_blue_x[g].x_start;
-				object_blue[blue_centroid_total].x_stop =  box_blue_x[g].x_stop;
-				object_blue[blue_centroid_total].y_start = box_blue_y[h].y_start;
-				object_blue[blue_centroid_total].y_stop= box_blue_y[h].y_stop;
-				object_blue[blue_centroid_total].confirmed = false;
-				checkObject(&(object_blue[blue_centroid_total]), false);
-				blue_centroid_total++;
-				
-			}
 		}
+	}
 
-		//DBG(" * Total blue centroids %d\n",blue_centroid_total  );
-		
-		    blue_centroid_total_valid =0;
-			for (g=0; g< blue_centroid_total ;g++)
-			
-			{    
-			   if (object_blue[g].confirmed == true)
-			   {
-				object_blue_valid[blue_centroid_total_valid].x_start       = object_blue[g].x_start;
-				object_blue_valid[blue_centroid_total_valid].x_stop       = object_blue[g].x_stop;
-				object_blue_valid[blue_centroid_total_valid].y_start       = object_blue[g].y_start;
-				object_blue_valid[blue_centroid_total_valid].y_stop       = object_blue[g].y_stop;
-				object_blue_valid[blue_centroid_total_valid].c_x            = object_blue[g].c_x;
-				object_blue_valid[blue_centroid_total_valid].c_y            = object_blue[g].c_y;
-				object_blue_valid[blue_centroid_total_valid].size_x       = object_blue[g]. size_x;
-				object_blue_valid[blue_centroid_total_valid].size_y       = object_blue[g].size_y;
-				object_blue_valid[blue_centroid_total_valid].confirmed = true;   
-			   }
-				
-				
-				blue_centroid_total_valid++;
-			}
-			
-			red_centroid_total_valid =0;
-			for (g=0; g< red_centroid_total ;g++)
-			
-			{    
-			   if (object_red[g].confirmed == true)
-			   {
-				object_red_valid[red_centroid_total_valid].x_start  =  object_red[g].x_start;
-				object_red_valid[red_centroid_total_valid].x_stop  =  object_red[g].x_stop; 
-				object_red_valid[red_centroid_total_valid].y_start =   object_red[g].y_start;
-				object_red_valid[red_centroid_total_valid].y_stop  =  object_red[g].y_stop; 
-				object_red_valid[red_centroid_total_valid].c_x       =  object_red[g].c_x; 
-				object_red_valid[red_centroid_total_valid].c_y       =  object_red[g].c_y;  
-				object_red_valid[red_centroid_total_valid].size_x  =  object_red[g]. size_x;
-				object_red_valid[red_centroid_total_valid].size_y  =  object_red[g].size_y;
-				object_red_valid[red_centroid_total_valid].confirmed  = true;   
-			   }
-				
-				
-				red_centroid_total_valid++;
-			}
-		
-		
-		targetfound=0;
-		for( int i = 0; i< red_centroid_total_valid; i++ )
-        { 
-	     for( int j = 0; j<blue_centroid_total_valid; j++ )
-		 {
-			 if 
-				 (
-				                               ( 
-											        ( object_red_valid[i].c_y  < object_blue_valid[j].c_y )
-												   &&
-                                                   ( object_red_valid[i].c_y  + (object_red_valid[i].size_y) >object_blue_valid[j].c_y )											   
-											  
-											  )
-											   &&
-											   (
-				                               ( ( object_red_valid[i].c_x   < object_blue_valid[j].c_x )&& (object_blue_valid[j].c_x < (object_red_valid[i].c_x  +(object_red_valid[i].size_x)))) ||
-											   (((object_red_valid[i].c_x - (object_red_valid[i].size_x))<object_blue_valid[j].c_x )&&(object_blue_valid[j].c_x<object_red_valid[i].c_x   ))
-											   )
-											   
-				 )
-				
-				{	
+	//DBG(" * Total blue centroids %d\n",blue_centroid_total  );
+	
+	targetfound=0;
+	#define DIV_BELOWSIZE 1
+	#define DIV_BESIDESIZE 2
+	#define MULT_SIZE 2
+	for( int i = 0; i< red_centroid_total; i++ )
+	{ 
+		for( int j = 0; j<blue_centroid_total; j++ )
+		{
+			if(
+					//Blue object is below red object
+					(object_red[i].c_y  < object_blue[j].c_y) 
+					&&
+					//Blue object is not farther below red object than the red object's size, divided by some constant
+					((object_red[i].c_y+object_red[i].size_y/DIV_BELOWSIZE)>object_blue[j].c_y)
+					&&
+					//Blue object is not farther beside red object than the red object's size, divided by some constant
+					(object_blue[j].c_x > (object_red[i].x_start-object_red[i].size_x/DIV_BESIDESIZE)) &&
+					(object_blue[j].c_x < (object_red[i].x_stop+object_red[i].size_x/DIV_BESIDESIZE))
+					&&
+					//Blue object and red object's sizes must be similar (and blue never larger than red to some degree!)
+					(object_blue[j].size_x < object_red[i].size_x*MULT_SIZE) &&
+					(object_blue[j].size_y < object_red[i].size_y*MULT_SIZE)
+					&&
+					//Blue object must be at least partially overlapping with red object in x axis.
+					(object_blue[j].x_start<object_red[i].x_stop) &&
+					(object_blue[j].x_stop>object_red[i].x_start)
+					){
+				//if(
+				//(	
+				//
+				//
+				//( object_red[i].c_y  < object_blue[j].c_y )
+				//	&&
+				//	( object_red[i].c_y  + (object_red[i].size_y) >object_blue[j].c_y ))
+				//&&(
+				//	
+				//
+				//	(( object_red[i].c_x   < object_blue[j].c_x )&& (object_blue[j].c_x < (object_red[i].c_x  +(object_red[i].size_x)))) ||
+				//	(((object_red[i].c_x - (object_red[i].size_x))<object_blue[j].c_x )&&(object_blue[j].c_x<object_red[i].c_x   ))
+				//)){	
 				
 				/*
 				if(targetfound<3){
 				
-				     target[targetfound].x_start  =  object_red[i].x_start;
-				     target[targetfound].x_stop  =  object_red[i].x_stop; 
-				     target[targetfound].y_start =   object_red[i].y_start;
-				     target[targetfound].y_stop  =  object_red[i].y_stop; 
-				     target[targetfound].c_x       =  object_red[i].c_x; 
-				     target[targetfound].c_y       =  object_red[i].c_y;  
-				     target[targetfound].size_x  =  object_red[i]. size_x;
-				     target[targetfound].size_y  =  object_red[i].size_y;
-				     target[targetfound].confirmed  = true;   
-				     targetfound++;
+					target[targetfound].x_start  =  object_red[i].x_start;
+					target[targetfound].x_stop  =  object_red[i].x_stop; 
+					target[targetfound].y_start =   object_red[i].y_start;
+					target[targetfound].y_stop  =  object_red[i].y_stop; 
+					target[targetfound].c_x       =  object_red[i].c_x; 
+					target[targetfound].c_y       =  object_red[i].c_y;  
+					target[targetfound].size_x  =  object_red[i]. size_x;
+					target[targetfound].size_y  =  object_red[i].size_y;
+					target[targetfound].confirmed  = true;   
+					targetfound++;
 				
-				     break;
-				    }
+					break;
+					}
 				}
 				*/
 				if(targetfound<MAX_TARGETS){
-				
-				     target[targetfound].x_start  =  	MIN(object_red[i].x_start, object_blue[i].x_start);
-				     target[targetfound].x_stop  =  	MAX(object_red[i].x_stop, object_blue[i].x_stop); 
-				     target[targetfound].y_start =   	MIN(object_red[i].y_start, object_blue[i].y_start);
-				     target[targetfound].y_stop  =  	MAX(object_red[i].y_stop, object_blue[i].y_stop); 
-				     target[targetfound].c_x       =  	object_red[i].c_x;       //base these things on red only
-				     target[targetfound].c_y       =  	object_red[i].c_y;       //base these things on red only
-				     target[targetfound].size_x  =  	object_red[i].size_x;    //base these things on red only
-				     target[targetfound].size_y  =  	object_red[i].size_y;    //base these things on red only
-				     target[targetfound].confirmed  = 	true;   
-				     targetfound++;
-				
-				     break;
-				    }
+					
+					target[targetfound].x_start  =  	MIN(object_red[i].x_start, object_blue[j].x_start);
+					target[targetfound].x_stop  =  	MAX(object_red[i].x_stop, object_blue[j].x_stop); 
+					target[targetfound].y_start =   	MIN(object_red[i].y_start, object_blue[j].y_start);
+					target[targetfound].y_stop  =  	MAX(object_red[i].y_stop, object_blue[j].y_stop); 
+					target[targetfound].c_x       =  	object_red[i].c_x;       //base these things on red only
+					target[targetfound].c_y       =  	object_red[i].c_y;       //base these things on red only
+					target[targetfound].size_x  =  	object_red[i].size_x;    //base these things on red only
+					target[targetfound].size_y  =  	object_red[i].size_y;    //base these things on red only
+					target[targetfound].confirmed  = 	true;   
+					targetfound++;
+					
+					break;
 				}
-         
-			
-			
-				
-				
-			    //DBG(" * Contour_blue[%d] - Cx(%d) = %d \n", j,j, c_blue[j].x );
-			    //DBG(" * Contour_blue[%d] - Cy(%d) = %d \n", j,j, c_blue[j].y );
-			    //DBG(" * Contour_red[%d] - Cx(%d) = %d \n", i,i, c_red[i].x );
-	            //DBG(" * Contour_red[%d] - Cy(%d) = %d \n", i,i, c_red[i].y );
-			  
-			}
-
-		 }
+			}			
+			//DBG(" * Contour_blue[%d] - Cx(%d) = %d \n", j,j, c_blue[j].x );
+			//DBG(" * Contour_blue[%d] - Cy(%d) = %d \n", j,j, c_blue[j].y );
+			//DBG(" * Contour_red[%d] - Cx(%d) = %d \n", i,i, c_red[i].x );
+			//DBG(" * Contour_red[%d] - Cy(%d) = %d \n", i,i, c_red[i].y );
+		}
+	}
 	//DBG("targets found: %d", targetfound);
 	//DBG("1st target %d %d", target[0].c_x, target[0].c_y);
-	   //DBG(" * total possibilities %d \n", total);  
+	//DBG(" * total possibilities %d \n", total);  
 	//drawBoxInRGB(10, 10, 1000, 20, 1.0f, 0.0f, 0.0f);
+	
+	//DBG("blue_centroid_total: %d blue_centroid_total: %d", blue_centroid_total, blue_centroid_total);
 	return;
 }
 
@@ -1074,20 +1070,31 @@ void checkObject(struct object* obj, bool red){
 	
 	bool started = false;
 	bool present = false;
+	
+	//if(red) DBG("Object ori x: %d till %d", obj->x_start, obj->x_stop);
+	
 	for(int x = xstartl; x<=xstopl; x+=xstep){
 		for(int y = obj->y_start; y <= obj->y_stop; y+=ystep){
-			if(((char*)horsumtexture1.image)[(horsumtexture1.Width*y+x)*4+coloroffset]){
+			if(((unsigned char*)horsumtexture1.image)[(horsumtexture1.Width*y+x)*4+coloroffset]){
 				obj->confirmed = true; //if we find at least one pixel of the right color, there is an object here.
 				present = true;
+				/*
+				if(red){
+					((unsigned char*)horsumtexture1.image)[(horsumtexture1.Width*y+x)*4+0] = 255;
+					((unsigned char*)horsumtexture1.image)[(horsumtexture1.Width*y+x)*4+1] = 255;
+					((unsigned char*)horsumtexture1.image)[(horsumtexture1.Width*y+x)*4+2] = 255;
+					((unsigned char*)horsumtexture1.image)[(horsumtexture1.Width*y+x)*4+3] = 255;
+				}
+				*/
 			}			
 		}
 		if((!started) && present){
 			started = true;
-			if(x*64>obj->x_start) obj->x_start = x*64;
+			if((x*64-31)>obj->x_start) obj->x_start = (x*64-31);
 		}
 		else if(started && (!present)){
 			started = false;
-			if(x*64<obj->x_stop) obj->x_stop = x*64;
+			if((x*64-31)<obj->x_stop) obj->x_stop = (x*64-31);
 		}
 		present = false;
 	}	
@@ -1107,6 +1114,10 @@ void checkObject(struct object* obj, bool red){
 		}
 		present = false;		
 	}
+	
+	//if(red) DBG("Object new x: %d till %d", obj->x_start, obj->x_stop);
+	
+	//horsumtexture1.SetPixels(horsumtexture1.image);
 }
 
 //-0.830746 0.294118 -0.857612 0.236601
@@ -1114,12 +1125,12 @@ void checkObject(struct object* obj, bool red){
 void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float y1i){
 	int i;
 	float x0,y0,x1,y1;
-	for(i=0; i<red_centroid_total_valid; i++){
-		if(!object_red_valid[i].confirmed) continue;
-		x0 = x0i + (x1i-x0i)*(((float)object_red_valid[i].x_start)/((float)rgbtexture.Width));
-		x1 = x0i + (x1i-x0i)*(((float)object_red_valid[i].x_stop)/((float)rgbtexture.Width));
-		y0 = y0i + (y1i-y0i)*(((float)object_red_valid[i].y_start)/((float)rgbtexture.Height));
-		y1 = y0i + (y1i-y0i)*(((float)object_red_valid[i].y_stop)/((float)rgbtexture.Height));
+	for(i=0; i<red_centroid_total; i++){
+		if(!object_red[i].confirmed) continue;
+		x0 = x0i + (x1i-x0i)*(((float)object_red[i].x_start)/((float)rgbtexture.Width));
+		x1 = x0i + (x1i-x0i)*(((float)object_red[i].x_stop)/((float)rgbtexture.Width));
+		y0 = y0i + (y1i-y0i)*(((float)object_red[i].y_start)/((float)rgbtexture.Height));
+		y1 = y0i + (y1i-y0i)*(((float)object_red[i].y_stop)/((float)rgbtexture.Height));
 		//DBG("%f %f %f %f", x0,y0,x1,y1);
 		DrawBox(x0,y0,x1,y1,1.0f,0.0f,0.0f, render_target);
 		//DrawBox(-0.5,-0.5,0.5,0.5,1.0f,0.0f,1.0f, render_target);
@@ -1127,12 +1138,12 @@ void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float
 	
 	
 	
-	for(i=0; i<blue_centroid_total_valid; i++){
-		if(!object_blue_valid[i].confirmed) continue;
-		x0 = x0i + (x1i-x0i)*(((float)object_blue_valid[i].x_start)/((float)rgbtexture.Width));
-		x1 = x0i + (x1i-x0i)*(((float)object_blue_valid[i].x_stop)/((float)rgbtexture.Width));
-		y0 = y0i + (y1i-y0i)*(((float)object_blue_valid[i].y_start)/((float)rgbtexture.Height));
-		y1 = y0i + (y1i-y0i)*(((float)object_blue_valid[i].y_stop)/((float)rgbtexture.Height));
+	for(i=0; i<blue_centroid_total; i++){
+		if(!object_blue[i].confirmed) continue;
+		x0 = x0i + (x1i-x0i)*(((float)object_blue[i].x_start)/((float)rgbtexture.Width));
+		x1 = x0i + (x1i-x0i)*(((float)object_blue[i].x_stop)/((float)rgbtexture.Width));
+		y0 = y0i + (y1i-y0i)*(((float)object_blue[i].y_start)/((float)rgbtexture.Height));
+		y1 = y0i + (y1i-y0i)*(((float)object_blue[i].y_stop)/((float)rgbtexture.Height));
 		//DBG("%f %f %f %f", x0,y0,x1,y1);
 		DrawBox(x0,y0,x1,y1,0.0f,0.0f,1.0f, render_target);
 		//DrawBox(-0.5,-0.5,0.5,0.5,1.0f,0.0f,1.0f, render_target);
@@ -1270,8 +1281,32 @@ void doInput(void){
 				else renderScreen = true;
 				break;
 			case 'i': //render from image instead of camera (if we have an image!)
-				if(imageAvailable) doImage = !doImage;
+				if(imageAvailable){
+					if(doImage == false){
+						current_input_file = 0;
+						doImage = true;
+					}
+					else{
+						current_input_file++;
+						if(current_input_file >= num_input_files){
+							current_input_file = 0;
+							doImage = false;
+						}
+					}
+				}
 				else doImage = false;
+				if(doImage){
+					unsigned char * inputbuf;
+					unsigned int w,h;
+					LodePNGState lstate;
+					lodepng_decode32_file(&inputbuf, &w, &h, input_files[current_input_file]);
+					DBG("Loading image: %s", input_files[current_input_file]);
+					if(w>0 && h>0){
+						fileinputtexture.CreateRGBA(w,h,(const void*)inputbuf,(GLfloat)GL_LINEAR,(GLfloat)GL_CLAMP_TO_EDGE);
+						imageAvailable = true;
+					}
+					free(inputbuf);
+				}
 				break;
 			case 't':
 				redadj = (redadj + 1)%4;
@@ -1336,7 +1371,7 @@ void doInput(void){
 				endwin();
 				exit(1);
 			}
-	
+			
 			move(0,0);
 			refresh();
 			ch = getch();

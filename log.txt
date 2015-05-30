@@ -1,12 +1,31 @@
 LEFT dir mismatch 2
 LEFT dir mismatch 2
 I2C ERROR!
+16 input files found.
 Start.
 Initializing graphics and camera.
 unable to open /dev/vc-mem ...
 Camera resolution: 1024x1024
 Creating Textures.
 Dedonut: 2048x244
-Low-res: 640x448
+Low-res: 1280x896
 Starting process loop.
-Mapping enabled. Size 640x448.
+Loading image: ./inputs/7.png
+Mapping enabled. Size 1280x896.
+Loading image: ./inputs/4.png
+Loading image: ./inputs/input.png
+Loading image: ./inputs/false2.png
+Loading image: ./inputs/false1.png
+Loading image: ./inputs/5.png
+Loading image: ./inputs/2.png
+Loading image: ./inputs/6.png
+Loading image: ./inputs/1.png
+Loading image: ./inputs/inputjumana.png
+Loading image: ./inputs/false4.png
+Loading image: ./inputs/8.png
+Loading image: ./inputs/inputsimple.png
+Loading image: ./inputs/false3.png
+Loading image: ./inputs/3.png
+Loading image: ./inputs/inputsander.png
+Loading image: ./inputs/7.png
+Loading image: ./inputs/4.png
