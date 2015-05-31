@@ -4,12 +4,9 @@ I2C ERROR!
 19 input files found.
 Start.
 Initializing graphics and camera.
-unable to open /dev/vc-mem ...
 Camera resolution: 1024x1024
 Creating Textures.
 Dedonut: 2048x244
 Low-res: 1280x896
 Starting process loop.
-Mapping enabled. Size 1280x896.
-Already mapped!
-Mapping enabled. Size 1280x896.
+Mapping enabled. Size 640x480, format RGB565.

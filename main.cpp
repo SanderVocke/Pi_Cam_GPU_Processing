@@ -131,8 +131,8 @@ int current_input_file = 0;
 char input_files[MAX_FILES][100];
 
 //more timing stuff to benchmark each step inside the loop separately.
-struct timespec t_start, t_curses, t_readframe, t_putframe, t_draw, t_getdata, t_processdata;
-long int nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata;
+struct timespec t_start, t_curses, t_readframe, t_putframe, t_draw, t_getdata, t_processdata, t_render, t_stream;
+long int nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata, nsec_render, nsec_stream;
 
 //these timing variables are for input keypress handling.
 struct timespec t_up, t_down, t_left, t_right;
@@ -150,7 +150,8 @@ GfxTexture lowdisptexture;
 #define VER_STRETCH 3.0f
 
 void analyzeResults(void); //analyze the results we got from GPU on the CPU
-void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, long nsec_getdata, long nsec_processdata); //Draw the CURSES GUI
+void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, 
+		long nsec_getdata, long nsec_processdata, long nsec_render, long nsec_stream); //Draw the CURSES GUI
 void initDeDonutTextures(GfxTexture *targetmap); //initialize the mapping look-up table texture for "de-donuting"
 void showTexWindow(float lowh);
 void doInput(void);
@@ -435,23 +436,47 @@ int main(int argc, const char **argv)
 			doSetSpeed(LEFT_MOTOR, 0);
 		}
 		
+		clock_gettime(CLOCK_REALTIME, &t_processdata); //for benchmarking.	
+		
 		//if 's' was pressed, showWindow will be true. Then we need to render our textures onto low-resolution versions for faster capturing back to CPU.
-		if(showWindow){
+		if(showWindow && (!doMap)){
 			renderDebugWindow(&lowdisptexture); //render to texture
+			clock_gettime(CLOCK_REALTIME, &t_render); //for benchmarking.
 		}		
 		else if(renderScreen){//if on-screen rendering to HDMI is active, draw all textures in the pipeline to the screen framebuffer as well.
 			renderDebugWindow(NULL); //render to screen
+			clock_gettime(CLOCK_REALTIME, &t_render); //for benchmarking.
 		}
-		if(doMap){ //write to fb map
+		else if(doMap){ //write to fb map
 			//DBG("Writing to memmap @ %lu.", (unsigned long)getMapAddr());
-			if(!showWindow) renderDebugWindow(&lowdisptexture); //render to texture
-			lowdisptexture.GetTo(getMapAddr());
+			renderDebugWindow(NULL); //render to texture
+			clock_gettime(CLOCK_REALTIME, &t_render); //for benchmarking.
+			//lowdisptexture.GetTo(getMapAddr());
+			
+			int r;
+			/* RGB565 TEST
+			
+			unsigned char* testdata = (unsigned char*)malloc(dst_rect.width*dst_rect.height*2);
+			int k;
+			for(k=0;k<dst_rect.width*dst_rect.height;k++){
+				testdata[k*2] = 0; //lower 5 bits = BLUE. Upper 3 bits = lower 3 of green
+				testdata[k*2+1] = ~(7); //lower 3 bits = higher 3 of green. Upper 5 bits = red
+			}
+			r = vc_dispmanx_resource_write_data(dispman_resource,VC_IMAGE_RGB565,ALIGN32(dst_rect.width*2),(void*)testdata,&dst_rect);
+			*/
+			r = vc_dispmanx_snapshot(dispman_display,dispman_resource,DISPMANX_NO_ROTATE);
+			r = vc_dispmanx_resource_read_data(dispman_resource,&dst_rect,getMapAddr(),640*2);//(rgbtexture.Width/32+1)*32);
 			//*((char*)getMapAddr()) = 'a';
 		}
+		else{
+			clock_gettime(CLOCK_REALTIME, &t_render); //for benchmarking.
+		}
+		
+		clock_gettime(CLOCK_REALTIME, &t_stream); //for benchmarking.
 		
 		EndFrame();
 		
-		clock_gettime(CLOCK_REALTIME, &t_processdata); //for benchmarking.		
+		
 		
 		//do all benchmarking time calculations
 		nsec_curses = t_curses.tv_nsec - t_start.tv_nsec;
@@ -460,12 +485,16 @@ int main(int argc, const char **argv)
 		nsec_draw = t_draw.tv_nsec - t_putframe.tv_nsec;
 		nsec_getdata = t_getdata.tv_nsec - t_draw.tv_nsec;
 		nsec_processdata = t_processdata.tv_nsec - t_getdata.tv_nsec;
+		nsec_render = t_render.tv_nsec - t_processdata.tv_nsec;
+		nsec_stream = t_stream.tv_nsec - t_render.tv_nsec;
 		if(nsec_curses < 0) nsec_curses += 1000000000;
 		if(nsec_readframe < 0) nsec_readframe += 1000000000;
 		if(nsec_putframe < 0) nsec_putframe += 1000000000;
 		if(nsec_draw < 0) nsec_draw += 1000000000;
 		if(nsec_getdata < 0) nsec_getdata += 1000000000;
 		if(nsec_processdata < 0) nsec_processdata += 1000000000;
+		if(nsec_render < 0) nsec_render += 1000000000;
+		if(nsec_stream < 0) nsec_stream += 1000000000;
 		
 		//read current time value
 		clock_gettime(CLOCK_REALTIME, &gettime_now);
@@ -479,7 +508,7 @@ int main(int argc, const char **argv)
 		//print the screen once every so many iterations
 		if((i%UPDATERATE)==0)
 		{			//draw the terminal window
-			drawCurses(fr, nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata);
+			drawCurses(fr, nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata, nsec_render, nsec_stream);
 			total_frameset_time_s = 0;
 		}
 
@@ -554,7 +583,7 @@ void renderDebugWindow(GfxTexture* render_target){
 #define FILTERCOL 0
 #define BENCHLINE (FILTERLINE + 2)
 #define BENCHCOL 0
-#define BLUELINE (BENCHLINE + 8)
+#define BLUELINE (BENCHLINE + 10)
 #define BLUECOL 0
 #define REDLINE BLUELINE
 #define REDCOL 40
@@ -566,7 +595,8 @@ void renderDebugWindow(GfxTexture* render_target){
 #define THRESCOL 0
 #define DBGLINE (THRESLINE + 3)
 #define DBGCOL 0
-void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, long nsec_getdata, long nsec_processdata){
+void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, 
+				long nsec_getdata, long nsec_processdata, long nsec_render, long nsec_stream){
 	clear();
 	
 	//Update CPU usage stats
@@ -630,6 +660,8 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	mvprintw(BENCHLINE+3,BENCHCOL,"msec Draw: %d   ",nsec_draw/1000000);
 	mvprintw(BENCHLINE+4,BENCHCOL,"msec Getdata: %d   ",nsec_getdata/1000000);
 	mvprintw(BENCHLINE+5,BENCHCOL,"msec Processdata: %d        ",nsec_processdata/1000000);
+	mvprintw(BENCHLINE+6,BENCHCOL,"msec Debug Render: %d        ",nsec_render/1000000);
+	mvprintw(BENCHLINE+7,BENCHCOL,"msec Debug Stream: %d        ",nsec_stream/1000000);
 	
 	//print the objects we found (for now, x and y axis separately!)
 	int i;
@@ -1345,9 +1377,9 @@ void doInput(void){
 				break;
 			case 'm':
 				if(!doMap){
-					initFBMap(&lowdisptexture);
+					//initFBMap(&lowdisptexture);
+					initFBMapVC(&dst_rect);
 					doMap = true;
-					DBG("Mapping enabled. Size %dx%d.", lowdisptexture.Width, lowdisptexture.Height);
 				}
 				else{
 					doMap = false;

@@ -6,12 +6,25 @@
 #include "lodepng.h"
 #include <SDL/SDL.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <vc_mem.h>
+
 void InitGraphics();
 void ReleaseGraphics();
 void BeginFrame();
 void EndFrame();
 void Finish();
 
+
+extern DISPMANX_ELEMENT_HANDLE_T dispman_element;
+extern DISPMANX_DISPLAY_HANDLE_T dispman_display;
+extern DISPMANX_RESOURCE_HANDLE_T dispman_resource;
+extern DISPMANX_UPDATE_HANDLE_T dispman_update;
+extern VC_RECT_T dst_rect;
+extern VC_RECT_T src_rect;
 
 class GfxShader
 {

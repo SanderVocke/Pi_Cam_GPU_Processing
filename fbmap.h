@@ -13,6 +13,7 @@
 #include <unistd.h>
 
 void initFBMap(GfxTexture* mapTex);
+void initFBMapVC(VC_RECT_T* rect);
 void* getMapAddr(void);
 
 #endif

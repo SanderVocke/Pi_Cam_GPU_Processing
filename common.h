@@ -7,6 +7,8 @@
 
 #define NUMDBG 10
 
+#define ALIGN32(X) ((X/32)*32+((X%32)?32:0))
+
 extern FILE * logfile;
 extern char messages[NUMDBG][300];
 extern unsigned int msgi;

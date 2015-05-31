@@ -53,6 +53,13 @@ GfxProgram GRangeProg;
 GLuint GQuadVertexBuffer;
 GLuint GLinesVertexBuffer;
 
+DISPMANX_ELEMENT_HANDLE_T dispman_element;
+DISPMANX_DISPLAY_HANDLE_T dispman_display;
+DISPMANX_RESOURCE_HANDLE_T dispman_resource;
+DISPMANX_UPDATE_HANDLE_T dispman_update;
+VC_RECT_T dst_rect;
+VC_RECT_T src_rect;
+
 uint32_t imgptr;
 #define PAGE_SIZE (4*1024)
 #define BLOCK_SIZE (128*1024)
@@ -118,13 +125,6 @@ void InitGraphics()
 	EGLint num_config;
 
 	static EGL_DISPMANX_WINDOW_T nativewindow;
-
-	DISPMANX_ELEMENT_HANDLE_T dispman_element;
-	DISPMANX_DISPLAY_HANDLE_T dispman_display;
-	DISPMANX_RESOURCE_HANDLE_T dispman_resource;
-	DISPMANX_UPDATE_HANDLE_T dispman_update;
-	VC_RECT_T dst_rect;
-	VC_RECT_T src_rect;
 
 	static const EGLint attribute_list[] =
 	{
@@ -206,6 +206,7 @@ void InitGraphics()
 	assert(EGL_FALSE != result);
 	check();
 	
+	/*
 	//write signature
 	VC_RECT_T testrect;
 	testrect.x = 0;
@@ -217,7 +218,7 @@ void InitGraphics()
 	//DBG("Writedata result: %d", r);
 	//find it
 	doSearch(NULL, 0);
-	
+	*/
 	
 	// Set background color and clear buffers
 	glClearColor(0.15f, 0.25f, 0.35f, 1.0f);
