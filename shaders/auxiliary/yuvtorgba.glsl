@@ -1,7 +1,9 @@
+#extension GL_OES_EGL_image_external : require
+
 varying vec2 tcoord;
-uniform sampler2D tex0;
-uniform sampler2D tex1;
-uniform sampler2D tex2;
+uniform samplerExternalOES tex0;
+uniform samplerExternalOES tex1;
+uniform samplerExternalOES tex2;
 void main(void) 
 {
 	float y = texture2D(tex0,tcoord).r;

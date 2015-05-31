@@ -1,7 +1,9 @@
+#extension GL_OES_EGL_image_external : require
+
 varying vec2 tcoord;
-uniform sampler2D tex0;
-uniform sampler2D tex1;
-uniform sampler2D tex2;
+uniform samplerExternalOES tex0;
+uniform samplerExternalOES tex1;
+uniform samplerExternalOES tex2;
 uniform vec4 donutparams; //(donutcx, donutcy, innerR, outerR)
 
 #define PI (3.141592653589793)

@@ -23,6 +23,13 @@
 #include <stdint.h>
 #include <errno.h>
 
+#include "EGL/eglext_brcm.h"
+#include "EGL/egl.h"
+#include "EGL/eglext.h"
+#include <GLES2/gl2.h>
+#include <GLES/gl.h>
+#include <GLES/glext.h>
+
 #define check() assert(glGetError() == 0)
 
 uint32_t GScreenWidth;
@@ -668,11 +675,11 @@ void DrawYUVTextureRectComp(GfxTexture* ytexture, GfxTexture* utexture, GfxTextu
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D,ytexture->GetId());	check();
+	glBindTexture(GL_TEXTURE_EXTERNAL_OES,ytexture->GetId());	check();
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D,utexture->GetId());	check();
+	glBindTexture(GL_TEXTURE_EXTERNAL_OES,utexture->GetId());	check();
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D,vtexture->GetId());	check();
+	glBindTexture(GL_TEXTURE_EXTERNAL_OES,vtexture->GetId());	check();
 	glActiveTexture(GL_TEXTURE0);
 
 	GLuint loc = glGetAttribLocation(GYUVCompProg.GetId(),"vertex");
@@ -719,11 +726,11 @@ void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* 
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D,ytexture->GetId());	check();
+	glBindTexture(GL_TEXTURE_EXTERNAL_OES,ytexture->GetId());	check();
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D,utexture->GetId());	check();
+	glBindTexture(GL_TEXTURE_EXTERNAL_OES,utexture->GetId());	check();
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D,vtexture->GetId());	check();
+	glBindTexture(GL_TEXTURE_EXTERNAL_OES,vtexture->GetId());	check();
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D,maptex->GetId());	check();
 	glActiveTexture(GL_TEXTURE0);
@@ -771,11 +778,11 @@ void DrawDonutRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* vtext
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D,ytexture->GetId());	check();
+	glBindTexture(GL_TEXTURE_EXTERNAL_OES,ytexture->GetId());	check();
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D,utexture->GetId());	check();
+	glBindTexture(GL_TEXTURE_EXTERNAL_OES,utexture->GetId());	check();
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D,vtexture->GetId());	check();
+	glBindTexture(GL_TEXTURE_EXTERNAL_OES,vtexture->GetId());	check();
 	glActiveTexture(GL_TEXTURE0);
 
 	GLuint loc = glGetAttribLocation(GYUVProg.GetId(),"vertex");

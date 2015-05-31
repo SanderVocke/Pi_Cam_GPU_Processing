@@ -12,8 +12,9 @@
 extern FILE * logfile;
 extern char messages[NUMDBG][300];
 extern unsigned int msgi;
+extern bool interfaceStarted;
 
-#define DBG(...) {sprintf(messages[msgi%NUMDBG], __VA_ARGS__); msgi++; fprintf(logfile, __VA_ARGS__); fprintf(logfile, "\n");}
+#define DBG(...) {sprintf(messages[msgi%NUMDBG], __VA_ARGS__); msgi++; fprintf(logfile, __VA_ARGS__); fprintf(logfile, "\n"); }//if(!interfaceStarted)printf(__VA_ARGS__);}
 #define OPENLOG logfile = fopen("log.txt", "w")
 #define CLOSELOG fclose(logfile)
 

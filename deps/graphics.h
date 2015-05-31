@@ -26,6 +26,13 @@ extern DISPMANX_UPDATE_HANDLE_T dispman_update;
 extern VC_RECT_T dst_rect;
 extern VC_RECT_T src_rect;
 
+extern uint32_t GScreenWidth;
+extern uint32_t GScreenHeight;
+extern EGLDisplay GDisplay;
+extern EGLSurface GSurface;
+extern EGLContext GContext;
+
+
 class GfxShader
 {
 	GLchar* Src;
@@ -59,11 +66,11 @@ public:
 
 class GfxTexture
 {
-	GLuint Id;
-	bool IsRGBA;
-
 	GLuint FramebufferId;
 public:
+	GLuint Id;
+	bool IsRGBA;
+	
 	void* image;
 	int Width,Height;
 

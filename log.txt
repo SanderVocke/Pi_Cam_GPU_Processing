@@ -4,6 +4,8 @@ I2C ERROR!
 19 input files found.
 Start.
 Initializing graphics and camera.
+Allocated 3 MMAL buffers of size 128.
+Camera initialized.
 Camera resolution: 1024x1024
 Creating Textures.
 Dedonut: 2048x232

@@ -1,6 +1,6 @@
 #include "loadstats.h"
 #include "graphics.h"
-#include "camera.h"
+//#include "camera.h"
 #include "common.h"
 #include "config.h"
 #include "window.h"
@@ -12,6 +12,8 @@
 #include "i2c_motor.h"
 #include "fbmap.h"
 #include "dirent.h"
+
+#include "cam.h"
 
 #include "GLES2/gl2.h"
 #include "EGL/egl.h"
@@ -27,6 +29,8 @@
 FILE * logfile;
 char messages[NUMDBG][300];
 unsigned int msgi = 0;
+
+bool interfaceStarted = false;
 
 int dWidth, dHeight; //width and height of "dedonuted" image
 bool gHaveI2C = false;
@@ -123,7 +127,7 @@ struct timespec gettime_now;
 double total_time_s = 0;
 bool do_pipeline = false;
 
-CCamera* cam;
+//CCamera* cam;
 
 #define MAX_FILES 100
 int num_input_files = 0;
@@ -218,11 +222,18 @@ int main(int argc, const char **argv)
 	//init graphics and camera
 	DBG("Start.");
 	DBG("Initializing graphics and camera.");
-	cam = StartCamera(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, g_conf.CAPTURE_FPS, 1, false); //Init camera object
+	//cam = StartCamera(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, g_conf.CAPTURE_FPS, 1, false); //Init camera object
 	InitGraphics(); //Init OpenGL environment
+	
+	
+	create_camera_component(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, g_conf.CAPTURE_FPS);
 	DBG("Camera resolution: %dx%d", g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT);
 	
+	
+	
+	
 	//set camera settings
+	/*
 	current_MeteringMode = g_conf.METERING;
 	current_Exposure = g_conf.EXPOSURE;
 	current_FX = g_conf.FX;
@@ -231,6 +242,7 @@ int main(int argc, const char **argv)
 	raspicamcontrol_set_awb_mode(cam->CameraComponent, AWB_Enum[current_AWB]);
 	raspicamcontrol_set_imageFX(cam->CameraComponent, FX_Enum[current_FX]);
 	raspicamcontrol_set_exposure_mode(cam->CameraComponent, Exposure_Enum[current_Exposure]);
+	*/
 	
 	//NOW ALLOCATE SPACE FOR ALL THESE TEXTURES
 	DBG("Creating Textures.");
@@ -317,6 +329,8 @@ int main(int argc, const char **argv)
 	clear();
 	nodelay(stdscr, TRUE);
 	
+	interfaceStarted = true;
+	
 	//baseline times.
 	clock_gettime(CLOCK_REALTIME, &t_up);
 	t_down=t_left=t_right=t_up;
@@ -342,6 +356,7 @@ int main(int argc, const char **argv)
 		
 		clock_gettime(CLOCK_REALTIME, &t_curses); //for benchmarking
 		
+		/*
 		//PART THAT GRABS A FRAME FROM THE CAMERA
 		//spin until we have a camera frame
 		const void* frame_data; int frame_sz;
@@ -366,6 +381,10 @@ int main(int argc, const char **argv)
 		utexture.SetPixels(data+upos);
 		vtexture.SetPixels(data+vpos);
 		cam->EndReadFrame(0);
+		*/
+		
+		while(!camera_read_frame());
+		clock_gettime(CLOCK_REALTIME, &t_readframe);
 		
 		clock_gettime(CLOCK_REALTIME, &t_putframe); //benchmarking		
 		
@@ -375,7 +394,7 @@ int main(int argc, const char **argv)
 		
 		if(!doImage){ //normal case: render from the camera stream.
 			//DrawYUVTextureRect(&ytexture,&utexture,&vtexture,&dedonutmap,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
-			DrawYUVTextureRectComp(&ytexture,&utexture,&vtexture,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
+			DrawYUVTextureRectComp(&cam_ytex,&cam_utex,&cam_vtex,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
 		}
 		else{ //render from the static PNG image texture we made.
 			DrawTextureRect(&fileinputtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgbtexture);
@@ -517,7 +536,8 @@ int main(int argc, const char **argv)
 	}
 
 	//if we get here, the main loop was exited for some reason.
-	StopCamera(); //stop camera
+	//StopCamera();
+	camera_release(); //stop camera
 	endwin(); //close window of CURSES
 	CLOSELOG; //close log file
 	
@@ -1311,7 +1331,7 @@ void doInput(void){
 				horsumtexture2.Save("./captures/tex_hor.png");
 				versumtexture2.Save("./captures/tex_ver.png");
 				BeginFrame();
-				DrawDonutRect(&ytexture, &utexture, &vtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgbdonuttexture);
+				DrawDonutRect(&cam_ytex, &cam_utex, &cam_vtex, -1.0f, -1.0f, 1.0f, 1.0f, &rgbdonuttexture);
 				EndFrame();
 				rgbdonuttexture.Save("./captures/donut.png");
 				break;
@@ -1392,24 +1412,32 @@ void doInput(void){
 				}
 				break;
 			case '1':
+				/*
 				current_Exposure++;
 				if(current_Exposure >= NUM_EXPOSURE) current_Exposure = 0;
 				raspicamcontrol_set_exposure_mode(cam->CameraComponent, Exposure_Enum[current_Exposure]);
+				*/
 				break;
 			case '2':
+				/*
 				current_MeteringMode++;
 				if(current_MeteringMode >= NUM_METERINGMODE) current_MeteringMode = 0;
 				raspicamcontrol_set_metering_mode(cam->CameraComponent, MeteringMode_Enum[current_MeteringMode]);
+				*/
 				break;
 			case '3':
+				/*
 				current_AWB++;
 				if(current_AWB >= NUM_AWB) current_AWB = 0;
 				raspicamcontrol_set_awb_mode(cam->CameraComponent, AWB_Enum[current_AWB]);
+				*/
 				break;
 			case '4':
+				/*
 				current_FX++;
 				if(current_FX >= NUM_FX) current_FX = 0;
 				raspicamcontrol_set_imageFX(cam->CameraComponent, FX_Enum[current_FX]);
+				*/
 				break;
 			case 'q': //quit
 				endwin();
