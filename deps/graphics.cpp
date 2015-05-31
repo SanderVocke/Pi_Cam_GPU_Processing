@@ -37,6 +37,7 @@ GfxShader GSimpleVS;
 GfxShader GSimpleFS;
 GfxShader GYUVFS;
 GfxShader GYUVCompFS;
+GfxShader GDonutFS;
 GfxShader GHorSumFS, GVerSumFS;
 GfxShader GCoordFS;
 GfxShader GThresholdFS;
@@ -46,6 +47,7 @@ GfxProgram GDirectProg;
 GfxProgram GSimpleProg;
 GfxProgram GYUVProg;
 GfxProgram GYUVCompProg;
+GfxProgram GDonutProg;
 GfxProgram GHorSumProg, GVerSumProg;
 GfxProgram GThresholdProg;
 GfxProgram GErodeProg, GDilateProg;
@@ -184,10 +186,10 @@ void InitGraphics()
 
 	dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
 	dispman_update = vc_dispmanx_update_start( 0 );
-	dispman_resource = vc_dispmanx_resource_create (VC_IMAGE_RGB565,GScreenWidth,GScreenHeight,&imgptr);
+	dispman_resource = vc_dispmanx_resource_create (VC_IMAGE_RGB565,GScreenWidth,GScreenHeight,&imgptr);//GScreenWidth,GScreenHeight,&imgptr);
 
 	dispman_element = vc_dispmanx_element_add ( dispman_update, dispman_display,
-		0/*layer*/, &dst_rect, dispman_resource,//0/*src*/,
+		0/*layer*/, &dst_rect, 0,//dispman_resource,//0/*src*/,
 		&src_rect, DISPMANX_PROTECTION_NONE, 0 /*alpha*/, 0/*clamp*/, (DISPMANX_TRANSFORM_T)0/*transform*/);
 
 	nativewindow.element = dispman_element;
@@ -265,6 +267,7 @@ void UpdateShaders(void){
 	GDirectFS.LoadFragmentShader("./shaders/color.glsl");
 	GRangeFS.LoadFragmentShader("./shaders/showrange.glsl");
 	GYUVCompFS.LoadFragmentShader("./shaders/auxiliary/yuvtorgba_dedonut_comp.glsl");
+	GDonutFS.LoadFragmentShader("./shaders/auxiliary/yuvtorgba.glsl");
 	GSimpleProg.Create(&GSimpleVS,&GSimpleFS);
 	GYUVProg.Create(&GSimpleVS,&GYUVFS);
 	GHorSumProg.Create(&GSimpleVS,&GHorSumFS);
@@ -275,6 +278,7 @@ void UpdateShaders(void){
 	GDirectProg.Create(&GDirectVS, &GDirectFS);
 	GRangeProg.Create(&GSimpleVS, &GRangeFS);
 	GYUVCompProg.Create(&GSimpleVS, &GYUVCompFS);
+	GDonutProg.Create(&GSimpleVS, &GDonutFS);
 	check();
 }
 
@@ -722,6 +726,56 @@ void DrawYUVTextureRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* 
 	glBindTexture(GL_TEXTURE_2D,vtexture->GetId());	check();
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D,maptex->GetId());	check();
+	glActiveTexture(GL_TEXTURE0);
+
+	GLuint loc = glGetAttribLocation(GYUVProg.GetId(),"vertex");
+	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
+	glEnableVertexAttribArray(loc);	check();
+	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 ); check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	if(render_target)
+	{
+		//glFinish();	check();
+		//glFlush(); check();
+		glBindFramebuffer(GL_FRAMEBUFFER,0);
+		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
+	}
+	
+	first = false;
+}
+
+void DrawDonutRect(GfxTexture* ytexture, GfxTexture* utexture, GfxTexture* vtexture, float x0, float y0, float x1, float y1, GfxTexture* render_target)
+{
+	if(render_target)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
+		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
+		check();
+	}
+	
+	static bool first = true;
+
+	glUseProgram(GDonutProg.GetId());	check();
+
+	if(first){
+		glUniform2f(glGetUniformLocation(GDonutProg.GetId(),"offset"),x0,y0);
+		glUniform2f(glGetUniformLocation(GDonutProg.GetId(),"scale"),x1-x0,y1-y0);
+		glUniform1i(glGetUniformLocation(GDonutProg.GetId(),"tex0"), 0);
+		glUniform1i(glGetUniformLocation(GDonutProg.GetId(),"tex1"), 1);
+		glUniform1i(glGetUniformLocation(GDonutProg.GetId(),"tex2"), 2);
+		check();
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D,ytexture->GetId());	check();
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D,utexture->GetId());	check();
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D,vtexture->GetId());	check();
 	glActiveTexture(GL_TEXTURE0);
 
 	GLuint loc = glGetAttribLocation(GYUVProg.GetId(),"vertex");

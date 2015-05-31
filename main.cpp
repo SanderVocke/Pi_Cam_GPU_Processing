@@ -139,7 +139,7 @@ struct timespec t_up, t_down, t_left, t_right;
 long int nsec_up, nsec_down, nsec_left, nsec_right;
 
 //DEFINE CPU-SIDE HANDLES (CLASS OBJECTS) FOR ALL OPENGL TEXTURES WE WILL USE
-GfxTexture ytexture, utexture, vtexture, rgbtexture, thresholdtexture, erodetexture, dilatetexture;
+GfxTexture ytexture, utexture, vtexture, rgbtexture, rgbdonuttexture, thresholdtexture, erodetexture, dilatetexture;
 GfxTexture dedonutmap, horsumtexture1, horsumtexture2, versumtexture1, versumtexture2;
 GfxTexture fileinputtexture;
 GfxTexture lowdisptexture;
@@ -262,6 +262,8 @@ int main(int argc, const char **argv)
 	ytexture.CreateGreyScale(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	utexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	vtexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	rgbdonuttexture.CreateRGBA(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_NEAREST, (GLfloat)GL_CLAMP_TO_EDGE);
+	rgbdonuttexture.GenerateFrameBuffer();
 	
 	//Main combined RGB textures
 	//rgbtexture will hold the result of transforming the separate y,u,v textures into a single RGBA format texture.
@@ -540,7 +542,7 @@ void renderDebugWindow(GfxTexture* render_target){
 		DrawRangeRect(0.8f, 0.6f, 1.0f, 0.2f,
 		blueparams[0], blueparams[1], blueparams[2], blueparams[3],
 		render_target);
-		drawBoxes(render_target, 0.8f, 1.0f, -1.0f, 0.2f);
+		//drawBoxes(render_target, 0.8f, 1.0f, -1.0f, 0.2f);
 	}
 	else{
 		//drawBoxes(&rgbtexture, -1.0f,-1.0f,1.0f,1.0f);
@@ -560,7 +562,7 @@ void renderDebugWindow(GfxTexture* render_target){
 		DrawRangeRect(0.8f, 0.6f, 1.0f, 1.0f,
 		blueparams[0], blueparams[1], blueparams[2], blueparams[3],
 		render_target);
-		drawBoxes(render_target, -1.0f, 0.2f, 0.8f, 1.0f );
+		//drawBoxes(render_target, -1.0f, 0.2f, 0.8f, 1.0f );
 	}
 }
 
@@ -1308,6 +1310,10 @@ void doInput(void){
 				thresholdtexture.Save("./captures/tex_out.png");
 				horsumtexture2.Save("./captures/tex_hor.png");
 				versumtexture2.Save("./captures/tex_ver.png");
+				BeginFrame();
+				DrawDonutRect(&ytexture, &utexture, &vtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgbdonuttexture);
+				EndFrame();
+				rgbdonuttexture.Save("./captures/donut.png");
 				break;
 			case 'r': //rendering on/off_type
 				if(renderScreen) renderScreen = false;
