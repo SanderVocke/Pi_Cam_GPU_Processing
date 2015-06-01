@@ -13,6 +13,8 @@
 #include "fbmap.h"
 #include "dirent.h"
 
+#include <pthread.h>
+
 #include "cam.h"
 
 #include "GLES2/gl2.h"
@@ -49,6 +51,8 @@ typedef enum filterLevels_t{
 	FILTER_OPEN,
 	FILTER_OPENCLOSE
 }filterLevels_t;
+
+pthread_t pt_processingThread;
 
 int filterLevel = FILTER_ERODE;
 
@@ -168,6 +172,8 @@ void doBehaviour2(void);
 void doSetSpeedDir(motor_t motor, direction_t dir, int speed);
 void doSetSpeed(motor_t motor, int speed);
 void doSetDirection(motor_t motor, direction_t dir);
+
+void* processingThread(void* args);
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
@@ -447,6 +453,8 @@ int main(int argc, const char **argv)
 		
 		clock_gettime(CLOCK_REALTIME, &t_getdata); //benchmarking
 		
+		/*
+		
 		//DATA ANALYSIS ON CPU
 		analyzeResults();
 		
@@ -457,47 +465,42 @@ int main(int argc, const char **argv)
 			doSetSpeed(LEFT_MOTOR, 0);
 		}
 		
+		*/
+		
 		clock_gettime(CLOCK_REALTIME, &t_processdata); //for benchmarking.	
 		
 		//if 's' was pressed, showWindow will be true. Then we need to render our textures onto low-resolution versions for faster capturing back to CPU.
 		if(showWindow && (!doMap)){
 			renderDebugWindow(&lowdisptexture); //render to texture
-			clock_gettime(CLOCK_REALTIME, &t_render); //for benchmarking.
 		}		
 		else if(renderScreen){//if on-screen rendering to HDMI is active, draw all textures in the pipeline to the screen framebuffer as well.
 			renderDebugWindow(NULL); //render to screen
-			clock_gettime(CLOCK_REALTIME, &t_render); //for benchmarking.
 		}
 		else if(doMap){ //write to fb map
 			//DBG("Writing to memmap @ %lu.", (unsigned long)getMapAddr());
 			renderDebugWindow(NULL); //render to texture
-			clock_gettime(CLOCK_REALTIME, &t_render); //for benchmarking.
 			//lowdisptexture.GetTo(getMapAddr());
 			
-			int r;
-			/* RGB565 TEST
-			
-			unsigned char* testdata = (unsigned char*)malloc(dst_rect.width*dst_rect.height*2);
-			int k;
-			for(k=0;k<dst_rect.width*dst_rect.height;k++){
-				testdata[k*2] = 0; //lower 5 bits = BLUE. Upper 3 bits = lower 3 of green
-				testdata[k*2+1] = ~(7); //lower 3 bits = higher 3 of green. Upper 5 bits = red
-			}
-			r = vc_dispmanx_resource_write_data(dispman_resource,VC_IMAGE_RGB565,ALIGN32(dst_rect.width*2),(void*)testdata,&dst_rect);
-			*/
-			r = vc_dispmanx_snapshot(dispman_display,dispman_resource,DISPMANX_NO_ROTATE);
-			r = vc_dispmanx_resource_read_data(dispman_resource,&dst_rect,getMapAddr(),640*2);//(rgbtexture.Width/32+1)*32);
+			//int r;
+			//r = vc_dispmanx_snapshot(dispman_display,dispman_resource,DISPMANX_NO_ROTATE);
+			//r = vc_dispmanx_resource_read_data(dispman_resource,&dst_rect,getMapAddr(),640*2);//(rgbtexture.Width/32+1)*32);
 			//*((char*)getMapAddr()) = 'a';
 		}
-		else{
-			clock_gettime(CLOCK_REALTIME, &t_render); //for benchmarking.
-		}
+		clock_gettime(CLOCK_REALTIME, &t_render); //for benchmarking.
 		
 		clock_gettime(CLOCK_REALTIME, &t_stream); //for benchmarking.
 		
-		EndFrame();
+		EndFrame();		
 		
+		if(pthread_create(&pt_processingThread, NULL, processingThread, NULL)) {
+			DBG("Error creating processing thread");
+			exit(1);
+		}
 		
+		if(pthread_join(pt_processingThread, NULL)) {
+			DBG("Error joining processing thread");
+			exit(1);
+		}		
 		
 		//do all benchmarking time calculations
 		nsec_curses = t_curses.tv_nsec - t_start.tv_nsec;
@@ -542,6 +545,38 @@ int main(int argc, const char **argv)
 	CLOSELOG; //close log file
 	
 	return 0;
+}
+
+void* processingThread(void* args){
+	//DATA ANALYSIS ON CPU
+	analyzeResults();
+	
+	//BEHAVIOUR
+	if(doBehave) doBehaviour();
+	else{
+		doSetSpeed(RIGHT_MOTOR,0);
+		doSetSpeed(LEFT_MOTOR, 0);
+	}
+	
+	if(doMap){ //write to fb map
+		
+		int r;
+		/* RGB565 TEST
+		
+		unsigned char* testdata = (unsigned char*)malloc(dst_rect.width*dst_rect.height*2);
+		int k;
+		for(k=0;k<dst_rect.width*dst_rect.height;k++){
+			testdata[k*2] = 0; //lower 5 bits = BLUE. Upper 3 bits = lower 3 of green
+			testdata[k*2+1] = ~(7); //lower 3 bits = higher 3 of green. Upper 5 bits = red
+		}
+		r = vc_dispmanx_resource_write_data(dispman_resource,VC_IMAGE_RGB565,ALIGN32(dst_rect.width*2),(void*)testdata,&dst_rect);
+		*/
+		r = vc_dispmanx_snapshot(dispman_display,dispman_resource,DISPMANX_NO_ROTATE);
+		r = vc_dispmanx_resource_read_data(dispman_resource,&dst_rect,getMapAddr(),640*2);//(rgbtexture.Width/32+1)*32);
+		//*((char*)getMapAddr()) = 'a';
+	}
+	
+	return NULL;
 }
 
 void renderDebugWindow(GfxTexture* render_target){

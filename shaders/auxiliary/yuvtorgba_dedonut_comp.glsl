@@ -16,7 +16,7 @@ void main(void)
 	float dx = d*sin(phi);
 	float dy = d*cos(phi);
 	float sx = donutparams[0]+dx;
-	float sy = donutparams[1]+dy;
+	float sy = donutparams[1]-dy;
 
 	float y = texture2D(tex0,vec2(sx,sy)).r;
 	float u = texture2D(tex1,vec2(sx,sy)).r;
