@@ -1,7 +1,7 @@
 LEFT dir mismatch 2
 LEFT dir mismatch 2
 I2C ERROR!
-19 input files found.
+20 input files found.
 Start.
 Initializing graphics and camera.
 Allocated 3 MMAL buffers of size 128.
@@ -12,3 +12,4 @@ Dedonut: 2048x232
 Low-res: 1280x896
 Starting process loop.
 Mapping enabled. Size 1280x720, format RGB565.
+Already mapped!

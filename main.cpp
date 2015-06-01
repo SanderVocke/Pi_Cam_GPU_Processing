@@ -394,7 +394,7 @@ int main(int argc, const char **argv)
 		cam->EndReadFrame(0);
 		*/
 		
-		while(!camera_read_frame()); //to be pipelined!
+		while(!camera_read_frame()) {usleep(500);}; //to be pipelined?
 		
 		clock_gettime(CLOCK_REALTIME, &t_readframe);
 		
@@ -1397,8 +1397,10 @@ void doInput(void){
 		}		
 	}
 	else{ //there was a key detected. check out what we should do.
+		bool donesomething = false;
 		while(ch != ERR) //for each key found...
 		{
+			donesomething = true;
 			GfxTexture* yuvtexes;
 			struct timespec temp;
 			long diff;
@@ -1573,6 +1575,10 @@ void doInput(void){
 			move(0,0);
 			refresh();
 			ch = getch();
+		}
+		
+		if(donesomething){
+			drawCurses(0, nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata, nsec_render, nsec_stream, nsec_join);
 		}
 	}
 }
