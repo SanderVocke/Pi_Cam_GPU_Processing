@@ -64,13 +64,28 @@ MMAL_COMPONENT_T *camera;
 
 RASPICAM_CAMERA_PARAMETERS cameraParameters;
 
-GfxTexture cam_ytex, cam_utex, cam_vtex;
+GfxTexture camtexes[2][3];
+int swap = 0; //denotes the front textures
+
 EGLImageKHR yimg = EGL_NO_IMAGE_KHR;
 EGLImageKHR uimg = EGL_NO_IMAGE_KHR;
 EGLImageKHR vimg = EGL_NO_IMAGE_KHR;
 
 void camera_control_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer);
 void video_output_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer);
+GfxTexture* getYUVTextures(int bufnum);
+
+GfxTexture* getFrontYUVTextures(){
+	return camtexes[swap];
+}
+GfxTexture* getBackYUVTextures(){
+	return camtexes[swap?0:1];
+}
+
+void camTexSwap(void){
+	swap = swap?0:1;
+	return;
+}
 
 bool camera_read_frame(void){
 	if(MMAL_BUFFER_HEADER_T* buf = mmal_queue_get(video_queue)){
@@ -79,7 +94,7 @@ bool camera_read_frame(void){
 		
 		//DBG("Buffer received with length %d", buf->length);
 	
-		glBindTexture(GL_TEXTURE_EXTERNAL_OES, cam_ytex.Id);
+		glBindTexture(GL_TEXTURE_EXTERNAL_OES, camtexes[swap?0:1][0].Id);
 		check();
 		if(yimg != EGL_NO_IMAGE_KHR){
 			eglDestroyImageKHR(GDisplay, yimg);
@@ -94,7 +109,7 @@ bool camera_read_frame(void){
 		glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, yimg);
 		check();
 		
-		glBindTexture(GL_TEXTURE_EXTERNAL_OES, cam_utex.Id);
+		glBindTexture(GL_TEXTURE_EXTERNAL_OES, camtexes[swap?0:1][1].Id);
 		check();
 		if(uimg != EGL_NO_IMAGE_KHR){
 			eglDestroyImageKHR(GDisplay, uimg);
@@ -109,7 +124,7 @@ bool camera_read_frame(void){
 		glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, uimg);
 		check();
 		
-		glBindTexture(GL_TEXTURE_EXTERNAL_OES, cam_vtex.Id);
+		glBindTexture(GL_TEXTURE_EXTERNAL_OES, camtexes[swap?0:1][2].Id);
 		check();
 		if(vimg != EGL_NO_IMAGE_KHR){
 			eglDestroyImageKHR(GDisplay, vimg);
@@ -354,15 +369,24 @@ void create_camera_component(int Width, int Height, int FrameRate){
 	
 	
 	//Setup the camera's textures and EGL images.
-	glGenTextures(1, &cam_ytex.Id);
-	glGenTextures(1, &cam_utex.Id);
-	glGenTextures(1, &cam_vtex.Id);
-	cam_ytex.Width = cam_ytex.Height = 1024;
-	cam_utex.Width = cam_utex.Height = 1024;
-	cam_vtex.Width = cam_vtex.Height = 1024;
-	cam_ytex.IsRGBA = false;
-	cam_utex.IsRGBA = false;
-	cam_vtex.IsRGBA = false;
+	glGenTextures(1, &camtexes[0][0].Id);
+	glGenTextures(1, &camtexes[0][1].Id);
+	glGenTextures(1, &camtexes[0][2].Id);
+	glGenTextures(1, &camtexes[1][0].Id);
+	glGenTextures(1, &camtexes[1][1].Id);
+	glGenTextures(1, &camtexes[1][2].Id);
+	camtexes[0][0].Width = camtexes[0][0].Height = 1024;
+	camtexes[0][1].Width = camtexes[0][1].Height = 1024;
+	camtexes[0][2].Width = camtexes[0][2].Height = 1024;
+	camtexes[1][0].Width = camtexes[1][0].Height = 1024;
+	camtexes[1][1].Width = camtexes[1][1].Height = 1024;
+	camtexes[1][2].Width = camtexes[1][2].Height = 1024;
+	camtexes[0][0].IsRGBA = false;
+	camtexes[0][1].IsRGBA = false;
+	camtexes[0][2].IsRGBA = false;
+	camtexes[1][0].IsRGBA = false;
+	camtexes[1][1].IsRGBA = false;
+	camtexes[1][2].IsRGBA = false;
 	
 	return;
 }

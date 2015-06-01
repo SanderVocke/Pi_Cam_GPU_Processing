@@ -56,6 +56,7 @@ typedef enum filterLevels_t{
 }filterLevels_t;
 
 pthread_t pt_processingThread;
+pthread_t pt_camThread;
 
 int filterLevel = FILTER_ERODE;
 
@@ -179,6 +180,7 @@ void doSetDirection(motor_t motor, direction_t dir);
 void drawBoxSoft(float x0, float y0, float x1, float y1, float R, float G, float B, void* buffer, int bufwidth, int bufheight);
 
 void* processingThread(void* args);
+void* camThread(void* args);
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
@@ -392,7 +394,8 @@ int main(int argc, const char **argv)
 		cam->EndReadFrame(0);
 		*/
 		
-		while(!camera_read_frame());
+		while(!camera_read_frame()); //to be pipelined!
+		
 		clock_gettime(CLOCK_REALTIME, &t_readframe);
 		
 		clock_gettime(CLOCK_REALTIME, &t_putframe); //benchmarking		
@@ -401,9 +404,28 @@ int main(int argc, const char **argv)
 		//begin frame: a call from the graphics.h/cpp module that starts the rendering pipeline for this frame.
 		BeginFrame();
 		
+		/* camera pipelining
+		if(!firstIteration){
+			if(pthread_join(pt_camThread, NULL)) {
+				DBG("Error joining camera capture thread");
+				exit(1);
+			}	
+		}
+		*/
+		
+		camTexSwap();
+		GfxTexture* yuvtexes = getFrontYUVTextures();
+		
+		/*
+		if(pthread_create(&pt_camThread, NULL, camThread, NULL)) {
+			DBG("Error creating camera thread");
+			exit(1);
+		}
+		*/		
+		
 		if(!doImage){ //normal case: render from the camera stream.
 			//DrawYUVTextureRect(&ytexture,&utexture,&vtexture,&dedonutmap,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
-			DrawYUVTextureRectComp(&cam_ytex,&cam_utex,&cam_vtex,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
+			DrawYUVTextureRectComp(&(yuvtexes[0]),&(yuvtexes[1]),&(yuvtexes[2]),-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
 		}
 		else{ //render from the static PNG image texture we made.
 			DrawTextureRect(&fileinputtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgbtexture);
@@ -452,9 +474,6 @@ int main(int argc, const char **argv)
 				DBG("Error joining processing thread");
 				exit(1);
 			}	
-		}
-		else{
-			firstIteration = false;
 		}
 		
 		clock_gettime(CLOCK_REALTIME, &t_join); //benchmarking
@@ -547,6 +566,8 @@ int main(int argc, const char **argv)
 			drawCurses(fr, nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata, nsec_render, nsec_stream, nsec_join);
 			total_frameset_time_s = 0;
 		}
+		
+		if(firstIteration) firstIteration = false;
 
 	}
 
@@ -557,6 +578,11 @@ int main(int argc, const char **argv)
 	CLOSELOG; //close log file
 	
 	return 0;
+}
+
+void* camThread(void* args){
+	while(!camera_read_frame());
+	return NULL;
 }
 
 void* processingThread(void* args){
@@ -1373,6 +1399,7 @@ void doInput(void){
 	else{ //there was a key detected. check out what we should do.
 		while(ch != ERR) //for each key found...
 		{
+			GfxTexture* yuvtexes;
 			struct timespec temp;
 			long diff;
 			switch(ch){ //which key was it?
@@ -1429,7 +1456,8 @@ void doInput(void){
 				horsumtexture2.Save("./captures/tex_hor.png");
 				versumtexture2.Save("./captures/tex_ver.png");
 				BeginFrame();
-				DrawDonutRect(&cam_ytex, &cam_utex, &cam_vtex, -1.0f, -1.0f, 1.0f, 1.0f, &rgbdonuttexture);
+				yuvtexes = getFrontYUVTextures();
+				DrawDonutRect(&(yuvtexes[0]), &(yuvtexes[1]), &(yuvtexes[2]), -1.0f, -1.0f, 1.0f, 1.0f, &rgbdonuttexture);
 				EndFrame();
 				rgbdonuttexture.Save("./captures/donut.png");
 				break;

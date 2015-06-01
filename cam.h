@@ -19,4 +19,8 @@ void create_camera_component(int Width, int Height, int Framerate);
 void camera_release();
 bool camera_read_frame(void);
 
+GfxTexture* getFrontYUVTextures(void);
+GfxTexture* getBackYUVTextures(void);
+void camTexSwap(void);
+
 #endif
