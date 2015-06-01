@@ -134,6 +134,9 @@ void InitGraphics()
 	EGLint num_config;
 
 	static EGL_DISPMANX_WINDOW_T nativewindow;
+	
+	//first, make sure we are in 1280x720 mode
+	system("tvservice -explicit=\"CEA 4 DVI\"");
 
 	static const EGLint attribute_list[] =
 	{
@@ -189,11 +192,11 @@ void InitGraphics()
 	src_rect.x = 0;
 	src_rect.y = 0;
 	src_rect.width = GScreenWidth << 16;
-	src_rect.height = GScreenHeight << 16;        
+	src_rect.height = GScreenHeight << 16;
 
 	dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
 	dispman_update = vc_dispmanx_update_start( 0 );
-	dispman_resource = vc_dispmanx_resource_create (VC_IMAGE_RGB565,GScreenWidth,GScreenHeight,&imgptr);//GScreenWidth,GScreenHeight,&imgptr);
+	dispman_resource = vc_dispmanx_resource_create (VC_IMAGE_RGB565,GScreenWidth,GScreenHeight,&imgptr);
 
 	dispman_element = vc_dispmanx_element_add ( dispman_update, dispman_display,
 		0/*layer*/, &dst_rect, 0,//dispman_resource,//0/*src*/,

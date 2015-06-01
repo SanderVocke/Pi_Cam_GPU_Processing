@@ -43,6 +43,7 @@ bool doImage = false;
 bool doBehave = false;
 bool doMap = false;
 bool do_Behaviour2 = false;
+bool firstIteration = true;
 
 #define FILTER_LEVELS 4
 typedef enum filterLevels_t{
@@ -164,7 +165,8 @@ void initDeDonutTextures(GfxTexture *targetmap); //initialize the mapping look-u
 void showTexWindow(float lowh);
 void doInput(void);
 void renderDebugWindow(GfxTexture* render_target);
-void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float y1i);
+void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float y1i,
+			bool soft, void* buffer, int bufwidth, int bufheight);
 void drawBoxInRGB(int x0i, int y0i, int x1i, int y1i, float R, float G, float B);
 void checkObject(struct object* obj, bool red);
 void doBehaviour(void);
@@ -172,6 +174,7 @@ void doBehaviour2(void);
 void doSetSpeedDir(motor_t motor, direction_t dir, int speed);
 void doSetSpeed(motor_t motor, int speed);
 void doSetDirection(motor_t motor, direction_t dir);
+void drawBoxSoft(float x0, float y0, float x1, float y1, float R, float G, float B, void* buffer, int bufwidth, int bufheight);
 
 void* processingThread(void* args);
 
@@ -444,6 +447,16 @@ int main(int argc, const char **argv)
 		
 		clock_gettime(CLOCK_REALTIME, &t_draw); //benchmarking
 		
+		if(!firstIteration){
+			if(pthread_join(pt_processingThread, NULL)) {
+				DBG("Error joining processing thread");
+				exit(1);
+			}	
+		}
+		else{
+			firstIteration = false;
+		}
+		
 		//DATA RETREIVAL FROM GPU
 		//get summed data back to host (CPU side)
 		versumtexture2.Get();
@@ -495,12 +508,7 @@ int main(int argc, const char **argv)
 		if(pthread_create(&pt_processingThread, NULL, processingThread, NULL)) {
 			DBG("Error creating processing thread");
 			exit(1);
-		}
-		
-		if(pthread_join(pt_processingThread, NULL)) {
-			DBG("Error joining processing thread");
-			exit(1);
-		}		
+		}	
 		
 		//do all benchmarking time calculations
 		nsec_curses = t_curses.tv_nsec - t_start.tv_nsec;
@@ -572,8 +580,11 @@ void* processingThread(void* args){
 		r = vc_dispmanx_resource_write_data(dispman_resource,VC_IMAGE_RGB565,ALIGN32(dst_rect.width*2),(void*)testdata,&dst_rect);
 		*/
 		r = vc_dispmanx_snapshot(dispman_display,dispman_resource,DISPMANX_NO_ROTATE);
-		r = vc_dispmanx_resource_read_data(dispman_resource,&dst_rect,getMapAddr(),640*2);//(rgbtexture.Width/32+1)*32);
+		r = vc_dispmanx_resource_read_data(dispman_resource,&dst_rect,getMapAddr(),dst_rect.width*2);//(rgbtexture.Width/32+1)*32);
 		//*((char*)getMapAddr()) = 'a';
+		
+		//render boxes
+		drawBoxes(NULL, 0.8f, 1.0f, -1.0f, 0.2f, true, getMapAddr(), dst_rect.width, dst_rect.height);
 	}
 	
 	return NULL;
@@ -1212,21 +1223,23 @@ void checkObject(struct object* obj, bool red){
 
 //-0.830746 0.294118 -0.857612 0.236601
 //drawBoxes(render_target, -1.0f, 0.2f, 0.8f, 1.0f );
-void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float y1i){
+void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float y1i,
+			bool soft, void* buffer, int bufwidth, int bufheight){
 	int i;
-	float x0,y0,x1,y1;
+	float x0,y0,x1,y1;	
+	
+	//DBG("%d %d %d", targetfound, red_centroid_total, blue_centroid_total);
+	
 	for(i=0; i<red_centroid_total; i++){
 		if(!object_red[i].confirmed) continue;
 		x0 = x0i + (x1i-x0i)*(((float)object_red[i].x_start)/((float)rgbtexture.Width));
 		x1 = x0i + (x1i-x0i)*(((float)object_red[i].x_stop)/((float)rgbtexture.Width));
 		y0 = y0i + (y1i-y0i)*(((float)object_red[i].y_start)/((float)rgbtexture.Height));
 		y1 = y0i + (y1i-y0i)*(((float)object_red[i].y_stop)/((float)rgbtexture.Height));
-		//DBG("%f %f %f %f", x0,y0,x1,y1);
-		DrawBox(x0,y0,x1,y1,1.0f,0.0f,0.0f, render_target);
-		//DrawBox(-0.5,-0.5,0.5,0.5,1.0f,0.0f,1.0f, render_target);
+		//DBG("%f %f %f %f", x0, y0, x1, y1);
+		if(soft) drawBoxSoft(x0,y0,x1,y1,1.0f,0.0f,0.0f,buffer,bufwidth,bufheight);
+		else DrawBox(x0,y0,x1,y1,1.0f,0.0f,0.0f, render_target);
 	}
-	
-	
 	
 	for(i=0; i<blue_centroid_total; i++){
 		if(!object_blue[i].confirmed) continue;
@@ -1234,9 +1247,8 @@ void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float
 		x1 = x0i + (x1i-x0i)*(((float)object_blue[i].x_stop)/((float)rgbtexture.Width));
 		y0 = y0i + (y1i-y0i)*(((float)object_blue[i].y_start)/((float)rgbtexture.Height));
 		y1 = y0i + (y1i-y0i)*(((float)object_blue[i].y_stop)/((float)rgbtexture.Height));
-		//DBG("%f %f %f %f", x0,y0,x1,y1);
-		DrawBox(x0,y0,x1,y1,0.0f,0.0f,1.0f, render_target);
-		//DrawBox(-0.5,-0.5,0.5,0.5,1.0f,0.0f,1.0f, render_target);
+		if(soft) drawBoxSoft(x0,y0,x1,y1,0.0f,0.0f,1.0f,buffer,bufwidth,bufheight);
+		else DrawBox(x0,y0,x1,y1,0.0f,0.0f,1.0f, render_target);
 	}
 	
 	//DBG("targetfound %d", targetfound);
@@ -1254,14 +1266,59 @@ void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float
 		x1 = x0i + (x1i-x0i)*(((float)xstop)/((float)rgbtexture.Width));
 		y0 = y0i + (y1i-y0i)*(((float)ystart)/((float)rgbtexture.Height));
 		y1 = y0i + (y1i-y0i)*(((float)ystop)/((float)rgbtexture.Height));
-		//DBG("%f %f %f %f", x0,y0,x1,y1);
-		DrawBox(x0,y0,x1,y1,1.0f,1.0f,0.0f, render_target);
+		if(soft) drawBoxSoft(x0,y0,x1,y1,1.0f,1.0f,0.0f,buffer,bufwidth,bufheight);
+		else DrawBox(x0,y0,x1,y1,1.0f,1.0f,0.0f, render_target);
 		//DBG("%d %d %d %d", target[i].x_start, target[i].x_stop, target[i].y_start, target[i].y_stop);
 	}
 	
 	//DrawBox(-1.0f,0.2f,0.8f,1.0f,1.0f,1.0f,0.0f, render_target);
 	//DrawBox(x0i,y0i,x1i,y1i, 1.0f,1.0f,0.0f,render_target);
 	//DrawBox(-0.5f,-0.5f,0.5f,0.5f, 1.0f,1.0f,0.0f,render_target);
+}
+
+void drawBoxSoft(float x0, float y0, float x1, float y1, float R, float G, float B, void* buffer, int bufwidth, int bufheight){
+	x0 = (x0 + 1.0f)/2.0f;
+	x1 = (x1 + 1.0f)/2.0f;
+	y0 = (y0 + 1.0f)/2.0f;
+	y1 = (y1 + 1.0f)/2.0f;
+	
+	int x0i = (int)(x0*(float)bufwidth );
+	int x1i = (int)(x1*(float)bufwidth );
+	int y0i = (int)(y0*(float)bufheight);
+	int y1i = (int)(y1*(float)bufheight);
+	
+	int temp;
+	if(x0i > x1i) {temp = x0i; x0i = x1i; x1i = temp;}
+	if(y0i > y1i) {temp = y0i; y0i = y1i; y1i = temp;}
+	
+	//DBG("Box @ %d, %d, %d, %d", x0i, y0i, x1i, y1i);	
+	
+	//1st byte: lower 5 bits = BLUE. Upper 3 bits = lower 3 of green
+	//2nd byte: lower 3 bits = higher 3 of green. Upper 5 bits = red
+	
+	unsigned int Ri = (unsigned int)(R*31.0f);
+	unsigned int Gi = (unsigned int)(G*63.0f);
+	unsigned int Bi = (unsigned int)(B*31.0f);
+	unsigned int RGBi = Bi | Gi<<5 | Ri << 11;
+	unsigned char color[2];
+	color[0] = (unsigned char)RGBi;
+	color[1] = (unsigned char)(RGBi>>8);
+	
+	int x,y;
+	for(x=x0i; x<x1i; x++){
+		((unsigned char*)buffer)[((bufheight-y0i)*bufwidth+x)*2] = color[0];
+		((unsigned char*)buffer)[((bufheight-y0i)*bufwidth+x)*2+1] = color[1];
+		((unsigned char*)buffer)[((bufheight-y1i)*bufwidth+x)*2] = color[0];
+		((unsigned char*)buffer)[((bufheight-y1i)*bufwidth+x)*2+1] = color[1];
+	}
+	for(y=y0i; y<y1i; y++){
+		((unsigned char*)buffer)[((bufheight-y)*bufwidth+x0i)*2] = color[0];
+		((unsigned char*)buffer)[((bufheight-y)*bufwidth+x0i)*2+1] = color[1];
+		((unsigned char*)buffer)[((bufheight-y)*bufwidth+x1i)*2] = color[0];
+		((unsigned char*)buffer)[((bufheight-y)*bufwidth+x1i)*2+1] = color[1];
+	}
+	
+	return;
 }
 
 void drawBoxInRGB(int x0i, int y0i, int x1i, int y1i, float R, float G, float B){
