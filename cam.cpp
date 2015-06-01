@@ -60,6 +60,7 @@ MMAL_PORT_T *video_port = NULL;
 MMAL_PORT_T *still_port = NULL;
 MMAL_QUEUE_T *video_queue = NULL;
 MMAL_POOL_T *video_pool = NULL;
+MMAL_COMPONENT_T *camera;
 
 RASPICAM_CAMERA_PARAMETERS cameraParameters;
 
@@ -143,7 +144,7 @@ bool camera_read_frame(void){
 }
 
 void create_camera_component(int Width, int Height, int FrameRate){
-	MMAL_COMPONENT_T *camera = 0;
+	camera = 0;
 	MMAL_ES_FORMAT_T *format;
 	
 	MMAL_STATUS_T status;

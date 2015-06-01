@@ -21,6 +21,8 @@
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
 
+#include "cameracontrol.h"
+
 #define PI (3.141592653589793)
 
 #define MAX_TARGETS 10
@@ -140,8 +142,8 @@ int current_input_file = 0;
 char input_files[MAX_FILES][100];
 
 //more timing stuff to benchmark each step inside the loop separately.
-struct timespec t_start, t_curses, t_readframe, t_putframe, t_draw, t_getdata, t_processdata, t_render, t_stream;
-long int nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata, nsec_render, nsec_stream;
+struct timespec t_start, t_curses, t_readframe, t_putframe, t_draw, t_getdata, t_processdata, t_render, t_stream, t_join;
+long int nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata, nsec_render, nsec_stream, nsec_join;
 
 //these timing variables are for input keypress handling.
 struct timespec t_up, t_down, t_left, t_right;
@@ -160,7 +162,7 @@ GfxTexture lowdisptexture;
 
 void analyzeResults(void); //analyze the results we got from GPU on the CPU
 void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, 
-		long nsec_getdata, long nsec_processdata, long nsec_render, long nsec_stream); //Draw the CURSES GUI
+		long nsec_getdata, long nsec_processdata, long nsec_render, long nsec_stream, long nsec_join); //Draw the CURSES GUI
 void initDeDonutTextures(GfxTexture *targetmap); //initialize the mapping look-up table texture for "de-donuting"
 void showTexWindow(float lowh);
 void doInput(void);
@@ -242,16 +244,14 @@ int main(int argc, const char **argv)
 	
 	
 	//set camera settings
-	/*
 	current_MeteringMode = g_conf.METERING;
 	current_Exposure = g_conf.EXPOSURE;
 	current_FX = g_conf.FX;
 	current_AWB = g_conf.AWB;
-	raspicamcontrol_set_metering_mode(cam->CameraComponent, MeteringMode_Enum[current_MeteringMode]);
-	raspicamcontrol_set_awb_mode(cam->CameraComponent, AWB_Enum[current_AWB]);
-	raspicamcontrol_set_imageFX(cam->CameraComponent, FX_Enum[current_FX]);
-	raspicamcontrol_set_exposure_mode(cam->CameraComponent, Exposure_Enum[current_Exposure]);
-	*/
+	raspicamcontrol_set_metering_mode(camera, MeteringMode_Enum[current_MeteringMode]);
+	raspicamcontrol_set_awb_mode(camera, AWB_Enum[current_AWB]);
+	raspicamcontrol_set_imageFX(camera, FX_Enum[current_FX]);
+	raspicamcontrol_set_exposure_mode(camera, Exposure_Enum[current_Exposure]);
 	
 	//NOW ALLOCATE SPACE FOR ALL THESE TEXTURES
 	DBG("Creating Textures.");
@@ -457,6 +457,8 @@ int main(int argc, const char **argv)
 			firstIteration = false;
 		}
 		
+		clock_gettime(CLOCK_REALTIME, &t_join); //benchmarking
+		
 		//DATA RETREIVAL FROM GPU
 		//get summed data back to host (CPU side)
 		versumtexture2.Get();
@@ -515,10 +517,11 @@ int main(int argc, const char **argv)
 		nsec_readframe = t_readframe.tv_nsec - t_curses.tv_nsec;
 		nsec_putframe = t_putframe.tv_nsec - t_readframe.tv_nsec;
 		nsec_draw = t_draw.tv_nsec - t_putframe.tv_nsec;
-		nsec_getdata = t_getdata.tv_nsec - t_draw.tv_nsec;
+		nsec_join = t_join.tv_nsec - t_draw.tv_nsec;
+		nsec_getdata = t_getdata.tv_nsec - t_join.tv_nsec;
 		nsec_processdata = t_processdata.tv_nsec - t_getdata.tv_nsec;
 		nsec_render = t_render.tv_nsec - t_processdata.tv_nsec;
-		nsec_stream = t_stream.tv_nsec - t_render.tv_nsec;
+		nsec_stream = t_stream.tv_nsec - t_render.tv_nsec;		
 		if(nsec_curses < 0) nsec_curses += 1000000000;
 		if(nsec_readframe < 0) nsec_readframe += 1000000000;
 		if(nsec_putframe < 0) nsec_putframe += 1000000000;
@@ -527,6 +530,7 @@ int main(int argc, const char **argv)
 		if(nsec_processdata < 0) nsec_processdata += 1000000000;
 		if(nsec_render < 0) nsec_render += 1000000000;
 		if(nsec_stream < 0) nsec_stream += 1000000000;
+		if(nsec_join < 0) nsec_join += 1000000000;
 		
 		//read current time value
 		clock_gettime(CLOCK_REALTIME, &gettime_now);
@@ -540,7 +544,7 @@ int main(int argc, const char **argv)
 		//print the screen once every so many iterations
 		if((i%UPDATERATE)==0)
 		{			//draw the terminal window
-			drawCurses(fr, nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata, nsec_render, nsec_stream);
+			drawCurses(fr, nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata, nsec_render, nsec_stream, nsec_join);
 			total_frameset_time_s = 0;
 		}
 
@@ -651,7 +655,7 @@ void renderDebugWindow(GfxTexture* render_target){
 #define FILTERCOL 0
 #define BENCHLINE (FILTERLINE + 2)
 #define BENCHCOL 0
-#define BLUELINE (BENCHLINE + 10)
+#define BLUELINE (BENCHLINE + 11)
 #define BLUECOL 0
 #define REDLINE BLUELINE
 #define REDCOL 40
@@ -664,7 +668,7 @@ void renderDebugWindow(GfxTexture* render_target){
 #define DBGLINE (THRESLINE + 3)
 #define DBGCOL 0
 void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putframe, long nsec_draw, 
-				long nsec_getdata, long nsec_processdata, long nsec_render, long nsec_stream){
+				long nsec_getdata, long nsec_processdata, long nsec_render, long nsec_stream, long nsec_join){
 	clear();
 	
 	//Update CPU usage stats
@@ -726,10 +730,12 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	mvprintw(BENCHLINE+1,BENCHCOL,"msec Readframe: %d   ",nsec_readframe/1000000);
 	mvprintw(BENCHLINE+2,BENCHCOL,"msec Putframe: %d   ",nsec_putframe/1000000);
 	mvprintw(BENCHLINE+3,BENCHCOL,"msec Draw: %d   ",nsec_draw/1000000);
-	mvprintw(BENCHLINE+4,BENCHCOL,"msec Getdata: %d   ",nsec_getdata/1000000);
-	mvprintw(BENCHLINE+5,BENCHCOL,"msec Processdata: %d        ",nsec_processdata/1000000);
+	mvprintw(BENCHLINE+4,BENCHCOL,"msec Pipeline join: %d        ",nsec_join/1000000);
+	mvprintw(BENCHLINE+5,BENCHCOL,"msec Getdata: %d   ",nsec_getdata/1000000);
 	mvprintw(BENCHLINE+6,BENCHCOL,"msec Debug Render: %d        ",nsec_render/1000000);
-	mvprintw(BENCHLINE+7,BENCHCOL,"msec Debug Stream: %d        ",nsec_stream/1000000);
+	mvprintw(BENCHLINE+7,BENCHCOL,"(msec Processdata): %d        ",nsec_processdata/1000000);
+	mvprintw(BENCHLINE+8,BENCHCOL,"(msec Debug Stream): %d        ",nsec_stream/1000000);
+	
 	
 	//print the objects we found (for now, x and y axis separately!)
 	int i;
@@ -1504,32 +1510,32 @@ void doInput(void){
 				}
 				break;
 			case '1':
-				/*
+				
 				current_Exposure++;
 				if(current_Exposure >= NUM_EXPOSURE) current_Exposure = 0;
-				raspicamcontrol_set_exposure_mode(cam->CameraComponent, Exposure_Enum[current_Exposure]);
-				*/
+				raspicamcontrol_set_exposure_mode(camera, Exposure_Enum[current_Exposure]);
+				
 				break;
 			case '2':
-				/*
+				
 				current_MeteringMode++;
 				if(current_MeteringMode >= NUM_METERINGMODE) current_MeteringMode = 0;
-				raspicamcontrol_set_metering_mode(cam->CameraComponent, MeteringMode_Enum[current_MeteringMode]);
-				*/
+				raspicamcontrol_set_metering_mode(camera, MeteringMode_Enum[current_MeteringMode]);
+				
 				break;
 			case '3':
-				/*
+				
 				current_AWB++;
 				if(current_AWB >= NUM_AWB) current_AWB = 0;
-				raspicamcontrol_set_awb_mode(cam->CameraComponent, AWB_Enum[current_AWB]);
-				*/
+				raspicamcontrol_set_awb_mode(camera, AWB_Enum[current_AWB]);
+				
 				break;
 			case '4':
-				/*
+				
 				current_FX++;
 				if(current_FX >= NUM_FX) current_FX = 0;
-				raspicamcontrol_set_imageFX(cam->CameraComponent, FX_Enum[current_FX]);
-				*/
+				raspicamcontrol_set_imageFX(camera, FX_Enum[current_FX]);
+				
 				break;
 			case 'q': //quit
 				endwin();

@@ -136,7 +136,8 @@ void InitGraphics()
 	static EGL_DISPMANX_WINDOW_T nativewindow;
 	
 	//first, make sure we are in 1280x720 mode
-	system("tvservice -explicit=\"CEA 4 DVI\"");
+	//system("tvservice --explicit=\"CEA 4 DVI\"");
+	//system("fbset -xres 1280 -yres 720");
 
 	static const EGLint attribute_list[] =
 	{

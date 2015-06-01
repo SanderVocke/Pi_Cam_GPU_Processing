@@ -13,6 +13,8 @@
 
 extern GfxTexture cam_ytex, cam_utex, cam_vtex;
 
+extern MMAL_COMPONENT_T *camera;
+
 void create_camera_component(int Width, int Height, int Framerate);
 void camera_release();
 bool camera_read_frame(void);
