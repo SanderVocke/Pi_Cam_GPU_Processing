@@ -1,6 +1,5 @@
 LEFT dir mismatch 2
 LEFT dir mismatch 2
-I2C ERROR!
 20 input files found.
 Start.
 Initializing graphics and camera.
@@ -12,4 +11,3 @@ Dedonut: 2048x232
 Low-res: 1280x896
 Starting process loop.
 Mapping enabled. Size 1280x720, format RGB565.
-Already mapped!

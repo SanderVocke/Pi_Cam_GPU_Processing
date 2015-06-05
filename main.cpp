@@ -117,6 +117,11 @@ struct object object_red[300];
 
 struct object target[MAX_TARGETS];
 int targetfound;
+//for tracking the same target
+struct object trackingTarget;
+int targetTrackingCounter = 100000;
+bool tracking_target = false;
+#define TRACKING_INTERVAL 5 //(5 frames of target tracking)
 
 int blue_x [30];
 int blue_y [30];
@@ -184,7 +189,7 @@ void* camThread(void* args);
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
-#define NUMKEYS 14
+#define NUMKEYS 15
 const char* keys[NUMKEYS] = {
 	"arrow keys: move bot",
 	"b: turn autonomous behaviour on/off",
@@ -193,6 +198,7 @@ const char* keys[NUMKEYS] = {
 	"r: turn HDMI live rendering on/off",
 	"f: filtering level (erosion/dilation)",
 	"i: use PNG input image instead of camera stream",
+	"c: use camera stream input",
 	"m: enable memory-mapped framebuffer",
 	"t/g: change which thres param to tweak (red/blue resp.)",
 	"y/h: course tweak of parameter (red/blue resp.)",
@@ -591,10 +597,10 @@ void* processingThread(void* args){
 	
 	//BEHAVIOUR
 	if(doBehave) doBehaviour();
-	else{
-		doSetSpeed(RIGHT_MOTOR,0);
-		doSetSpeed(LEFT_MOTOR, 0);
-	}
+	//else{
+	//	doSetSpeed(RIGHT_MOTOR,0);
+	//	doSetSpeed(LEFT_MOTOR, 0);
+	//}
 	
 	if(doMap){ //write to fb map
 		
@@ -665,7 +671,9 @@ void renderDebugWindow(GfxTexture* render_target){
 
 //this is a function which will be called from the main() program's main loop,
 //updating the "text GUI" which is visible when running the program over SSH.
-#define STATSLINE 0
+#define TRACKINGLINE 0
+#define TRACKINGCOL 0
+#define STATSLINE (TRACKINGLINE + 2)
 #define STATSCOL 0
 #define SPEEDLINE (STATSLINE + 7)
 #define SPEEDCOL 0
@@ -699,6 +707,10 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 	
 	//Update CPU usage stats
 	updateStats();
+	
+	//print whether we are tracking a target
+	if(tracking_target) mvprintw(TRACKINGLINE, TRACKINGCOL, "--- TRACKING TARGET ---");
+	else mvprintw(TRACKINGLINE, TRACKINGCOL, "--- IDLE ---");
 	
 	//Print framerate and CPU usage stats
 	mvprintw(STATSLINE+0,STATSCOL,"Framerate: %g  ",fr);	
@@ -1169,6 +1181,65 @@ void analyzeResults(void){
 	//drawBoxInRGB(10, 10, 1000, 20, 1.0f, 0.0f, 0.0f);
 	
 	//DBG("blue_centroid_total: %d blue_centroid_total: %d", blue_centroid_total, blue_centroid_total);
+	
+	
+	
+	/*
+	@somebody:
+	below is the target tracking code, which remembers targets so that we dont stop if they are briefly lost.
+	
+	It is basically working but can use a lot of improvement.
+	
+	it keeps the currently "tracked target" (the one we are driving to) in the variable trackingTarget (object type).
+	It also keeps a counter which says how old that information is (targetTrackingCounter).
+	The counter counts up on every frame. If the tracking target is updated, it is reset to 0.
+	That way we know that if the counter is too high (determined by TRACKING_INTERVAL), the target is from too long
+	ago and should be ignored.
+	
+	Currently it is very basic:
+	- if there is already a (reasonably "fresh") tracked target, and we find one or more new targets in this frame,
+	the tracked target is replaced by the new target which is closest to where the previously tracked target was.
+	This works, but if there are two targets in the environment, and we are tracking one, then it disappears for only
+	one frame, the robot will immediately switch to the other (not good!). That needs to be better (for example putting
+	a threshold of minimal closeness to the previous tracked target, and ignoring new targets outside that range!)
+
+	*/
+	
+	
+	//target tracking
+	if(targetTrackingCounter<TRACKING_INTERVAL){
+		targetTrackingCounter++; //one more frame elapsed - never allow it to overflow
+		//if(targetTrackingCounter >= TRACKING_INTERVAL) DBG("Tracking lost"); //first time we lose it
+	} 	
+	
+	if(targetTrackingCounter>=TRACKING_INTERVAL){ //old target is too old, let's start over
+		tracking_target = false;
+	
+		if(!targetfound) return; //if we found nothing now, there is nothing we can do
+		
+		//if we did find something, select the new target to track
+		trackingTarget = target[0]; //for now, just select the first found target
+		targetTrackingCounter = 0; //reset the counter as we picked a new target
+		//DBG("Track started");
+		tracking_target = true;
+	}
+	else{
+		tracking_target = true;
+		if(!targetfound) return; //if we found nothing now, this will keep remembering the tracked target that was already there.
+		
+		//if we reached here, there was already a tracked target but we also found one or more targets this frame.
+		//for now, the procedure is this: we will just switch to the closest new target we have found, using c_x.
+		int closest_d_x = 10000;
+		int index_to_track = 0;
+		for(int i=0; i<targetfound; i++){
+			if(abs(target[i].c_x - trackingTarget.c_x) < closest_d_x){
+				closest_d_x = abs(target[i].c_x - trackingTarget.c_x);
+				index_to_track = i;
+			}
+		}
+		trackingTarget = target[index_to_track];
+		targetTrackingCounter = 0;
+	}	
 	return;
 }
 
@@ -1303,6 +1374,25 @@ void drawBoxes(GfxTexture* render_target, float x0i, float y0i, float x1i, float
 		//DBG("%d %d %d %d", target[i].x_start, target[i].x_stop, target[i].y_start, target[i].y_stop);
 	}
 	
+	if(tracking_target){
+		int xstart,xstop,ystart,ystop;
+		xstart = trackingTarget.x_start-5;
+		xstop = trackingTarget.x_stop +5;
+		ystart = trackingTarget.y_start-5;
+		ystop = trackingTarget.y_stop +5;
+		if(xstart<0) xstart = 0;
+		if(xstop>(rgbtexture.Width-1)) xstop = rgbtexture.Width-1;
+		if(ystart<0) ystart = 0;
+		if(ystop>(rgbtexture.Width-1)) ystop = rgbtexture.Width-1;
+		x0 = x0i + (x1i-x0i)*(((float)xstart)/((float)rgbtexture.Width));
+		x1 = x0i + (x1i-x0i)*(((float)xstop)/((float)rgbtexture.Width));
+		y0 = y0i + (y1i-y0i)*(((float)ystart)/((float)rgbtexture.Height));
+		y1 = y0i + (y1i-y0i)*(((float)ystop)/((float)rgbtexture.Height));
+		if(soft) drawBoxSoft(x0,y0,x1,y1,0.0f,1.0f,0.0f,buffer,bufwidth,bufheight);
+		else DrawBox(x0,y0,x1,y1,0.0f,1.0f,0.0f, render_target);
+		//DBG("%d %d %d %d", target[i].x_start, target[i].x_stop, target[i].y_start, target[i].y_stop);
+	}
+	
 	//DrawBox(-1.0f,0.2f,0.8f,1.0f,1.0f,1.0f,0.0f, render_target);
 	//DrawBox(x0i,y0i,x1i,y1i, 1.0f,1.0f,0.0f,render_target);
 	//DrawBox(-0.5f,-0.5f,0.5f,0.5f, 1.0f,1.0f,0.0f,render_target);
@@ -1392,8 +1482,10 @@ void doInput(void){
 		if(diffu < 0) diffu += 1000000000;
 		if(diffd < 0) diffd += 1000000000;
 		if(diffr>60000000 && diffl>60000000 && diffu>60000000 && diffd>60000000){
-			doSetSpeed(RIGHT_MOTOR,0);
-			doSetSpeed(LEFT_MOTOR, 0);
+			if(!doBehave){
+				doSetSpeed(RIGHT_MOTOR,0);
+				doSetSpeed(LEFT_MOTOR, 0);
+			}
 		}		
 	}
 	else{ //there was a key detected. check out what we should do.
@@ -1467,6 +1559,9 @@ void doInput(void){
 				if(renderScreen) renderScreen = false;
 				else renderScreen = true;
 				break;
+			case 'c': //render from camera instead of images
+				doImage = false;
+				break;
 			case 'i': //render from image instead of camera (if we have an image!)
 				if(imageAvailable){
 					if(doImage == false){
@@ -1522,7 +1617,11 @@ void doInput(void){
 				if(filterLevel >= FILTER_LEVELS) filterLevel = 0;
 				break;
 			case 'b':
-				if(doBehave) doBehave = false;
+				if(doBehave){
+					doSetSpeed(RIGHT_MOTOR,0);
+					doSetSpeed(LEFT_MOTOR, 0);
+					doBehave = false;
+				}
 				else doBehave = true;
 				break;
 			case 'p':
@@ -1624,13 +1723,13 @@ void doBehaviour2(void){
 
 void doBehaviour(void){
 	//first, calculate the angle to the target.
-	if(!targetfound){
+	if(!tracking_target){
 		//no target
 		doSetSpeed(LEFT_MOTOR,0);
 		doSetSpeed(RIGHT_MOTOR,0);
 		return;
 	}
-	int angle = (rgbtexture.Width/2)-target[0].c_x; //subtract middle of image from X coordinate to find something proportional to angle from middle.
+	int angle = (rgbtexture.Width/2)-trackingTarget.c_x; //subtract middle of image from X coordinate to find something proportional to angle from middle.
 	angle *= 180;
 	angle /= rgbtexture.Width; //normalize to 360 degrees
 	
@@ -1653,6 +1752,7 @@ void doBehaviour(void){
 }
 
 void doSetSpeedDir(motor_t motor, direction_t dir, int speed){
+	//DBG("Motor %d, Direction %d, Speed %d", motor, dir, speed);
 	gHaveI2C = setSpeedDir(motor, dir, speed);
 	dspeed[(int)motor]=speed;
 	ddir[(int)motor]=dir;

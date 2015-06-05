@@ -34,7 +34,7 @@ unsigned char gSpeed[2] = {0,0};
 int fd = -1;
 bool error = false;
 
-#define RETERROR {DBG("I2C ERROR!"); error = true; return false;}
+#define RETERROR {/*DBG("I2C ERROR!");*/ error = true; return false;}
 #define RETSUCCESS {error = false; return true;}
 #define NUMTRIES 2
 
@@ -103,6 +103,7 @@ bool startI2CMotor(void){
 
 bool setSpeed(motor_t motor, unsigned char speed){
 	if(gSpeed[(int)motor] == speed) return !error;
+	//DBG("Motor %d, Speed %d", motor, speed);
 	gSpeed[(int)motor] = speed;
 	//DBG("setSpeed %s %d", (motor == LEFT_MOTOR) ? "LEFT" : "RIGHT", speed);
 	bool res = doWrite(motor);
@@ -112,6 +113,7 @@ bool setSpeed(motor_t motor, unsigned char speed){
 
 bool setDirection(motor_t motor, direction_t direction){
 	if(gDirection[(int)motor] == direction) return !error;
+	//DBG("Motor %d, Direction %d", motor, direction);
 	gDirection[(int)motor] = direction;
 	bool res = doWrite(motor);
 	if(!res) RETERROR;	
@@ -119,7 +121,11 @@ bool setDirection(motor_t motor, direction_t direction){
 }
 
 bool setSpeedDir(motor_t motor, direction_t direction, unsigned char speed){
-	return (setDirection(motor, direction) && setSpeed(motor, speed));
+	bool res1 = false;
+	bool res2 = false;
+	res1 = setDirection(motor, direction);
+	res2 = setSpeed(motor, speed);
+	return (res1 && res2);
 }
 
 bool stopI2CMotor(void){
