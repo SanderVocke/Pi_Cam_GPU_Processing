@@ -66,6 +66,8 @@ direction_t ddir[2];
 float redparams[4];
 float blueparams[4];
 
+int luminosity = 0;
+
 int redadj = 0;
 int blueadj = 0;
 const char* redprops[] = {
@@ -157,12 +159,13 @@ long int nsec_up, nsec_down, nsec_left, nsec_right;
 
 //DEFINE CPU-SIDE HANDLES (CLASS OBJECTS) FOR ALL OPENGL TEXTURES WE WILL USE
 GfxTexture ytexture, utexture, vtexture, rgbtexture, rgbdonuttexture, thresholdtexture, erodetexture, dilatetexture;
-GfxTexture dedonutmap, horsumtexture1, horsumtexture2, versumtexture1, versumtexture2;
+GfxTexture dedonutmap, horsumtexture1, horsumtexture2, versumtexture1, versumtexture2, lummipmaptex, squaretex;
 GfxTexture fileinputtexture;
 GfxTexture lowdisptexture;
 //add erode/dilate textures here!
 
 #define UPDATERATE 10
+#define UPDATELUMINOSITYRATE 50
 #define MAX_COORDS 100
 #define VER_STRETCH 3.0f
 
@@ -183,13 +186,15 @@ void doSetSpeedDir(motor_t motor, direction_t dir, int speed);
 void doSetSpeed(motor_t motor, int speed);
 void doSetDirection(motor_t motor, direction_t dir);
 void drawBoxSoft(float x0, float y0, float x1, float y1, float R, float G, float B, void* buffer, int bufwidth, int bufheight);
+void getLuminosity(void);
+void updateThresholds(void);
 
 void* processingThread(void* args);
 void* camThread(void* args);
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
-#define NUMKEYS 15
+#define NUMKEYS 16
 const char* keys[NUMKEYS] = {
 	"arrow keys: move bot",
 	"b: turn autonomous behaviour on/off",
@@ -205,6 +210,7 @@ const char* keys[NUMKEYS] = {
 	"u/j: fine tweak of parameter (red/blue resp.)",
 	"1/2/3/4: Exposure, Metering, AWB, FX resp.",
 	"p: toggle behaviour algorithm",
+	"a: report luminosity average",
 	"q: quit"
 };
 
@@ -321,6 +327,12 @@ int main(int argc, const char **argv)
 	versumtexture1.GenerateFrameBuffer();
 	versumtexture2.CreateRGBA(dWidth,1,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	versumtexture2.GenerateFrameBuffer();
+	
+	//mipmap for average value of image.
+	lummipmaptex.CreateRGBA(1,1,NULL,(GLfloat)GL_NEAREST, (GLfloat)GL_CLAMP_TO_EDGE);
+	lummipmaptex.GenerateFrameBuffer();
+	squaretex.CreateRGBA(2048,2048,NULL,(GLfloat)GL_NEAREST, (GLfloat)GL_CLAMP_TO_EDGE);
+	squaretex.GenerateFrameBuffer();
 	
 	//initialize the new textures here!
 	
@@ -573,6 +585,11 @@ int main(int argc, const char **argv)
 			total_frameset_time_s = 0;
 		}
 		
+		if((i%UPDATELUMINOSITYRATE)==0){
+			getLuminosity();
+			updateThresholds();
+		}
+		
 		if(firstIteration) firstIteration = false;
 
 	}
@@ -687,7 +704,9 @@ void renderDebugWindow(GfxTexture* render_target){
 #define IMGCOL 0
 #define FILTERLINE (IMGLINE + 1)
 #define FILTERCOL 0
-#define BENCHLINE (FILTERLINE + 2)
+#define LUMLINE (FILTERLINE + 1)
+#define LUMCOL 0
+#define BENCHLINE (LUMLINE + 2)
 #define BENCHCOL 0
 #define BLUELINE (BENCHLINE + 11)
 #define BLUECOL 0
@@ -762,6 +781,9 @@ void drawCurses(float fr, long nsec_curses, long nsec_readframe, long nsec_putfr
 		mvprintw(FILTERLINE, FILTERCOL, "Filtering: Open+Close   ");
 		break;
 	}
+	
+	//Print average luminosity
+	mvprintw(LUMLINE, LUMCOL, "Luminosity: %d    ", luminosity);
 	
 	//Print benchmarking results
 	mvprintw(BENCHLINE,BENCHCOL,"msec Curses: %d   ",nsec_curses/1000000);
@@ -1669,7 +1691,18 @@ void doInput(void){
 			case 'q': //quit
 				endwin();
 				exit(1);
+			case 'a': //get average value of luminosity of image
+				BeginFrame();
+				DrawTextureRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &squaretex);
+				EndFrame();
+				glBindTexture(GL_TEXTURE_2D,squaretex.Id);
+				glGenerateMipmap(GL_TEXTURE_2D);
+				DrawAvgViaMipmap(&squaretex, -1.0f,-1.0f,1.0f,1.0f,&lummipmaptex);
+				lummipmaptex.Get();
+				DBG("Average luminosity: %d", *((unsigned char*)lummipmaptex.image));
+				break;
 			}
+			
 			
 			move(0,0);
 			refresh();
@@ -1769,4 +1802,46 @@ void doSetDirection(motor_t motor, direction_t dir){
 	gHaveI2C = setDirection(motor, dir);
 	ddir[(int)motor]=dir;
 	return;
+}
+
+
+void getLuminosity(void){
+	BeginFrame();
+	DrawTextureRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, &squaretex);
+	EndFrame();
+	glBindTexture(GL_TEXTURE_2D,squaretex.Id);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	DrawAvgViaMipmap(&squaretex, -1.0f,-1.0f,1.0f,1.0f,&lummipmaptex);
+	lummipmaptex.Get();
+	luminosity = *((unsigned char*)lummipmaptex.image);
+}
+
+void updateThresholds(void){
+	//UPDATE THRESHOLDS HERE!
+	
+	//This function is automatically called about once per second, to update the thresholds.
+	//All you need to do here is update the thresholds (if you want) based on average luminosity (already measured).
+	
+	//you can access the latest luminosity value that was found in the int variable "luminosity". (0 = lowest, 255 = highest).
+	//this is the same that is displayed in the runtime window.
+	//there are two sets of threshold parameters loaded from a config file (config.txt). 
+	//the "normal" thresholds can be accessed here via 
+		//g_conf.REDPARAMS[0],  <--- H minimum
+		//g_conf.REDPARAMS[1], <--- H maximum
+		//g_conf.REDPARAMS[2], <--- S minimum
+		//g_conf.REDPARAMS[3] <--- V minimum
+		//(float values).
+	//Same for g_conf.BLUEPARAMS[]. 
+	//The alternative thresholds are as above, but then g_conf.REDPARAMSLOW[], g_conf.BLUEPARAMSLOW[].
+	
+	//To change the current parameters being CURRENTLY USED by the program, you must change the variables redparams[] and blueparams[]. (same inside ordering as above). You could use one of the sets of configured thresholds, or even interpolate between them based on the exact luminosity if you want!
+	
+	//The latest luminosity, and the current thresholds in use, are all displayed in the run-time text window. (maximize the window to see all information)
+	
+	//To test this with test images, you can put all test images you want to try in the "inputs" folder before running. pressing 'i' during operation cycles through these test images instead of using the camera. I know we already have at least 1 test image in sunny conditions, and a few in dark conditions.
+	//You will want to enable the Gstreamer video stream to see what is going on and whether targets are being detected! If you dont know how to set this up please ask me.
+	
+	//Good luck! Make it work! Thanks for the powa.
+	
+	//Cheers, S.
 }

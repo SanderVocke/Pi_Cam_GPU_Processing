@@ -50,6 +50,7 @@ GfxShader GCoordFS;
 GfxShader GThresholdFS;
 GfxShader GErodeFS, GDilateFS;
 GfxShader GRangeFS;
+GfxShader GAvgLumFS;
 GfxProgram GDirectProg;
 GfxProgram GSimpleProg;
 GfxProgram GYUVProg;
@@ -59,6 +60,7 @@ GfxProgram GHorSumProg, GVerSumProg;
 GfxProgram GThresholdProg;
 GfxProgram GErodeProg, GDilateProg;
 GfxProgram GRangeProg;
+GfxProgram GAvgLumProg;
 GLuint GQuadVertexBuffer;
 GLuint GLinesVertexBuffer;
 
@@ -279,6 +281,7 @@ void UpdateShaders(void){
 	GRangeFS.LoadFragmentShader("./shaders/showrange.glsl");
 	GYUVCompFS.LoadFragmentShader("./shaders/auxiliary/yuvtorgba_dedonut_comp.glsl");
 	GDonutFS.LoadFragmentShader("./shaders/auxiliary/yuvtorgba.glsl");
+	GAvgLumFS.LoadFragmentShader("./shaders/auxiliary/avglum.glsl");
 	GSimpleProg.Create(&GSimpleVS,&GSimpleFS);
 	GYUVProg.Create(&GSimpleVS,&GYUVFS);
 	GHorSumProg.Create(&GSimpleVS,&GHorSumFS);
@@ -290,6 +293,7 @@ void UpdateShaders(void){
 	GRangeProg.Create(&GSimpleVS, &GRangeFS);
 	GYUVCompProg.Create(&GSimpleVS, &GYUVCompFS);
 	GDonutProg.Create(&GSimpleVS, &GDonutFS);
+	GAvgLumProg.Create(&GSimpleVS, &GAvgLumFS);
 	check();
 }
 
@@ -931,6 +935,47 @@ void DrawVerSum1(GfxTexture* texture, float x0, float y0, float x1, float y1, Gf
 	
 	first = false;
 }
+
+void DrawAvgViaMipmap(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
+	if(render_target)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER,render_target->GetFramebufferId());
+		glViewport ( 0, 0, render_target->GetWidth(), render_target->GetHeight() );
+		check();
+	}
+	
+	static bool first = true;
+
+	glUseProgram(GAvgLumProg.GetId());	check();
+
+	if(first){
+		glUniform2f(glGetUniformLocation(GAvgLumProg.GetId(),"offset"),x0,y0);
+		glUniform2f(glGetUniformLocation(GAvgLumProg.GetId(),"scale"),x1-x0,y1-y0);
+		glUniform1i(glGetUniformLocation(GAvgLumProg.GetId(),"tex"), 0);
+		check();
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
+	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
+
+	GLuint loc = glGetAttribLocation(GAvgLumProg.GetId(),"vertex");
+	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
+	glEnableVertexAttribArray(loc);	check();
+	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 ); check();
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	if(render_target)
+	{
+		//glFinish();	check();
+		//glFlush(); check();
+		glBindFramebuffer(GL_FRAMEBUFFER,0);
+		glViewport ( 0, 0, GScreenWidth, GScreenHeight );
+	}
+	
+	first = false;
+}
+
 void DrawVerSum2(GfxTexture* texture, float x0, float y0, float x1, float y1, GfxTexture* render_target){
 	if(render_target)
 	{

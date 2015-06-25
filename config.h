@@ -13,6 +13,8 @@ typedef struct config_t{
 	int LOWRES_WIDTH;
 	float REDPARAMS[4];
 	float BLUEPARAMS[4];
+	float REDPARAMSLOW[4];
+	float BLUEPARAMSLOW[4];
 	int EXPOSURE;
 	int AWB;
 	int METERING;
