@@ -187,6 +187,16 @@ void drawBoxSoft(float x0, float y0, float x1, float y1, float R, float G, float
 void* processingThread(void* args);
 void* camThread(void* args);
 
+
+void DoPanoramaRGBConversionStep(unsigned char* y_buffer, unsigned char* u_buffer, unsigned char* v_buffer, unsigned char* out_buffer);		
+void DoThresholdStep(unsigned char* in_buffer, unsigned char* out_buffer);
+void DoDrawHorSum1Step(unsigned char* in_buffer, unsigned char* out_buffer);
+void DoDrawVerSum1Step(unsigned char* in_buffer, unsigned char* out_buffer);
+void DoErodeStep(unsigned char* in_buffer, unsigned char* out_buffer);
+void DoDilateStep(unsigned char* in_buffer, unsigned char* out_buffer);
+void DoDrawHorSum2Step(unsigned char* in_buffer, unsigned char* out_buffer);
+void DoDrawVerSum2Step(unsigned char* in_buffer, unsigned char* out_buffer);
+
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
 #define NUMKEYS 15
@@ -288,9 +298,12 @@ int main(int argc, const char **argv)
 	//these textures will store the image data coming from the camera.
 	//the camera records in YUV color space. Each color component is stored in a SEPARATE buffer, which is why
 	//we have three separate textures for them.
-	ytexture.CreateGreyScale(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
-	utexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
-	vtexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	ytexture.CreateRGBA(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	utexture.CreateRGBA(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	vtexture.CreateRGBA(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	ytexture.GenerateFrameBuffer();
+	utexture.GenerateFrameBuffer();
+	vtexture.GenerateFrameBuffer();
 	rgbdonuttexture.CreateRGBA(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_NEAREST, (GLfloat)GL_CLAMP_TO_EDGE);
 	rgbdonuttexture.GenerateFrameBuffer();
 	
@@ -300,27 +313,36 @@ int main(int argc, const char **argv)
 	
 	rgbtexture.CreateRGBA(dWidth,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	rgbtexture.GenerateFrameBuffer();
+	rgbtexture.Get();
 	
 	//thresholdtexture holds the result of performing thresholding (and possibly other filtering steps)
 	thresholdtexture.CreateRGBA(dWidth,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	thresholdtexture.GenerateFrameBuffer();
+	thresholdtexture.Get();
 	
 	//Morphological filtering textures erode and dilate
 	erodetexture.CreateRGBA(dWidth,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	erodetexture.GenerateFrameBuffer();
+	erodetexture.Get();
 	dilatetexture.CreateRGBA(dWidth,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	dilatetexture.GenerateFrameBuffer();
+	dilatetexture.Get();
 	
 	//the textures below hold the summation results. It is a two-stage summation: therefore there are two textures for this with different sizes.
 	//the two-stage approach is because of the GLSL limitation on Pi that allows only reading 64 pixels max per shader.
 	horsumtexture1.CreateRGBA((dWidth/64)+1,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	horsumtexture1.GenerateFrameBuffer();
+	horsumtexture1.Get();
 	horsumtexture2.CreateRGBA(1,dHeight,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	horsumtexture2.GenerateFrameBuffer();
+	horsumtexture2.Get();
 	versumtexture1.CreateRGBA(dWidth,(dHeight/64)+1,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	versumtexture1.GenerateFrameBuffer();
+	versumtexture1.Get();
 	versumtexture2.CreateRGBA(dWidth,1,NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	versumtexture2.GenerateFrameBuffer();
+	versumtexture2.Get();
+	
 	
 	//initialize the new textures here!
 	
@@ -429,46 +451,74 @@ int main(int argc, const char **argv)
 		}
 		*/		
 		
-		if(!doImage){ //normal case: render from the camera stream.
-			//DrawYUVTextureRect(&ytexture,&utexture,&vtexture,&dedonutmap,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
-			DrawYUVTextureRectComp(&(yuvtexes[0]),&(yuvtexes[1]),&(yuvtexes[2]),-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
-		}
-		else{ //render from the static PNG image texture we made.
-			DrawTextureRect(&fileinputtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgbtexture);
-		}
+		//get the camera image back to CPU
+		DrawTextureRect(&yuvtexes[0], -1.0f, -1.0f, 1.0f, 1.0f, &ytexture);
+		DrawTextureRect(&yuvtexes[1], -1.0f, -1.0f, 1.0f, 1.0f, &utexture);
+		DrawTextureRect(&yuvtexes[2], -1.0f, -1.0f, 1.0f, 1.0f, &vtexture);
+		ytexture.Get();
+		utexture.Get();
+		vtexture.Get();		
+		
+		DoPanoramaRGBConversionStep((unsigned char*)yuvtexes[0].image, (unsigned char*)yuvtexes[1].image, (unsigned char*)yuvtexes[2].image, (unsigned char*)rgbtexture.image);
+		
+		//if(!doImage){ //normal case: render from the camera stream.
+		//	//DrawYUVTextureRect(&ytexture,&utexture,&vtexture,&dedonutmap,-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
+		//	DrawYUVTextureRectComp(&(yuvtexes[0]),&(yuvtexes[1]),&(yuvtexes[2]),-1.f,-1.f,1.f,1.f,&rgbtexture); //separate Y, U, V donut textures to RGBA panorama texture.
+		//}
+		//else{ //render from the static PNG image texture we made.
+		//	DrawTextureRect(&fileinputtexture, -1.0f, -1.0f, 1.0f, 1.0f, &rgbtexture);
+		//}
 		
 		//make thresholded
-		DrawThresholdRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, 
-		redparams[0], redparams[1], redparams[2], redparams[3],
-		blueparams[0], blueparams[1], blueparams[2], blueparams[3],
-		&thresholdtexture); //perform thresholding
+		
+		DoThresholdStep((unsigned char*)rgbtexture.image, (unsigned char*)thresholdtexture.image);
+		
+		//DrawThresholdRect(&rgbtexture, -1.0f, -1.0f, 1.0f, 1.0f, 
+		//redparams[0], redparams[1], redparams[2], redparams[3],
+		//blueparams[0], blueparams[1], blueparams[2], blueparams[3],
+		//&thresholdtexture); //perform thresholding
 		
 		if(filterLevel == FILTER_OFF){
-			DrawHorSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
-			DrawVerSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
+			//DrawHorSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
+			//DrawVerSum1(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
+			DoDrawHorSum1Step((unsigned char*)thresholdtexture.image, (unsigned char*)horsumtexture1.image);
+			DoDrawVerSum1Step((unsigned char*)thresholdtexture.image, (unsigned char*)versumtexture1.image);
 		}
 		else if(filterLevel == FILTER_ERODE){
-			DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform erosion [ in the Opening phase, the temporary outputs 
-			DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
-			DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
+			//DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform erosion [ in the Opening phase, the temporary outputs
+			DoErodeStep((unsigned char*)thresholdtexture.image, (unsigned char*)erodetexture.image);
+			//DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
+			//DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
+			DoDrawHorSum1Step((unsigned char*)erodetexture.image, (unsigned char*)horsumtexture1.image);
+			DoDrawVerSum1Step((unsigned char*)erodetexture.image, (unsigned char*)versumtexture1.image);
 		}
 		else if(filterLevel == FILTER_OPEN){
-			DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform erosion [ in the Opening phase, the temporary outputs 
-			DrawDilate(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform dilation		are stored in the wrong texture, for texture re-use]
-			DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
-			DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
+			//DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform erosion [ in the Opening phase, the temporary outputs 
+			DoErodeStep((unsigned char*)thresholdtexture.image, (unsigned char*)dilatetexture.image);
+			//DrawDilate(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform dilation		are stored in the wrong texture, for texture re-use]
+			DoDilateStep((unsigned char*)dilatetexture.image, (unsigned char*)erodetexture.image);
+			//DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
+			//DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
+			DoDrawHorSum1Step((unsigned char*)erodetexture.image, (unsigned char*)horsumtexture1.image);
+			DoDrawVerSum1Step((unsigned char*)erodetexture.image, (unsigned char*)versumtexture1.image);
 		}
 		else if(filterLevel == FILTER_OPENCLOSE){
-			DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform erosion [ in the Opening phase, the temporary outputs 
-			DrawDilate(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform dilation		are stored in the wrong texture, for texture re-use]
-			DrawDilate(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); //perform dilation	  [ in the Closing phase, they are in right order ]
-			DrawErode(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform erosion
-			DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
-			DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
+			//DrawErode(&thresholdtexture, -1.0f, -1.0f, 1.0f, 1.0f, &dilatetexture); 
+			DoErodeStep((unsigned char*)thresholdtexture.image, (unsigned char*)dilatetexture.image);
+			//DrawDilate(&dilatetexture, -1.0f, -1.0f, 1.0f, 1.0f, &erodetexture); //perform dilation		are stored in the wrong texture, for texture re-use]
+			DoDilateStep((unsigned char*)dilatetexture.image, (unsigned char*)erodetexture.image);
+			DoDilateStep((unsigned char*)erodetexture.image, (unsigned char*)dilatetexture.image);
+			DoErodeStep((unsigned char*)dilatetexture.image, (unsigned char*)erodetexture.image);
+			//DrawHorSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture1); //first horizontal summer stage
+			//DrawVerSum1(&erodetexture, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture1); //first vertical summer stage
+			DoDrawHorSum1Step((unsigned char*)erodetexture.image, (unsigned char*)horsumtexture1.image);
+			DoDrawVerSum1Step((unsigned char*)erodetexture.image, (unsigned char*)versumtexture1.image);
 		}
 		
-		DrawHorSum2(&horsumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture2); //second (final) horizontal summer stage
-		DrawVerSum2(&versumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture2); //second (final) vertical summer stage		
+		//DrawHorSum2(&horsumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &horsumtexture2); //second (final) horizontal summer stage
+		//DrawVerSum2(&versumtexture1, -1.0f, -1.0f, 1.0f, 1.0f, &versumtexture2); //second (final) vertical summer stage		
+		DoDrawHorSum2Step((unsigned char*)horsumtexture1.image, (unsigned char*)horsumtexture2.image);
+		DoDrawVerSum2Step((unsigned char*)horsumtexture1.image, (unsigned char*)horsumtexture2.image);
 		
 		
 		Finish(); //for accurate benchmarking
@@ -486,10 +536,10 @@ int main(int argc, const char **argv)
 		
 		//DATA RETREIVAL FROM GPU
 		//get summed data back to host (CPU side)
-		versumtexture2.Get();
-		horsumtexture2.Get();
-		versumtexture1.Get();
-		horsumtexture1.Get();
+		//versumtexture2.Get();
+		//horsumtexture2.Get();
+		//versumtexture1.Get();
+		//horsumtexture1.Get();
 		
 		clock_gettime(CLOCK_REALTIME, &t_getdata); //benchmarking
 		
@@ -511,14 +561,14 @@ int main(int argc, const char **argv)
 		
 		//if 's' was pressed, showWindow will be true. Then we need to render our textures onto low-resolution versions for faster capturing back to CPU.
 		if(showWindow && (!doMap)){
-			renderDebugWindow(&lowdisptexture); //render to texture
+			//renderDebugWindow(&lowdisptexture); //render to texture
 		}		
 		else if(renderScreen){//if on-screen rendering to HDMI is active, draw all textures in the pipeline to the screen framebuffer as well.
-			renderDebugWindow(NULL); //render to screen
+			//renderDebugWindow(NULL); //render to screen
 		}
 		else if(doMap){ //write to fb map
 			//DBG("Writing to memmap @ %lu.", (unsigned long)getMapAddr());
-			renderDebugWindow(NULL); //render to texture
+			//renderDebugWindow(NULL); //render to texture
 			//lowdisptexture.GetTo(getMapAddr());
 			
 			//int r;
@@ -1532,6 +1582,7 @@ void doInput(void){
 				diff = temp.tv_nsec - t_right.tv_nsec;
 				if(diff < 0) diff += 1000000000;
 				t_right = temp;
+				
 				if(diff<=60000000){
 					doSetSpeedDir(RIGHT_MOTOR, BACKWARD, MAX_SPEED);
 					doSetSpeedDir(LEFT_MOTOR,FORWARD, MAX_SPEED);
@@ -1545,15 +1596,17 @@ void doInput(void){
 				mvprintw(0,0, "Downloading and saving texture framebuffers, please wait...");
 				refresh();
 				//SaveFrameBuffer("tex_fb.png");
+				ytexture.Save("./captures/tex_y.png");
+				utexture.Save("./captures/tex_u.png");
+				vtexture.Save("./captures/tex_v.png");
+				erodetexture.Save("./captures/tex_erode.png");
+				dilatetexture.Save("./captures/tex_dilate.png");
 				rgbtexture.Save("./captures/tex_rgb.png");
 				thresholdtexture.Save("./captures/tex_out.png");
-				horsumtexture2.Save("./captures/tex_hor.png");
-				versumtexture2.Save("./captures/tex_ver.png");
-				BeginFrame();
-				yuvtexes = getFrontYUVTextures();
-				DrawDonutRect(&(yuvtexes[0]), &(yuvtexes[1]), &(yuvtexes[2]), -1.0f, -1.0f, 1.0f, 1.0f, &rgbdonuttexture);
-				EndFrame();
-				rgbdonuttexture.Save("./captures/donut.png");
+				horsumtexture1.Save("./captures/tex_hor1.png");
+				versumtexture1.Save("./captures/tex_ver1.png");
+				horsumtexture2.Save("./captures/tex_hor2.png");
+				versumtexture2.Save("./captures/tex_ver2.png");
 				break;
 			case 'r': //rendering on/off_type
 				if(renderScreen) renderScreen = false;
@@ -1769,4 +1822,56 @@ void doSetDirection(motor_t motor, direction_t dir){
 	gHaveI2C = setDirection(motor, dir);
 	ddir[(int)motor]=dir;
 	return;
+}
+
+
+//General notes;
+//PORTING
+//when reading the shaders, everything is represented in floating point:
+// - colors are from 0 to 1 (minimum to maximum)
+// - coordinates are from 0 to 1 (0 is bottom / left edge, 1 is top/right edge)
+//here we deal in integers! colors are chars from 0 to 255, coordinates are absolute. conversion must be made!!
+
+//DEBUGGING
+//to debug your kernels you can use the 'w' key while running. All buffers will be saved to files in the 'captures' folder.
+void DoPanoramaRGBConversionStep(unsigned char* y_buffer, unsigned char* u_buffer, unsigned char* v_buffer, unsigned char* out_buffer){
+	//INPUTS:
+	//y_buffer, u_buffer and v_buffer are the YUV values.
+	//each of these buffers has size 1024*1024 pixels (greyscale???)
+	//OUTPUT:
+	//out_buffer is 2048x232 pixels.
+	
+	//TASK: do YUV->RGB conversion on each pixel and also make into panoramic at the same time.
+}
+void DoThresholdStep(unsigned char* in_buffer, unsigned char* out_buffer){
+	//INPUT:
+	//in_buffer has the RGB picture, in panoramic shape, from camera. size is 2048*232 pixels.
+	//OUTPUT:
+	//out_buffer (2048*232 pixels) needs to have thresholded values. Meaning convert to HSV, do thresholds, then convert back to RGB.
+
+}
+void DoDrawHorSum1Step(unsigned char* in_buffer, unsigned char* out_buffer){
+	//in_buffer (2048*232 pixels) has thresholded color outcomes.
+	//out_buffer (33*232 pixels) needs to have the partial sums of horizontal lines' "sections". (each output pixel is roughly a sum of 64 input pixels)
+}
+void DoDrawVerSum1Step(unsigned char* in_buffer, unsigned char* out_buffer){
+	//in_buffer (2048*232 pixels) has thresholded color outcomes.
+	//out_buffer (2048*4 pixels) needs to have the partial sums of vertical lines' "sections". (each output pixel is roughly a sum of 64 input pixels)
+
+}
+void DoErodeStep(unsigned char* in_buffer, unsigned char* out_buffer){
+	//in_buffer (2048*232 pixels) some image.
+	//out_buffer (2048*232 pixels) needs to be eroded over a 5x5 pixel area.
+}
+void DoDilateStep(unsigned char* in_buffer, unsigned char* out_buffer){
+	//in_buffer (2048*232 pixels) some image.
+	//out_buffer (2048*232 pixels) needs to be dilated over a 5x5 pixel area.
+}
+void DoDrawHorSum2Step(unsigned char* in_buffer, unsigned char* out_buffer){
+	//in_buffer (33*232 pixels) has thresholded color outcomes.
+	//out_buffer (1*232 pixels) needs to have the sums of each horizontal row of 33 pixels.
+}
+void DoDrawVerSum2Step(unsigned char* in_buffer, unsigned char* out_buffer){
+	//in_buffer (2048*4 pixels) has thresholded color outcomes.
+	//out_buffer (2048*1 pixels) needs to have the sums of each vertical column of 4 pixels.
 }

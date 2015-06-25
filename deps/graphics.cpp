@@ -630,7 +630,7 @@ void DrawTextureRect(GfxTexture* texture, float x0, float y0, float x1, float y1
 	check();
 
 	glBindBuffer(GL_ARRAY_BUFFER, GQuadVertexBuffer);	check();
-	glBindTexture(GL_TEXTURE_2D,texture->GetId());	check();
+	glBindTexture(GL_TEXTURE_EXTERNAL_OES,texture->GetId());	check();
 
 	GLuint loc = glGetAttribLocation(GSimpleProg.GetId(),"vertex");
 	glVertexAttribPointer(loc, 4, GL_FLOAT, 0, 16, 0);	check();
@@ -1088,11 +1088,11 @@ void SaveFrameBuffer(const char* fname)
 void GfxTexture::Save(const char* fname)
 {
 	if(image == NULL) image = malloc(Width*Height*4);
-	glBindFramebuffer(GL_FRAMEBUFFER,FramebufferId);
-	check();
-	glReadPixels(0,0,Width,Height,IsRGBA ? GL_RGBA : GL_LUMINANCE, GL_UNSIGNED_BYTE, image);
-	check();
-	glBindFramebuffer(GL_FRAMEBUFFER,0);
+	//glBindFramebuffer(GL_FRAMEBUFFER,FramebufferId);
+	//check();
+	//glReadPixels(0,0,Width,Height,IsRGBA ? GL_RGBA : GL_LUMINANCE, GL_UNSIGNED_BYTE, image);
+	//check();
+	//glBindFramebuffer(GL_FRAMEBUFFER,0);
 
 	unsigned error = lodepng::encode(fname, (const unsigned char*)image, Width, Height, IsRGBA ? LCT_RGBA : LCT_GREY);
 	if(error) 
@@ -1102,11 +1102,11 @@ void GfxTexture::Save(const char* fname)
 void GfxTexture::Show(SDL_Rect *target)
 {
 	if(image == NULL) image = malloc(Width*Height*4);
-	glBindFramebuffer(GL_FRAMEBUFFER,FramebufferId);
-	check();
-	glReadPixels(0,0,Width,Height,IsRGBA ? GL_RGBA : GL_LUMINANCE, GL_UNSIGNED_BYTE, image);
-	check();
-	glBindFramebuffer(GL_FRAMEBUFFER,0);
+	//glBindFramebuffer(GL_FRAMEBUFFER,FramebufferId);
+	//check();
+	//glReadPixels(0,0,Width,Height,IsRGBA ? GL_RGBA : GL_LUMINANCE, GL_UNSIGNED_BYTE, image);
+	//check();
+	//glBindFramebuffer(GL_FRAMEBUFFER,0);
 
 	openWindowArgs_t args;
 	args.width = Width;

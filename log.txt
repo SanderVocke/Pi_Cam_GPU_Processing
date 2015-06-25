@@ -10,4 +10,3 @@ Creating Textures.
 Dedonut: 2048x232
 Low-res: 1280x896
 Starting process loop.
-Mapping enabled. Size 1280x720, format RGB565.
