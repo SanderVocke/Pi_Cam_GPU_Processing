@@ -46,6 +46,7 @@ bool doBehave = false;
 bool doMap = false;
 bool do_Behaviour2 = false;
 bool firstIteration = true;
+bool vision = true;
 
 #define FILTER_LEVELS 4
 typedef enum filterLevels_t{
@@ -194,12 +195,13 @@ void* camThread(void* args);
 
 //This array of strings is just here to be printed to the terminal screen,
 //telling the user what keys on the keyboard do what.
-#define NUMKEYS 16
+#define NUMKEYS 17
 const char* keys[NUMKEYS] = {
 	"arrow keys: move bot",
 	"b: turn autonomous behaviour on/off",
 	"s: show snapshot window",
 	"w: save framebuffers",
+	"v: vision on/off (power saving)",
 	"r: turn HDMI live rendering on/off",
 	"f: filtering level (erosion/dilation)",
 	"i: use PNG input image instead of camera stream",
@@ -294,9 +296,9 @@ int main(int argc, const char **argv)
 	//these textures will store the image data coming from the camera.
 	//the camera records in YUV color space. Each color component is stored in a SEPARATE buffer, which is why
 	//we have three separate textures for them.
-	ytexture.CreateGreyScale(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
-	utexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
-	vtexture.CreateGreyScale(g_conf.CAPTURE_WIDTH/2, g_conf.CAPTURE_HEIGHT/2, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	ytexture.CreateRGBA(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	utexture.CreateRGBA(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
+	vtexture.CreateRGBA(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_NEAREST,(GLfloat)GL_CLAMP_TO_EDGE);
 	rgbdonuttexture.CreateRGBA(g_conf.CAPTURE_WIDTH, g_conf.CAPTURE_HEIGHT, NULL, (GLfloat)GL_NEAREST, (GLfloat)GL_CLAMP_TO_EDGE);
 	rgbdonuttexture.GenerateFrameBuffer();
 	
@@ -384,6 +386,12 @@ int main(int argc, const char **argv)
 		doInput(); //handles input.
 		
 		clock_gettime(CLOCK_REALTIME, &t_curses); //for benchmarking
+		
+		if(!vision){
+			usleep(1000000);
+			float fr = -1.0f;
+			drawCurses(fr, nsec_curses, nsec_readframe, nsec_putframe, nsec_draw, nsec_getdata, nsec_processdata, nsec_render, nsec_stream, nsec_join);
+		}
 		
 		/*
 		//PART THAT GRABS A FRAME FROM THE CAMERA
@@ -1569,17 +1577,31 @@ void doInput(void){
 				//SaveFrameBuffer("tex_fb.png");
 				rgbtexture.Save("./captures/tex_rgb.png");
 				thresholdtexture.Save("./captures/tex_out.png");
+				horsumtexture1.Save("./captures/tex_hor_partial.png");
+				versumtexture1.Save("./captures/tex_ver_partial.png");
 				horsumtexture2.Save("./captures/tex_hor.png");
 				versumtexture2.Save("./captures/tex_ver.png");
+				erodetexture.Save("./captures/tex_erode.png");
+				dilatetexture.Save("./captures/tex_dilate.png");
 				BeginFrame();
 				yuvtexes = getFrontYUVTextures();
 				DrawDonutRect(&(yuvtexes[0]), &(yuvtexes[1]), &(yuvtexes[2]), -1.0f, -1.0f, 1.0f, 1.0f, &rgbdonuttexture);
+				DrawTextureRectExternal(&(yuvtexes[0]), -1.0f, -1.0f, 1.0f, 1.0f, &ytexture);
+				DrawTextureRectExternal(&(yuvtexes[1]), -1.0f, -1.0f, 1.0f, 1.0f, &utexture);
+				DrawTextureRectExternal(&(yuvtexes[2]), -1.0f, -1.0f, 1.0f, 1.0f, &vtexture);
+				ytexture.Save("./captures/tex_y.png");
+				utexture.Save("./captures/tex_u.png");
+				vtexture.Save("./captures/tex_v.png");
 				EndFrame();
 				rgbdonuttexture.Save("./captures/donut.png");
 				break;
 			case 'r': //rendering on/off_type
 				if(renderScreen) renderScreen = false;
 				else renderScreen = true;
+				break;
+			case 'v': //vision on/off toggle
+				if(vision) vision = false;
+				else vision = true;
 				break;
 			case 'c': //render from camera instead of images
 				doImage = false;

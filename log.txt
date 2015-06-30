@@ -10,11 +10,3 @@ Creating Textures.
 Dedonut: 2048x232
 Low-res: 1280x896
 Starting process loop.
-Loading image: ./inputs/7.png
-Loading image: ./inputs/4.png
-Loading image: ./inputs/input.png
-Loading image: ./inputs/false2.png
-Loading image: ./inputs/false1.png
-Loading image: ./inputs/5.png
-Loading image: ./inputs/10.png
-Loading image: ./inputs/livingroom.png
